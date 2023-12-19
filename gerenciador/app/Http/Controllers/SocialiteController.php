@@ -40,7 +40,7 @@ class SocialiteController extends Controller
             DB::table('usuario_perfil')->insert([
                 [
                     'id' => $usuarioId = Auth::user()->id,
-                    'id_perfil' => 4,
+                    'id_perfil' => 1,
                 ]
             ]);
             //email

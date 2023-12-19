@@ -23,19 +23,11 @@ return new class extends Migration
         DB::table('perfil')->insert([
             [
                 'id_perfil' => 1,
-                'nome' => 'AMD',
+                'nome' => 'Zerado',
             ],
             [
                 'id_perfil' => 2,
-                'nome' => 'Padrao',
-            ],
-            [
-                'id_perfil' => 3,
-                'nome' => 'Festa',
-            ],
-            [
-                'id_perfil' => 4,
-                'nome' => 'Zerado',
+                'nome' => 'ADM',
             ],
         ]);
     }

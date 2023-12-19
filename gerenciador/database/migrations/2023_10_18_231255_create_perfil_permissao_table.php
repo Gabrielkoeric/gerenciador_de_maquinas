@@ -26,36 +26,9 @@ return new class extends Migration
 
         $dadosPadrao = [
             //adm
-            ['id_home' => 1, 'id_perfil' => 1],
-            ['id_home' => 2, 'id_perfil' => 1],
-            ['id_home' => 3, 'id_perfil' => 1],
-            ['id_home' => 4, 'id_perfil' => 1],
-            ['id_home' => 5, 'id_perfil' => 1],
-            ['id_home' => 6, 'id_perfil' => 1],
-            ['id_home' => 7, 'id_perfil' => 1],
-            ['id_home' => 8, 'id_perfil' => 1],
-            ['id_home' => 9, 'id_perfil' => 1],
-            ['id_home' => 10, 'id_perfil' => 1],
-            ['id_home' => 11, 'id_perfil' => 1],
-            ['id_home' => 12, 'id_perfil' => 1],
-            ['id_home' => 13, 'id_perfil' => 1],
-            ['id_home' => 14, 'id_perfil' => 1],
-            ['id_home' => 15, 'id_perfil' => 1],
-            ['id_home' => 16, 'id_perfil' => 1],
-            ['id_home' => 17, 'id_perfil' => 1],
-            ['id_home' => 18, 'id_perfil' => 1],
-            ['id_home' => 19, 'id_perfil' => 1],
-            ['id_home' => 20, 'id_perfil' => 1],
-            ['id_home' => 21, 'id_perfil' => 1],
-            //padrao
+            ['id_home' => 1, 'id_perfil' => 2],
+            ['id_home' => 2, 'id_perfil' => 2],
             ['id_home' => 3, 'id_perfil' => 2],
-            ['id_home' => 5, 'id_perfil' => 2],
-            ['id_home' => 6, 'id_perfil' => 2],
-            ['id_home' => 9, 'id_perfil' => 2],
-            ['id_home' => 10, 'id_perfil' => 2],
-            ['id_home' => 11, 'id_perfil' => 2],
-            //Festa
-            ['id_home' => 21, 'id_perfil' => 3],
         ];
 
         DB::table('perfil_permissao')->insert($dadosPadrao);

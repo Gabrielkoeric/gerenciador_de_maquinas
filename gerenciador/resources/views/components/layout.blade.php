@@ -20,7 +20,6 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{route('usuario.edit', Auth::User('id'))}}">Editar Usuario</a>
-                    <a class="dropdown-item" href="{{route('check.index')}}">Meu Ingresso</a>
                     <a class="dropdown-item" href="{{route('logout')}}">Sair</a>
                 </div>
             </div>
