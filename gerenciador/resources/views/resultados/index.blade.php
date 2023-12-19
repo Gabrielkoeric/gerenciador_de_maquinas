@@ -1,0 +1,133 @@
+<x-layout title="Resultados">
+    <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
+    <a href="{{route('resultadosproduto.relatorio')}}" target="_blank" class="btn btn-dark my-3">Relatório de Vendas Produtos</a>
+    <a href="{{route('resultadosingresso.relatorio')}}" target="_blank" class="btn btn-dark my-3">Relatório de Vendas Ingressos</a>
+    <a href="{{route('relatorioresultados.relatorio')}}" target="_blank" class="btn btn-dark my-3">Relatório de Resultados</a>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#produtos" role="tab" aria-controls="produtos" aria-selected="true">Produtos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#ingressos" role="tab" aria-controls="ingressos" aria-selected="false">Ingressos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#custos" role="tab" aria-controls="contact" aria-selected="false">Custos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#resultados" role="tab" aria-controls="contact" aria-selected="false">Resultados</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="produtos" role="tabpanel" aria-labelledby="home-tab">
+            @foreach ($comprasEstoque->unique('id_compra') as $compra)
+                <div class="card mb-3">
+                    <div class="card-header">
+                        Compra número: {{ $compra->id_compra }}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Status de Pagamento: {{ $compra->status }}</h5>
+                        <ul class="list-group">
+                            @foreach ($comprasEstoque->where('id_compra', $compra->id_compra) as $produto)
+                                <li class="list-group-item">{{ $produto->nome_produto }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endforeach
+                {{ $comprasEstoque->links('pagination::bootstrap-4') }}
+
+
+        </div>
+        <div class="tab-pane fade" id="ingressos" role="tabpanel" aria-labelledby="profile-tab">
+            @foreach ($comprasIngressos->unique('id_compra') as $compra)
+                <div class="card mb-3">
+                    <div class="card-header">
+                        Compra número: {{ $compra->id_compra }}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Status de Pagamento: {{ $compra->status }}</h5>
+                        <ul class="list-group">
+                            @foreach ($comprasIngressos->where('id_compra', $compra->id_compra) as $ingresso)
+                                <li class="list-group-item">{{ $ingresso->nome_ingresso }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endforeach
+            {{ $comprasIngressos->links('pagination::bootstrap-4') }}
+        </div>
+
+        <div class="tab-pane fade" id="custos" role="tabpanel" aria-labelledby="profile-tab">
+            @php
+                $somaTotal = 0;
+            @endphp
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Qantidade</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col">Valor Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach ($custos as $custo)
+                    <tr>
+                        <td>{{ $custo->nome }}</a></td>
+                        <td>{{ $custo->quantidade }}</a></td>
+                        <td>R$: {{ $custo->valor }}</a></td>
+                        @php
+                            $valorTotal = $custo->valor * $custo->quantidade;
+                            $somaTotal += $valorTotal;
+                        @endphp
+                        <td>R$: {{$valorTotal}}</td>
+                    </tr>
+                @endforeach
+                <tr>
+                    <td colspan="3">Soma Total:</td>
+                    <td>R$: {{$somaTotal}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="resultados" role="tabpanel" aria-labelledby="contact-tab">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Descrição</th>
+                    <th scope="col">Valor</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td>Vendas De Produtos</td>
+                        <td>R$: {{$totalCompraEstoque}}</td>
+                    </tr>
+                    <tr>
+                        <td>Vendas De Ingressos</td>
+                        <td>R$: {{$totalCompraIngresso}}</td>
+                    </tr>
+                    <tr>
+                        <td>Custo de Produtos</td>
+                        <td>R$: {{$totalValorCusto}}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>SubTotal</td>
+                        <td>R$: {{$totalCompraEstoque + $totalCompraIngresso - $totalValorCusto }}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</x-layout>
+
+
+

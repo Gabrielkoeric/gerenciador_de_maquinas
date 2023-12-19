@@ -1,0 +1,48 @@
+public function handleWebhook(Request $request)
+    {
+        // Configurar as credenciais do Mercado Pago
+        $accessToken = config('services.mercado_pago.access_token');
+        SDK::setAccessToken($accessToken);
+
+        // Log de todas as informações disponíveis na notificação
+
+        Log::info('Recebida notificação do Mercado Pago');
+        Log::info('Tipo de evento: ' . $request->input('type'));
+        Log::info('ID do recurso: ' . $request->input('data.id'));
+        Log::info('Status do recurso: ' . $request->input('data.status'));
+        Log::info('Data de criação: ' . $request->input('date_created'));
+        Log::info('ID do usuário: ' . $request->input('user_id'));
+        Log::info('Versão da API: ' . $request->input('api_version'));
+
+        //consulta na api
+        // Consultar o status da compra
+        $paymentId = $request->input('data.id');
+        $payment = Payment::find_by_id($paymentId);
+
+        // Log de informações detalhadas do pagamento
+        Log::info('Detalhes do pagamento:');
+        Log::info('ID: ' . $payment->id);
+        Log::info('Status: ' . $payment->status);
+        Log::info('Método de pagamento: ' . $payment->payment_method_id);
+        Log::info('Valor: ' . $payment->transaction_amount);
+        Log::info('Descrição: ' . $payment->description);
+        //pegar o id interno
+        // Acessar os detalhes do item
+        $items = $payment->additional_info->items;
+// Verificar se existem itens e obter o ID
+        if (!empty($items)) {
+            $itemId = $items[0]->id;
+            Log::info('ID do item: ' . $itemId);
+        }
+        $externalReference = $payment->external_reference;
+        $status = $payment->status;
+
+        // Adicionar 'external_reference' ao log
+        Log::info('External Reference: ' . $externalReference);
+        DB::table('compras')
+            ->where('hash', $externalReference) // Substitua $idDaCompra pelo ID da compra que você deseja atualizar
+            ->update(['status' => $status]);
+        // Responder ao Mercado Pago para confirmar o recebimento da notificação
+        return response()->json(['status' => 'OK'], 200);
+
+    }
