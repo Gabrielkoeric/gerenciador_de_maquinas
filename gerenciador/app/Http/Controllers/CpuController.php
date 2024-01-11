@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CpuController extends Controller
 {
@@ -23,7 +24,7 @@ class CpuController extends Controller
      */
     public function create()
     {
-        //
+        return view('cpu.create');
     }
 
     /**
@@ -34,7 +35,23 @@ class CpuController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'marca' => ['required'],
+            'modelo' => ['required'],
+            'geracao' => ['required']
+        ]);
+        $marca = $request->input('marca');
+        $modelo = $request->input('modelo');
+        $geracao = $request->input('geracao');
+
+        $dados = [
+            'marca' => $marca,
+            'modelo' => $modelo,
+            'geracao' => $geracao,
+        ];
+        DB::table('cpu')->insertGetId($dados);
+
+        return redirect('/cpu')->with('mensagem.sucesso', 'Usuario inserido com sucesso!');
     }
 
     /**

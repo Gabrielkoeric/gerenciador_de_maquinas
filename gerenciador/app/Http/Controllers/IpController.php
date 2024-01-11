@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class IpController extends Controller
 {
@@ -12,46 +13,68 @@ class IpController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $dados = DB::table('ip')->orderBy('cidade')->get();
-/*
+        $ip = $request->input('ip');
+        $cidade = $request->input('cidade');
+        $regiao = $request->input('regiao');
+        $continente = $request->input('continente');
+        $id_incidente = $request->input('incidente');
 
-                foreach ($dados as $dado)
-                    if (is_null($dado->ip) || is_null($dado->cidade) || is_null($dado->continente) || is_null($dado->regiao) || is_null($dado->localizacao) || is_null($dado->empresa) || is_null($dado->postal) || is_null($dado->timezone))
-                    {
-                        $ip = $dado->ip;
-                        $url = "https://ipinfo.io/$ip/json?token=5e2c5aa71f13aa";
 
-                        // Faz a requisição HTTP
-                        $response = file_get_contents($url);
-                        $jsonData = json_decode($response);
+        $query = DB::table('ip')->orderBy('cidade');
 
-                        $newData = [
-                            'cidade' => "$jsonData->city",
-                            'regiao' => "$jsonData->region",
-                            'continente' => "$jsonData->country",
-                            'localizacao' => "$jsonData->loc",
-                            'empresa' => "$jsonData->org",
-                            'postal' => "$jsonData->postal",
-                            'timezone' => $jsonData->timezone,
-                        ];
+        // Aplicar condições WHERE com AND
+        if (!empty($ip)) {
+            $query->where('ip', $ip);
+        }
 
-                        $isNull = false;
-                        foreach ($newData as $value) {
-                            if (is_null($value)) {
-                                $isNull = true;
-                                break;
-                            }
-                        }
+        if (!empty($cidade)) {
+            $query->where('cidade', $cidade);
+        }
 
-                        if (!$isNull) {
-                            DB::table('ip')
-                                ->where('ip', $ip)
-                                ->update($newData);
-                        }
-                    }*/
-        return view('ip.index')->with('dados', $dados);
+        if (!empty($regiao)) {
+            $query->where('regiao', $regiao);
+        }
+
+        if (!empty($continente)) {
+            $query->where('continente', $continente);
+        }
+
+        if (!empty($id_incidente)) {
+            $query->where('id_incidente', $id_incidente);
+        }
+
+        $dados = $query->get();
+
+        $incidentes = DB::table('ip')
+            ->join('incidente as i', 'ip.id_incidente', '=', 'i.id_incidente')
+            ->groupBy('i.id_incidente', 'i.nome')
+            ->select('i.id_incidente', 'i.nome as nome_incidente')
+            ->get();
+
+        $cidades = DB::table('ip')
+            ->select('cidade')
+            ->distinct()
+            ->get();
+
+        $continentes = DB::table('ip')
+            ->select('continente')
+            ->distinct()
+            ->get();
+
+        $regioes = DB::table('ip')
+            ->select('regiao')
+            ->distinct()
+            ->get();
+
+        return view('ip.index')
+            ->with('dados', $dados)
+            ->with('incidentes', $incidentes)
+            ->with('cidades', $cidades)
+            ->with('continentes', $continentes)
+            ->with('regioes', $regioes);
+        //return view('ip.index')->with('dados', $dados)->with('incidentes', $incidentes)->with('incidenteAtual', $incidenteAtual);
     }
 
     /**
@@ -81,7 +104,7 @@ class IpController extends Controller
             'arquivoIp' => $arquivoIpPath
         ];
 
-        $idInserido = DB::table('incidente')->insertGetId($dados);
+        $id_incidente = DB::table('incidente')->insertGetId($dados);
 
         $fullFilePath = storage_path('app/public/' . $arquivoIpPath);
         $handle = fopen($fullFilePath, "r");
@@ -111,7 +134,7 @@ class IpController extends Controller
                                 'empresa' => $jsonData->org ?? null,
                                 'postal' => $jsonData->postal ?? null,
                                 'timezone' => $jsonData->timezone ?? null,
-                                'id_incidente' => $idInserido,
+                                'id_incidente' => $id_incidente,
                             ];
 
                             DB::table('ip')->insert($newData);
@@ -125,9 +148,9 @@ class IpController extends Controller
         }
 
         fclose($handle);
-
+        Log::info("incidente no store: $id_incidente");
         // Retirei o comentário para redirecionar após o processamento
-        return redirect('/ip');
+        return redirect('/ip')->with('id_incidente', $id_incidente);
     }
 
 

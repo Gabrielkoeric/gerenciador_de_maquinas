@@ -1,3 +1,3 @@
-<x-layout title="Novo Usuario">
-    <x-usuario.forms :action="route('usuario.store')" :perfis="$perfis"></x-usuario.forms>
+<x-layout title="Novo CPU">
+    <x-cpu.forms :action="route('cpu.store')"></x-cpu.forms>
 </x-layout>
