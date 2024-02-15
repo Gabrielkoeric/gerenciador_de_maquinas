@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+<link rel="icon" href="storage/home/cloud.png" type="image/png">
+    <link rel="shortcut icon" href="storage/home/cloud.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">

@@ -75,6 +75,7 @@
             <th scope="col">IP</th>
             <th scope="col">cidade</th>
             <th scope="col">Continente</th>
+            <th scope="col">Continente Bandeira</th>
             <th scope="col">regiao</th>
             <th scope="col">Empresa</th>
         </tr>
@@ -86,10 +87,13 @@
                 <td>{{$dado->ip}}</td>
                 <td>{{$dado->cidade}}</td>
                 <td>{{$dado->continente}}</td>
+                <td><img src="{{ asset('storage/bandeiraImagem/' . strtolower($dado->continente) . '.png') }}" width="65" height="30"></td>
                 <td>{{$dado->regiao}}</td>
                 <td>{{$dado->empresa}}</td>
             </tr>
         @endforeach
+
+
 
         </tbody>
     </table>

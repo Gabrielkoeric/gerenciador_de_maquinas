@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Jobs\DownloadBandeiraJob;
+use App\Jobs\teste;
 
 class IpController extends Controller
 {
@@ -138,6 +140,12 @@ class IpController extends Controller
                             ];
 
                             DB::table('ip')->insert($newData);
+
+                            //DownloadBandeiraJob::dispatch($jsonData->country)->onQueue('padrao');
+                           /* for ($i = 0; $i < 10000; $i++) {
+                                Log::info('jobdisparado');
+                                teste::dispatch()->onQueue('padrao');
+                            }*/
 
                             // Exibe o IP encontrado
                             //echo "IP: " . $ip . "<br>";

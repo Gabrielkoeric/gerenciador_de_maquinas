@@ -14,7 +14,7 @@ class UsuarioController extends Controller
             ->select('u.id', 'u.nome_completo', 'u.email', 'u.imagem', 'u.celular', 'p.nome as nome_perfil')
             ->leftJoin('usuario_perfil as up', 'u.id', '=', 'up.id')
             ->leftJoin('perfil as p', 'up.id_perfil', '=', 'p.id_perfil')
-            ->get();
+            ->paginate(100);
         $mensagemSucesso = $request->session()->get('mensagem.sucesso');
 
         return view('usuarios.index')->with('usuarios', $usuarios)->with('mensagemSucesso', $mensagemSucesso);
