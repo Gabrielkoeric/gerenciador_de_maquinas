@@ -15,7 +15,7 @@
                 <option value="">Selecione um Incidente</option>
             @foreach ($incidentes as $incidente)
 
-                        <option value="{{ $incidente->id_incidente }}">{{ $incidente->nome_incidente }}</option>
+                        <option value="{{ $incidente->id_incidente }}">{{ $incidente->nome }}</option>
             @endforeach
         </select >
         <!---------------------Cidade--------------------------------------------------->

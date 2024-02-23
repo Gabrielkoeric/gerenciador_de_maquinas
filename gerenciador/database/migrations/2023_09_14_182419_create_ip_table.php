@@ -23,11 +23,11 @@ return new class extends Migration
             $table->string('empresa')->nullable();
             $table->string('postal')->nullable();
             $table->string('timezone')->nullable();
-            $table->unsignedBigInteger('id_incidente')->nullable();
-            $table->boolean('check')->defult('true')->nullable();
-            $table->timestamps();
+            //$table->unsignedBigInteger('id_incidente')->nullable();
+            //$table->boolean('check')->defult('true')->nullable();
+            //$table->timestamps();
 
-            $table->foreign('id_incidente')->references('id_incidente')->on('incidente');
+            //$table->foreign('id_incidente')->references('id_incidente')->on('incidente');
         });
     }
 

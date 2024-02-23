@@ -33,6 +33,7 @@ use App\Http\Middleware\Autenticador;
 use App\Http\Middleware\ControleAcesso;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\Api\ApiIpController;
 
 
 /*
@@ -84,6 +85,11 @@ Route::resource('/server', ServerController::class)->middleware(Autenticador::cl
 Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //Route::resource('/server', ServerController::class);
 Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+
+
+//api
+Route::post('/api/ip', [ApiIpController::class, 'store']);
 
 
 
