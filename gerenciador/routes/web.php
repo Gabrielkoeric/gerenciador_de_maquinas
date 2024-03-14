@@ -34,6 +34,8 @@ use App\Http\Middleware\ControleAcesso;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\Api\ApiIpController;
+use App\Http\Controllers\Api\ApiIp2Controller;
+use App\Http\Controllers\Api\ApiIp3Controller;
 
 
 /*
@@ -90,6 +92,12 @@ Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->mid
 
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
+
+//api2
+Route::post('/api/ip2', [ApiIp2Controller::class, 'store']);
+
+//api3
+Route::post('/api/ip3', [ApiIp3Controller::class, 'store']);
 
 
 

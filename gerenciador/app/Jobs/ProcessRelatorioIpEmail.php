@@ -11,8 +11,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Relatorio;
 
-class backup_ProcessRelatorioIp implements ShouldQueue
+class ProcessRelatorioIpEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -23,11 +26,15 @@ class backup_ProcessRelatorioIp implements ShouldQueue
      */
     protected $nome;
     protected $id_incidente;
+    protected $email;
+    protected $id_async_task;
 
-    public function __construct($nome, $id_incidente)
+    public function __construct($nome, $id_incidente, $email, $id_async_task)
     {
         $this->nome = $nome;
         $this->id_incidente = $id_incidente;
+        $this->email = $email;
+        $this->id_async_task = $id_async_task;
     }
 
     /**
@@ -37,6 +44,11 @@ class backup_ProcessRelatorioIp implements ShouldQueue
      */
     public function handle()
     {
+        Log::info("email assinc $this->email");
+        DB::table('async_tasks')->where('id_async_tasks', $this->id_async_task)->update([
+            'status' => 'iniciado',
+            'horario_inicio' => now()
+        ]);
         $relatorioIp = DB::table('ip')
             ->select(
                 'ip.id_ip',
@@ -63,5 +75,14 @@ class backup_ProcessRelatorioIp implements ShouldQueue
 
         // Salva o arquivo PDF no diretório específico com o nome do arquivo
         $pdf->save($caminhoArquivo);
+
+        DB::table('async_tasks')->where('id_async_tasks', $this->id_async_task)->update([
+            'status' => 'concluido',
+            'horario_fim' => now(),
+            'log' => "Arquivo PDF processado, salvo no caminho $caminhoArquivo"
+        ]);
+        //Mail::to($this->email)->queue(new Relatorio($caminhoArquivo));
+        Mail::to($this->email)->queue(new Relatorio($nomeArquivo, $caminhoArquivo));
+
     }
 }
