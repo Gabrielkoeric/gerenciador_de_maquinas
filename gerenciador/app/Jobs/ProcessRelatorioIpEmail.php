@@ -64,8 +64,10 @@ class ProcessRelatorioIpEmail implements ShouldQueue
             )
             ->join('ip_incidente', 'ip.id_ip', '=', 'ip_incidente.id_ip')
             ->join('incidente', 'ip_incidente.id_incidente', '=', 'incidente.id_incidente')
-            ->where('incidente.id_incidente', $this->id_incidente) // Corrigido aqui
+            ->where('incidente.id_incidente', $this->id_incidente)
+            ->orderBy('ip.ip', 'asc') // Ordenar por IP de forma crescente
             ->get();
+
 
         $nomeArquivo = $this->nome . '.pdf'; // Corrigido aqui
         $caminhoArquivo = storage_path('app/public/arquivosIpPDF/' . $nomeArquivo);
