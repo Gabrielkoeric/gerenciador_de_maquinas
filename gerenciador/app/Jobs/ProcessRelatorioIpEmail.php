@@ -65,7 +65,9 @@ class ProcessRelatorioIpEmail implements ShouldQueue
             ->join('ip_incidente', 'ip.id_ip', '=', 'ip_incidente.id_ip')
             ->join('incidente', 'ip_incidente.id_incidente', '=', 'incidente.id_incidente')
             ->where('incidente.id_incidente', $this->id_incidente)
-            ->orderBy('ip.ip', 'asc') // Ordenar por IP de forma crescente
+            ->orderByDesc('ip_incidente.quantidade') // Ordenar por quantidade em ordem decrescente
+    	    ->orderBy('ip.empresa', 'asc') // Ordenar por empresa em ordem crescente
+    	    ->orderBy('ip.ip', 'asc') // Ordenar por IP em ordem crescente
             ->get();
 
 

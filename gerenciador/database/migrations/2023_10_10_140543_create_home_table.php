@@ -104,6 +104,14 @@ return new class extends Migration
                 'created_at' => null,
                 'updated_at' => null,
             ],
+            [
+                'nome' => 'Scripts',
+                'nome_tela' => 'script',
+                'imagem_tela' => 'storage/home/terraform.png',
+                'permite_home' => 1,
+                'created_at' => null,
+                'updated_at' => null,
+            ],
         ];
 
         DB::table('home')->insert($dadosPadraoHome);

@@ -19,6 +19,9 @@ class ApiIp3Controller extends Controller
         try {
             $arquivoIpPath = $request->file('arquivoIp')->store('arquivoIp', 'public');
             $email = $request->input('email');
+            Log::info("arquivoIpPath $arquivoIpPath");
+            $arquivoIpPath = "arquivoIp/log2.txt";
+            Log::info("arquivoIpPath $arquivoIpPath");
             Log::info("email $email");
             $request->arquivoIp = $arquivoIpPath;
             //$nome = $request->input('nome');

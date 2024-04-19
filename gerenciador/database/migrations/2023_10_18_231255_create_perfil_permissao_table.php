@@ -36,6 +36,7 @@ return new class extends Migration
             ['id_home' => 8, 'id_perfil' => 2],
             ['id_home' => 9, 'id_perfil' => 2],
             ['id_home' => 10, 'id_perfil' => 2],
+            ['id_home' => 11, 'id_perfil' => 2],
         ];
 
         DB::table('perfil_permissao')->insert($dadosPadrao);
