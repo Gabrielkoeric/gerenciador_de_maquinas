@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class ScriptController extends Controller
+class ExecutarController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +13,7 @@ class ScriptController extends Controller
      */
     public function index()
     {
-        $scripts = DB::table('script')->get();
-        return view('script.index')->with('scripts', $scripts);
+        //
     }
 
     /**

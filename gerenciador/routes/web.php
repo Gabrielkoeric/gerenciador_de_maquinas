@@ -7,6 +7,7 @@ use App\Http\Controllers\CompraIngressoController;
 use App\Http\Controllers\CheckController;
 use App\Http\Controllers\CpuController;
 use App\Http\Controllers\ScriptController;
+use App\Http\Controllers\ExecutarController;
 use App\Http\Controllers\EstoqueController;
 use App\Http\Controllers\GeraController;
 use App\Http\Controllers\HdController;
@@ -72,6 +73,8 @@ Route::resource('memoria', MemoriaController::class)->middleware(Autenticador::c
 Route::resource('cpu', CpuController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //Script
 Route::resource('script', ScriptController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+//Executar
+Route::resource('executar', ExecutarController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //Route::get('login/google', "SocialiteController@redirectToProvider");
 //Route::get('login/google/callback', 'SocialiteController@handleProviderCalback');
