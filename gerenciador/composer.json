@@ -6,7 +6,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
-        "ext-mysql": "*",
+        "ext-mysqli": "*",
+        "ext-pdo_mysql": "*",
         "barryvdh/laravel-dompdf": "^2.0",
         "cboden/ratchet": "^0.4.4",
         "endroid/qr-code": "^4.8",

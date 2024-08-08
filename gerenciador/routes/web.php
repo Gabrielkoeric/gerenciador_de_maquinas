@@ -38,6 +38,7 @@ use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\Api\ApiIpController;
 use App\Http\Controllers\Api\ApiIp2Controller;
 use App\Http\Controllers\Api\ApiIp3Controller;
+use App\Http\Controllers\Api\ApiIp4Controller;
 
 
 /*
@@ -104,6 +105,9 @@ Route::post('/api/ip2', [ApiIp2Controller::class, 'store']);
 
 //api3
 Route::post('/api/ip3', [ApiIp3Controller::class, 'store']);
+
+//api4
+Route::post('/api/ip4', [ApiIp4Controller::class, 'store']);
 
 
 
