@@ -39,6 +39,7 @@ use App\Http\Controllers\Api\ApiIpController;
 use App\Http\Controllers\Api\ApiIp2Controller;
 use App\Http\Controllers\Api\ApiIp3Controller;
 use App\Http\Controllers\Api\ApiIp4Controller;
+use App\Http\Controllers\Api\ApiIp5Controller;
 
 
 /*
@@ -63,9 +64,9 @@ Route::resource('access_logs', AccessLogsController::class)->middleware(Autentic
 //perfis de usuarios
 Route::resource('perfis_usuarios', PerfilController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //busca de ip's
-Route::resource('ip', IpController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::resource('ip', IpController::class)/*->middleware(Autenticador::class)->middleware(ControleAcesso::class)*/;
 //ip publicos da unidade
-Route::resource('ip_publico', IpPublicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::resource('ip_publico', IpPublicoController::class)/*->middleware(Autenticador::class)->middleware(ControleAcesso::class)*/;
 //hd
 Route::resource('hd', HdController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //memoria
@@ -108,6 +109,8 @@ Route::post('/api/ip3', [ApiIp3Controller::class, 'store']);
 
 //api4
 Route::post('/api/ip4', [ApiIp4Controller::class, 'store']);
+//api5
+Route::post('/api/ip5', [ApiIp5Controller::class, 'store']);
 
 
 
