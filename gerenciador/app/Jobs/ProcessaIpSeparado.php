@@ -27,12 +27,12 @@ class ProcessaIpSeparado implements ShouldQueue
     protected $arquivoIpPath;
     protected $id_async_task;
 
-    public function __construct($nome, $id_incidente, $email, $arquivoIpPath, $id_async_task)
+    public function __construct(/*$nome,*/ $id_incidente, $email, /*$arquivoIpPath,*/ $id_async_task)
     {
-        $this->nome = $nome;
+       // $this->nome = $nome;
         $this->id_incidente = $id_incidente;
         $this->email = $email;
-        $this->arquivoIpPath = $arquivoIpPath;
+        //$this->arquivoIpPath = $arquivoIpPath;
         $this->id_async_task = $id_async_task;
     }
 

@@ -80,14 +80,14 @@ class SeparaIp implements ShouldQueue
 
     $id_async_task = DB::table('async_tasks')->insertGetId([
         'nome_async_tasks' => "Precessando ip's da temp",
-        'horario_disparo' => now(), // useCurrent não é necessário aqui porque o Laravel irá preencher automaticamente o campo
+        'horario_disparo' => now(),
         'status' => 'pendente'
     ]);
-    //ProcessaIpSeparado::dispatch($id_incidente, $email, $id_async_task)->onQueue('padrao');
+
     Log::info("erro ta aq");
-    //Log::info("id_incidente $id_incidente");
-    Log::info("email $email");
+    Log::info("email $this->email");
     Log::info("id_async_task $id_async_task");
+
     ProcessaIpSeparado::dispatch($this->id_incidente, $this->email, $id_async_task)->onQueue('padrao');
 
     // Finaliza a tarefa
