@@ -40,6 +40,7 @@ use App\Http\Controllers\Api\ApiIp2Controller;
 use App\Http\Controllers\Api\ApiIp3Controller;
 use App\Http\Controllers\Api\ApiIp4Controller;
 use App\Http\Controllers\Api\ApiIp5Controller;
+use App\Http\Controllers\Api\ApiIp6Controller;
 
 
 /*
@@ -111,6 +112,8 @@ Route::post('/api/ip3', [ApiIp3Controller::class, 'store']);
 Route::post('/api/ip4', [ApiIp4Controller::class, 'store']);
 //api5
 Route::post('/api/ip5', [ApiIp5Controller::class, 'store']);
+//api6 salva os ip na tabela temp e processa depois
+Route::post('/api/ip6', [ApiIp6Controller::class, 'store']);
 
 
 
