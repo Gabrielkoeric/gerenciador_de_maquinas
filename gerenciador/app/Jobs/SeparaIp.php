@@ -88,7 +88,7 @@ class SeparaIp implements ShouldQueue
     Log::info("email $this->email");
     Log::info("id_async_task $id_async_task");
 
-    ProcessaIpSeparado::dispatch($this->id_incidente, $this->email, $id_async_task)->onQueue('padrao');
+    ProcessaIpSeparado::dispatch($this->nome, $this->id_incidente, $this->email, $id_async_task)->onQueue('padrao');
 
     // Finaliza a tarefa
     DB::table('async_tasks')->where('id_async_tasks', $this->id_async_task)->update([

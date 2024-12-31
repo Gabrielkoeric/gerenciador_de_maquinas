@@ -21,18 +21,16 @@ class ProcessaIpSeparado implements ShouldQueue
      * @return void
      */
 
-    protected $nome;
     protected $id_incidente;
     protected $email;
-    protected $arquivoIpPath;
     protected $id_async_task;
+    protected $nome;
 
-    public function __construct(/*$nome,*/ $id_incidente, $email, /*$arquivoIpPath,*/ $id_async_task)
+    public function __construct($nome, $id_incidente, $email, $id_async_task)
     {
-       // $this->nome = $nome;
+        $this->nome = $nome;
         $this->id_incidente = $id_incidente;
         $this->email = $email;
-        //$this->arquivoIpPath = $arquivoIpPath;
         $this->id_async_task = $id_async_task;
     }
 
@@ -43,46 +41,76 @@ class ProcessaIpSeparado implements ShouldQueue
      */
     public function handle()
 {
-    DB::table('async_tasks')->where('id_async_tasks', $this->id_async_task)->update([
-        'status' => 'iniciado',
-        'horario_inicio' => now()
-    ]);
+    Log::info("job processa ip"); 
 
-    $fullFilePath = storage_path('app/public/' . $this->arquivoIpPath);
-    $lines = file($fullFilePath); // Lê todas as linhas do arquivo
-    $totalLines = count($lines); // Total de linhas no arquivo
-    $processedLines = 0; // Contador de linhas processadas
+    // Exemplo de como acessar id_async_task corretamente
+    Log::info("ID da tarefa assíncrona: " . $this->id_async_task);
+    
+        // Agrupa os IPs na tabela temp_ip
+        $groupedIps = DB::table('temp_ip')
+            ->select('ip', 'id_incidente', DB::raw('COUNT(*) as quantidade'))
+            ->groupBy('ip', 'id_incidente')
+            ->get();
 
-    foreach ($lines as $line) {
-        $processedLines++; // Incrementa a linha processada
+        foreach ($groupedIps as $tempIp) {
+            $ip = trim($tempIp->ip);
+            $idIncidente = $tempIp->id_incidente;
+            $quantidade = $tempIp->quantidade;
 
-        // Encontra todos os IPs na linha
-        preg_match_all('/\b(?:\d{1,3}\.){3}\d{1,3}\b/', $line, $matches);
+            // Valida se o IP já existe na tabela 'ip'
+            $existingIp = DB::table('ip')->where('ip', $ip)->first();
 
-        foreach ($matches[0] as $ip) {
-            $ip = trim($ip);
+            if (!$existingIp) {
+                // Caso o IP não exista, consulta a API ipinfo.io
+                $url = "https://ipinfo.io/$ip/json?token=5e2c5aa71f13aa";
+                $response = @file_get_contents($url); // Usa @ para evitar warnings caso a API não responda
+                $jsonData = $response ? json_decode($response) : null;
 
-            // Insere diretamente na tabela temp_ip
-            DB::table('temp_ip')->insert([
-                'ip' => $ip,
-                'id_incidente' => $this->id_incidente,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+                if (!empty($jsonData->city)) {
+                    // Insere o novo IP na tabela 'ip'
+                    $idIp = DB::table('ip')->insertGetId([
+                        'ip' => $ip,
+                        'cidade' => $jsonData->city ?? null,
+                        'regiao' => $jsonData->region ?? null,
+                        'continente' => $jsonData->country ?? null,
+                        'localizacao' => $jsonData->loc ?? null,
+                        'empresa' => $jsonData->org ?? null,
+                        'postal' => $jsonData->postal ?? null,
+                        'timezone' => $jsonData->timezone ?? null,
+                    ]);
+                } else {
+                    // Se a API não retornar informações, pula para o próximo IP
+                    Log::warning("Não foi possível obter dados para o IP: $ip");
+                    continue;
+                }
+            } else {
+                $idIp = $existingIp->id_ip;
+            }
+
+            // Valida se o IP já está relacionado ao incidente
+            $existingIpIncidente = DB::table('ip_incidente')
+                ->where('id_ip', $idIp)
+                ->where('id_incidente', $idIncidente)
+                ->first();
+
+            if ($existingIpIncidente) {
+                // Atualiza a quantidade na tabela ip_incidente
+                DB::table('ip_incidente')
+                    ->where('id_ip', $idIp)
+                    ->where('id_incidente', $idIncidente)
+                    ->update(['quantidade' => DB::raw('quantidade + ' . $quantidade)]);
+            } else {
+                // Insere um novo registro na tabela ip_incidente
+                DB::table('ip_incidente')->insert([
+                    'id_ip' => $idIp,
+                    'id_incidente' => $idIncidente,
+                    'quantidade' => $quantidade,
+                ]);
+            }
         }
-
-        // Atualiza a tabela com o progresso
-        DB::table('async_tasks')->where('id_async_tasks', $this->id_async_task)->update([
-            'log' => "$processedLines/$totalLines"
-        ]);
+        Log::info("disparando tarefas");
+        ProcessRelatorioIpEmail2::dispatch($this->nome, $this->id_incidente, $this->email, $this->id_async_task)->onQueue('padrao');
+        DownloadBandeiraJob::dispatch()->onQueue('padrao');
+        Log::info("Processamento da tabela temp_ip concluído.");
     }
-
-    // Finaliza a tarefa
-    DB::table('async_tasks')->where('id_async_tasks', $this->id_async_task)->update([
-        'status' => 'concluido',
-        'horario_fim' => now()
-    ]);
-
-    Log::info("IP parsing concluído para o incidente: $this->id_incidente");
-}
 }
