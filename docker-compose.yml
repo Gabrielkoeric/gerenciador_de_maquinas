@@ -2,15 +2,12 @@ version: '3.9'
 
 volumes:
   mysql_data: {}
-  apache_logs: 
-    driver: local 
+  apache_logs:
+    driver: local
     driver_opts:
       type: none
       o: bind
-      #para windows
-      #device: C:\apache_logs
-      #para linux
-      device: /var/log/apache2
+      device: /root/projeto  # Altere para o diretório desejado
 
 services:
   mysql:
@@ -18,7 +15,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"  
+      - "3306:3306"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -40,10 +37,7 @@ services:
       - mysql
     volumes:
       - ./path/to/your/laravel/code:/var/www/html
-      #para windows
-      # - C:\\apache_logs:/var/log/apache2
-      #para linux
-      - apache_logs:/var/log/apache2
+      - apache_logs:/root/projeto  # Mapeando o volume para /root/projeto
     environment:
       - DB_HOST=mysql
       - DB_PORT=3306
