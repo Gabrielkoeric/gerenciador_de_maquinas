@@ -9,23 +9,23 @@ RUN apt-get update && \
 
 WORKDIR /var/www/html/
 
-RUN git clone https://github.com/Gabrielkoeric/TechChallenge.git
+RUN git clone https://github.com/Gabrielkoeric/gerenciador_de_maquinas.git
 
-RUN cp /var/www/html/TechChallenge/.env.example /var/www/html/TechChallenge/.env
+RUN cp /var/www/html/gerenciador_de_maquinas/.env.example /var/www/html/gerenciador_de_maquinas/.env
 
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/TechChallenge/public|' /etc/apache2/sites-available/000-default.conf
-RUN sed -i 's|<Directory /var/www/html>|<Directory /var/www/html/TechChallenge/public>|' /etc/apache2/apache2.conf
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/gerenciador_de_maquinas/public|' /etc/apache2/sites-available/000-default.conf
+RUN sed -i 's|<Directory /var/www/html>|<Directory /var/www/html/gerenciador_de_maquinas/public>|' /etc/apache2/apache2.conf
 
-WORKDIR /var/www/html/TechChallenge
+WORKDIR /var/www/html/gerenciador_de_maquinas
 
 RUN composer install --no-dev --optimize-autoloader
 
 RUN php artisan key:generate --force
 
-RUN chown -R www-data:www-data /var/www/html/TechChallenge/storage /var/www/html/TechChallenge/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/gerenciador_de_maquinas/storage /var/www/html/gerenciador_de_maquinas/bootstrap/cache
 
 RUN a2enmod rewrite
 
-EXPOSE 80
+EXPOSE 80 
 
 CMD ["apache2-foreground"]
