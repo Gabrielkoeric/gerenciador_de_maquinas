@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Jobs\SeparaIp;
+use App\Jobs\ProcessaIpSeparado;
+use App\Jobs\ProcessRelatorioIpEmail2;
+use App\Jobs\DownloadBandeiraJob;
 use Illuminate\Support\Str;
 
 
 
-class ApiIp6Controller extends Controller
+class ApiIp7Controller extends Controller
 {
     public function store(Request $request)
     {
@@ -20,7 +23,7 @@ class ApiIp6Controller extends Controller
             $arquivoIpPath = $request->file('arquivoIp')->store('arquivoIp', 'public');
             $email = $request->input('email');
             Log::info("arquivoIpPath $arquivoIpPath");
-            $arquivoIpPath = "arquivoIp/ssl_completo.log";
+            $arquivoIpPath = "arquivoIp/full.txt";
             Log::info("arquivoIpPath $arquivoIpPath");
             Log::info("email $email");
             $request->arquivoIp = $arquivoIpPath;
@@ -37,7 +40,11 @@ class ApiIp6Controller extends Controller
                 'status' => 'pendente'
             ]);
             Log::info("disparando o processo assincrono $id_async_task");
-            SeparaIp::dispatch($nome, $id_incidente, $email, $arquivoIpPath, $id_async_task)->onQueue('padrao');
+            // Passando os valores diretamente para os jobs
+        SeparaIp::dispatch($nome, $id_incidente, $email, $arquivoIpPath, $id_async_task)->onQueue('padrao');
+        ProcessaIpSeparado::dispatch($nome, $id_incidente, $email, $id_async_task)->onQueue('padrao');
+        ProcessRelatorioIpEmail2::dispatch($nome, $id_incidente, $email, $id_async_task)->onQueue('padrao');
+        DownloadBandeiraJob::dispatch()->onQueue('padrao');
             //ProcessIpAssincrono2::dispatch($nome, $id_incidente, $email, $arquivoIpPath, $id_async_task)->onQueue('padrao');
             //ProcessIpAssincrono::dispatch($nome, $id_incidente, $email, $arquivoIpPath, $id_async_task)->timeout(300)->onQueue('padrao');
             //ProcessIpAssincrono::dispatch($nome, $id_incidente, $email, $arquivoIpPath, $id_async_task)->onQueue('padrao')->delay(now()->addSeconds(300)); // Definindo o tempo limite para 5 minutos (300 segundos)

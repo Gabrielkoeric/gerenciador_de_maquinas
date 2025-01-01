@@ -109,6 +109,7 @@ class ProcessaIpSeparado implements ShouldQueue
             }
         }
         Log::info("disparando tarefas");
+        //$id_incidente = 1;
         ProcessRelatorioIpEmail2::dispatch($this->nome, $this->id_incidente, $this->email, $this->id_async_task)->onQueue('padrao');
         DownloadBandeiraJob::dispatch()->onQueue('padrao');
         Log::info("Processamento da tabela temp_ip concluído.");

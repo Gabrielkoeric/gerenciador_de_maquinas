@@ -18,5 +18,6 @@ class VerifyCsrfToken extends Middleware
         '/api/ip3',
         '/api/ip4',
         '/api/ip6',
+        '/api/ip7',
     ];
 }

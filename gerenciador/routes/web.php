@@ -41,6 +41,7 @@ use App\Http\Controllers\Api\ApiIp3Controller;
 use App\Http\Controllers\Api\ApiIp4Controller;
 use App\Http\Controllers\Api\ApiIp5Controller;
 use App\Http\Controllers\Api\ApiIp6Controller;
+use App\Http\Controllers\Api\ApiIp7Controller;
 
 
 /*
@@ -114,6 +115,8 @@ Route::post('/api/ip4', [ApiIp4Controller::class, 'store']);
 Route::post('/api/ip5', [ApiIp5Controller::class, 'store']);
 //api6 salva os ip na tabela temp e processa depois
 Route::post('/api/ip6', [ApiIp6Controller::class, 'store']);
+//api7 salva os ip na tabela temp e processa depois mas disparando as async primeiro
+Route::post('/api/ip7', [ApiIp7Controller::class, 'store']);
 
 
 
