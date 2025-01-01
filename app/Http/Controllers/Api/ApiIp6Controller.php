@@ -20,7 +20,7 @@ class ApiIp6Controller extends Controller
             $arquivoIpPath = $request->file('arquivoIp')->store('arquivoIp', 'public');
             $email = $request->input('email');
             Log::info("arquivoIpPath $arquivoIpPath");
-            $arquivoIpPath = "arquivoIp/ssl_completo.log";
+            //$arquivoIpPath = "arquivoIp/ssl_completo.log";
             Log::info("arquivoIpPath $arquivoIpPath");
             Log::info("email $email");
             $request->arquivoIp = $arquivoIpPath;
