@@ -47,10 +47,17 @@ class ProcessaIpSeparado implements ShouldQueue
     Log::info("ID da tarefa assíncrona: " . $this->id_async_task);
     
         // Agrupa os IPs na tabela temp_ip
-        $groupedIps = DB::table('temp_ip')
+       /* $groupedIps = DB::table('temp_ip')
             ->select('ip', 'id_incidente', DB::raw('COUNT(*) as quantidade'))
             ->groupBy('ip', 'id_incidente')
+            ->get();*/
+
+        $groupedIps = DB::table('temp_ip')
+            ->select('ip', 'id_incidente', DB::raw('COUNT(*) as quantidade'))
+            ->where('id_incidente', $this->id_incidente) // Filtra pelo id_incidente fornecido
+            ->groupBy('ip', 'id_incidente')
             ->get();
+        
 
         foreach ($groupedIps as $tempIp) {
             $ip = trim($tempIp->ip);
@@ -108,6 +115,9 @@ class ProcessaIpSeparado implements ShouldQueue
                 ]);
             }
         }
+
+        DB::table('temp_ip')->where('id_incidente', $this->id_incidente)->delete();
+        
         Log::info("disparando tarefas");
         //$id_incidente = 1;
         ProcessRelatorioIpEmail2::dispatch($this->nome, $this->id_incidente, $this->email, $this->id_async_task)->onQueue('padrao');

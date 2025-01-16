@@ -41,6 +41,8 @@ RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 # Gerar a chave da aplicação
 RUN php artisan key:generate --force
 
+RUN php artisan storage:link
+
 # Definir as permissões corretas para storage e cache
 RUN chown -R www-data:www-data /var/www/html/gerenciador_de_maquinas/storage /var/www/html/gerenciador_de_maquinas/bootstrap/cache
 
@@ -50,4 +52,4 @@ RUN a2enmod rewrite
 # Expor as portas 80 e 443
 EXPOSE 80 443
 
-CMD ["apache2-foreground"]
+CMD ["sh", "-c", "php artisan queue:work && php artisan queue:work --queue=padrao --timeout=1000000000 && apache2-foreground"]
