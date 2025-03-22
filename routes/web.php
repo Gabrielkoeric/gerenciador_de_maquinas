@@ -43,6 +43,8 @@ use App\Http\Controllers\Api\ApiIp5Controller;
 use App\Http\Controllers\Api\ApiIp6Controller;
 use App\Http\Controllers\Api\ApiIp7Controller;
 use App\Http\Controllers\Api\ConfereBackupController;
+use App\Http\Controllers\Auth\LocalAuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -57,7 +59,11 @@ use App\Http\Controllers\Api\ConfereBackupController;
 
 //home
 Route::get('/', [HomeController::class, 'index'])->name('home.index')->middleware(Autenticador::class);
-Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware(Autenticador::class);
+//Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware(Autenticador::class);
+Route::get('/home', [HomeController::class, 'index'])
+    ->name('home.index')
+    ->middleware(['auth', 'verified', Autenticador::class]);
+
 //gera
 //usuarios
 Route::resource('/usuario', UsuarioController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
@@ -84,7 +90,17 @@ Route::resource('executar', ExecutarController::class)->middleware(Autenticador:
 //Route::get('login/google/callback', 'SocialiteController@handleProviderCalback');
 Route::get('login/google', [SocialiteController::class, 'redirectToProvider'])->name('login');
 Route::get('login/google/callback', [SocialiteController::class, 'hendProviderCallback']);
-Route::get('login/logout', [SocialiteController::class, 'destroy'])->name('logout');
+Route::get('login/logout', [SocialiteController::class, 'destroy'])->name('logout_google');
+
+//login local
+Route::get('login_local', [LocalAuthController::class, 'showLoginForm'])->name('login_local');
+Route::post('login_local', [LocalAuthController::class, 'login'])->name('login_local.post');
+Route::post('logout', [LocalAuthController::class, 'logout'])->name('logout');
+//registro usuario local
+Route::get('/register', [LocalAuthController::class, 'showRegisterForm'])->name('register_local');
+Route::post('/register', [LocalAuthController::class, 'register'])->name('register_local.post');
+
+
 Route::get('/forbidden', function () {return view('forbidden.index');});
 
 Route::get('/email_novo_usuario', function (){return new \App\Mail\NovoUsuario();});

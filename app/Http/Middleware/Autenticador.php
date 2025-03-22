@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Autenticador
 {
@@ -18,8 +19,14 @@ class Autenticador
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::check()) {
-            return to_route('login');
+            $metodoAutenticacao = DB::table('config_geral')
+                ->where('nome_config', 'metodo_autenticacao')
+                ->value('valor_config');
+
+            $rotaLogin = $metodoAutenticacao === 'google' ? 'login' : 'login_local';
+            return to_route($rotaLogin);
         }
+        
         return $next($request);
     }
 }

@@ -19,6 +19,19 @@ return new class extends Migration
             $table->string('valor_config')->nullable();
             $table->timestamps();
         });
+
+        DB::table('config_geral')->insert([
+            [
+                'id_config_geral' => 1,
+                'nome_config' => 'metodo_autenticacao',
+                'valor_config' => 'login_local', #login_local pra rotina local e google pra integração com o google.
+            ],
+            [
+                'id_config_geral' => 2,
+                'nome_config' => 'email_administrador',
+                'valor_config' => 'administrador@gmail.com',
+            ],
+        ]);
     }
 
     /**
