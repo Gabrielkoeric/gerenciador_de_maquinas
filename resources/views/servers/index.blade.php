@@ -36,9 +36,9 @@
                         <td>
                             @if ($server->tipo === 'ssh')
                         <a href="{{ route('server.ssh', $server->id_server) }}" class="btn btn-primary btn-sm">SSH</a>
-                            @elseif ($server->tipo === 'rdp')
-                        <a href="rdp://full%20address=s:{{ $server->ip_publico }}&username=s:{{ $server->usuario }}" class="btn btn-success btn-sm">RDP</a>
-                            @endif
+                        @elseif ($server->tipo === 'rdp')
+                            <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $server->ip_publico }}', '{{ $server->usuario }}')">RDP</button>
+                        @endif
                         </td>
 
                         <td>
@@ -82,6 +82,20 @@
             document.body.removeChild(tempInput);
         }
     </script>
+
+<script>
+    function copyRDPCommand(ip, user) {
+        var command = `Start-Process "mstsc.exe" -ArgumentList "/v:${ip}"`;
+        var tempInput = document.createElement('textarea');
+        tempInput.value = command;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        alert("Comando copiado! Pressione Win + R, digite 'powershell' e cole o comando para conectar.");
+    }
+</script>
+
 
 </x-layout>
 
