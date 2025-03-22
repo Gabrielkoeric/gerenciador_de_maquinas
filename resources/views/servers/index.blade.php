@@ -19,7 +19,7 @@
                     <th scope="col">Porta</th>
                     <th scope="col">Processador</th>
                     <th scope="col">Memória</th>
-                    <th scope="col">Acesso SSH</th>
+                    <th scope="col">Acesso</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -33,7 +33,14 @@
                         <td><a href="{{ route('server.edit', $server->id_server) }}" class="text-decoration-none text-dark">{{ $server->porta }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_server) }}" class="text-decoration-none text-dark">{{ $server->processador }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_server) }}" class="text-decoration-none text-dark">{{ $server->memoria }}</a></td>
-                        <td><a href="{{ route('server.ssh', $server->id_server) }}" class="btn btn-primary btn-sm">SSH</a></td>
+                        <td>
+                            @if ($server->tipo === 'ssh')
+                        <a href="{{ route('server.ssh', $server->id_server) }}" class="btn btn-primary btn-sm">SSH</a>
+                            @elseif ($server->tipo === 'rdp')
+                        <a href="rdp://full%20address=s:{{ $server->ip_publico }}&username=s:{{ $server->usuario }}" class="btn btn-success btn-sm">RDP</a>
+                            @endif
+                        </td>
+
                         <td>
                         <span class="d-flex">
                             <!--<form action="{{route('usuario.destroy', $server->id_server)}}" method="post" class="ms-2">
