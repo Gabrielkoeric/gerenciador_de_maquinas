@@ -21,11 +21,11 @@ return new class extends Migration
 
             $table->unsignedBigInteger('id_vm');
             $table->unsignedBigInteger('id_servico');
-            $table->unsignedBigInteger('id_cliente');
+            $table->unsignedBigInteger('id_cliente_escala');
 
             $table->foreign('id_vm')->references('id_vm')->on('vm');
             $table->foreign('id_servico')->references('id_servico')->on('servico');
-            $table->foreign('id_cliente')->references('id_cliente')->on('cliente');
+            $table->foreign('id_cliente_escala')->references('id_cliente_escala')->on('cliente_escala');
         
         });
     }

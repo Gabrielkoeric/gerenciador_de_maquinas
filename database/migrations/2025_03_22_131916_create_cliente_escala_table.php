@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cliente', function (Blueprint $table) {
-            $table->id('id_cliente');
+        Schema::create('cliente_escala', function (Blueprint $table) {
+            $table->id('id_cliente_escala');
             $table->string('nome');
             $table->timestamps();
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cliente');
+        Schema::dropIfExists('cliente_escala');
     }
 };
