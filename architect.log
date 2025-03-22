@@ -1,0 +1,298 @@
+0    [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ArchitectUtils  - Log4J configured successfully
+1679 [AWT-EventQueue-0] INFO  ca.sqlpower.sql.PlDotIni  - Beginning to read/merge new pl.ini data
+1746 [AWT-EventQueue-0] INFO  ca.sqlpower.sql.PlDotIni  - Finished reading file.
+1748 [AWT-EventQueue-0] INFO  ca.sqlpower.sql.PlDotIni  - Beginning to read/merge new pl.ini data
+1779 [AWT-EventQueue-0] INFO  ca.sqlpower.sql.PlDotIni  - Finished reading file.
+23508 [Thread-5] ERROR ca.sqlpower.architect.swingui.action.CheckForUpdateAction  - Fail to retrieve current version number!
+524392 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+CREATE TABLE usuarios_acessos (
+
+)
+524397 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE config_geral (
+                id_config_geral VARCHAR AUTO_INCREMENT NOT NULL,
+                nome_config VARCHAR,
+                valor_config VARCHAR,
+                PRIMARY KEY (id_config_geral)
+)
+524400 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE servicos (
+                id_servicos INT AUTO_INCREMENT NOT NULL,
+                PRIMARY KEY (id_servicos)
+)
+524402 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE ip_publico (
+                id_ip_publico INT AUTO_INCREMENT NOT NULL,
+                PRIMARY KEY (id_ip_publico)
+)
+524403 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE hd (
+                id_hd INT AUTO_INCREMENT NOT NULL,
+                PRIMARY KEY (id_hd)
+)
+524405 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE memoria (
+                id_memoria INT AUTO_INCREMENT NOT NULL,
+                PRIMARY KEY (id_memoria)
+)
+524406 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE cpu (
+                id_cpu INT AUTO_INCREMENT NOT NULL,
+                marca VARCHAR NOT NULL,
+                modelo VARCHAR NOT NULL,
+                geracao VARCHAR NOT NULL,
+                ano_aquisicao VARCHAR NOT NULL,
+                PRIMARY KEY (id_cpu)
+)
+524407 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE servidor_fisico (
+                id_servidor_fisico INT AUTO_INCREMENT NOT NULL,
+                id_cpu INT NOT NULL,
+                id_memoria INT NOT NULL,
+                id_hd INT NOT NULL,
+                id_ip_publico INT NOT NULL,
+                PRIMARY KEY (id_servidor_fisico)
+)
+524408 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE servidor_virtual (
+                id_servidor_virtual INT AUTO_INCREMENT NOT NULL,
+                id_servidor_fisico INT NOT NULL,
+                PRIMARY KEY (id_servidor_virtual)
+)
+524410 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE servicos_servidor (
+                id_servicos_servidor INT AUTO_INCREMENT NOT NULL,
+                id_servidor_virtual INT NOT NULL,
+                id_servicos INT NOT NULL,
+                PRIMARY KEY (id_servicos_servidor)
+)
+524413 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE incidente (
+                id_incidente INT AUTO_INCREMENT NOT NULL,
+                nome VARCHAR NOT NULL,
+                arquivoip VARCHAR NOT NULL,
+                PRIMARY KEY (id_incidente)
+)
+524416 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE ip (
+                id_ip INT AUTO_INCREMENT NOT NULL,
+                ip VARCHAR NOT NULL,
+                cidade VARCHAR NOT NULL,
+                regiao VARCHAR NOT NULL,
+                continente VARCHAR NOT NULL,
+                localizacao VARCHAR NOT NULL,
+                empresa VARCHAR NOT NULL,
+                postal VARCHAR NOT NULL,
+                timezone VARCHAR NOT NULL,
+                PRIMARY KEY (id_ip)
+)
+524417 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE incidente_ip (
+                id_incidente_ip INT AUTO_INCREMENT NOT NULL,
+                id_incidente INT NOT NULL,
+                id_ip INT NOT NULL,
+                quantidade INT NOT NULL,
+                PRIMARY KEY (id_incidente_ip)
+)
+524419 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE home (
+                id_home INT AUTO_INCREMENT NOT NULL,
+                nome VARCHAR NOT NULL,
+                nome_tela VARCHAR NOT NULL,
+                imagem_tela VARCHAR NOT NULL,
+                PRIMARY KEY (id_home)
+)
+524421 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE perfil (
+                id_perfil INT AUTO_INCREMENT NOT NULL,
+                nome VARCHAR NOT NULL,
+                PRIMARY KEY (id_perfil)
+)
+524423 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE perfil_permissao (
+                id_perfil_permissao INT AUTO_INCREMENT NOT NULL,
+                id_perfil INT NOT NULL,
+                id_home INT NOT NULL,
+                PRIMARY KEY (id_perfil_permissao)
+)
+524427 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE usuarios (
+                id INT AUTO_INCREMENT NOT NULL,
+                email VARCHAR(50) NOT NULL,
+                nome_completo VARCHAR(255) NOT NULL,
+                celular VARCHAR(13) NOT NULL,
+                imagem CHAR,
+                permissao CHAR DEFAULT basico NOT NULL,
+                PRIMARY KEY (id)
+)
+524430 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE usuarios COMMENT 'Tabela referente a inserção de usuarios'
+524435 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE access_logs (
+                id_access_logs INT AUTO_INCREMENT NOT NULL,
+                ip_address VARCHAR NOT NULL,
+                id INT NOT NULL,
+                created_at DATE NOT NULL,
+                PRIMARY KEY (id_access_logs)
+)
+524436 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE rotinas (
+                id_rotinas INT AUTO_INCREMENT NOT NULL,
+                horario DATE NOT NULL,
+                id_access_logs INT NOT NULL,
+                PRIMARY KEY (id_rotinas)
+)
+524437 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+CREATE TABLE usuario_perfil (
+                id_usuario_perfil INT AUTO_INCREMENT NOT NULL,
+                id INT NOT NULL,
+                id_perfil INT NOT NULL,
+                PRIMARY KEY (id_usuario_perfil)
+)
+524438 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+
+ALTER TABLE servicos_servidor ADD CONSTRAINT servicos_servicos_servidor_fk
+FOREIGN KEY (id_servicos)
+REFERENCES servicos (id_servicos)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524440 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE servidor_fisico ADD CONSTRAINT ip_publico_servidor_fisico_fk
+FOREIGN KEY (id_ip_publico)
+REFERENCES ip_publico (id_ip_publico)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524442 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE servidor_fisico ADD CONSTRAINT hd_servidor_fisico_fk
+FOREIGN KEY (id_hd)
+REFERENCES hd (id_hd)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524445 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE servidor_fisico ADD CONSTRAINT memoria_servidor_fisico_fk
+FOREIGN KEY (id_memoria)
+REFERENCES memoria (id_memoria)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524446 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE servidor_fisico ADD CONSTRAINT cpu_servidor_fisico_fk
+FOREIGN KEY (id_cpu)
+REFERENCES cpu (id_cpu)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524449 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE servidor_virtual ADD CONSTRAINT servidor_fisico_servidor_virtual_fk
+FOREIGN KEY (id_servidor_fisico)
+REFERENCES servidor_fisico (id_servidor_fisico)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524450 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE servicos_servidor ADD CONSTRAINT servidor_virtual_servicos_servidor_fk
+FOREIGN KEY (id_servidor_virtual)
+REFERENCES servidor_virtual (id_servidor_virtual)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524452 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE incidente_ip ADD CONSTRAINT incidente_incidente_ip_fk
+FOREIGN KEY (id_incidente)
+REFERENCES incidente (id_incidente)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524454 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE incidente_ip ADD CONSTRAINT ip_incidente_ip_fk
+FOREIGN KEY (id_ip)
+REFERENCES ip (id_ip)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524455 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE perfil_permissao ADD CONSTRAINT home_tb_perfil_permissao_fk
+FOREIGN KEY (id_home)
+REFERENCES home (id_home)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524457 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE perfil_permissao ADD CONSTRAINT tb_perfil_tb_perfil_permissao_fk
+FOREIGN KEY (id_perfil)
+REFERENCES perfil (id_perfil)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524458 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE usuario_perfil ADD CONSTRAINT tb_perfil_usuario_perfil_fk
+FOREIGN KEY (id_perfil)
+REFERENCES perfil (id_perfil)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524460 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE usuario_perfil ADD CONSTRAINT tb_usuario_usuario_perfil_fk
+FOREIGN KEY (id)
+REFERENCES usuarios (id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524462 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE access_logs ADD CONSTRAINT usuarios_access_logs_fk
+FOREIGN KEY (id)
+REFERENCES usuarios (id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524463 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.ddl.GenericDDLGenerator  - endStatement: 
+
+ALTER TABLE rotinas ADD CONSTRAINT access_logs_rotinas_fk
+FOREIGN KEY (id_access_logs)
+REFERENCES access_logs (id_access_logs)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+524469 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.swingui.SQLScriptDialog  - The list size is :36
+1841465 [AWT-EventQueue-0] INFO  ca.sqlpower.architect.swingui.PlayPen  - Drop: I am over dtde=java.awt.dnd.DropTargetDropEvent[source=java.awt.dnd.DropTarget@ff592d7]
