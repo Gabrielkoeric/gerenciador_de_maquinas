@@ -44,7 +44,8 @@ use App\Http\Controllers\Api\ApiIp6Controller;
 use App\Http\Controllers\Api\ApiIp7Controller;
 use App\Http\Controllers\Api\ConfereBackupController;
 use App\Http\Controllers\Auth\LocalAuthController;
-
+use App\Http\Controllers\VmController;
+use App\Http\Controllers\VmServicoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +114,10 @@ Route::resource('/server', ServerController::class)->middleware(Autenticador::cl
 Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //Route::resource('/server', ServerController::class);
 Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+//vm
+Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+//vm servico
+Route::resource('/vm_servico', VmServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 
 

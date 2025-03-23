@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ServerController extends Controller
+class VmController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,16 +14,14 @@ class ServerController extends Controller
      */
     public function index(Request $request)
     {
-        /*$servers = DB::table('servidor_fisico')->get();
+        /*$vms = DB::table('vm')->get();*/
 
-        return view('servers.index')->with('servers', $servers);*/
-
-        $servers = DB::table('servidor_fisico')
-        ->leftJoin('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
-        ->select('servidor_fisico.*', 'usuario_servidor_fisico.usuario', 'usuario_servidor_fisico.senha')
+        $vms = DB::table('vm')
+        ->leftJoin('usuario_vm', 'vm.id_vm', '=', 'usuario_vm.id_vm')
+        ->select('vm.*', 'usuario_vm.usuario', 'usuario_vm.senha')
         ->get();
 
-        return view('servers.index')->with('servers', $servers);
+        return view('vm.index')->with('vms', $vms);
     }
 
     /**

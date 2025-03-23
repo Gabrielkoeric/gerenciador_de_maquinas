@@ -20,7 +20,12 @@ return new class extends Migration
             $table->string('ip_lan');
             $table->string('ip_wan');
             $table->string('porta');
+            $table->string('tipo');
             $table->timestamps();
+
+            $table->unsignedBigInteger('id_servidor_fisico');
+
+            $table->foreign('id_servidor_fisico')->references('id_servidor_fisico')->on('servidor_fisico');
         });
     }
 

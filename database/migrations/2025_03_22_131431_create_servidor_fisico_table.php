@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('ip_wan');
             $table->string('ip_lan');
             $table->string('porta');
+            $table->string('tipo');
             $table->timestamps();
         });
     }

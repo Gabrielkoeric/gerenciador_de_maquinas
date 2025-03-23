@@ -1,4 +1,4 @@
-<x-layout title="Servers Fisicos">
+<x-layout title="Serviço da VM">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('server.create')}}" class="btn btn-dark my-3">Adicionar</a>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
@@ -11,7 +11,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th scope="col">Nome</th>
+                    <th scope="col">Cliente</th>
                     <th scope="col">Usuario</th>
                     <th scope="col">Senha</th>
                     <th scope="col">IP Lan</th>
@@ -22,26 +22,26 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach ($servers as $server)
+                @foreach ($servicos as $servico)
                     <tr>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico ) }}" class="text-decoration-none text-dark">{{ $server->nome }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->usuario }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->senha }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->ip_lan }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->ip_wan }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->dns }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->porta }}</a></td>
+                        <td><a href="{{ route('server.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->cliente }}</a></td>
+                        <td><a href="{{ route('server.edit', $servico->id_servico_vm) }}" class="text-decoration-none text-dark">{{ $servico->usuario }}</a></td>
+                        <td><a href="{{ route('server.edit', $servico->id_servico_vm) }}" class="text-decoration-none text-dark">{{ $servico->senha }}</a></td>
+                        <td><a href="{{ route('server.edit', $servico->id_servico_vm) }}" class="text-decoration-none text-dark">{{ $servico->ip_lan }}</a></td>
+                        <td><a href="{{ route('server.edit', $servico->id_servico_vm) }}" class="text-decoration-none text-dark">{{ $servico->ip_wan }}</a></td>
+                        <td><a href="{{ route('server.edit', $servico->id_servico_vm) }}" class="text-decoration-none text-dark">{{ $servico->dns }}</a></td>
+                        <td><a href="{{ route('server.edit', $servico->id_servico_vm) }}" class="text-decoration-none text-dark">{{ $servico->porta }}</a></td>
                         <td>
-                            @if ($server->tipo === 'ssh')
-                        <a href="{{ route('server.ssh', $server->id_servidor_fisico) }}" class="btn btn-primary btn-sm">SSH</a>
-                        @elseif ($server->tipo === 'rdp')
-                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $server->ip_wan }}', '{{ $server->porta }}', '{{ $server->usuario }}', '{{ $server->senha }}')">RDP</button>
+                            @if ($servico->tipo === 'ssh')
+                        <a href="{{ route('server.ssh', $servico->id_servico_vm) }}" class="btn btn-primary btn-sm">SSH</a>
+                        @elseif ($servico->tipo === 'rdp')
+                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $servico->ip_wan }}', '{{ $servico->porta }}', '{{ $servico->usuario }}', '{{ $servico->senha }}')">RDP</button>
                         @endif
                         </td>
 
                         <td>
                         <span class="d-flex">
-                            <!--<form action="{{route('usuario.destroy', $server->id_servidor_fisico)}}" method="post" class="ms-2">
+                            <!--<form action="{{route('usuario.destroy', $servico->id_servico_vm)}}" method="post" class="ms-2">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-danger btn-sm">Excluir</button>
@@ -94,9 +94,4 @@
     }
 </script>
 
-
-
 </x-layout>
-
-
-
