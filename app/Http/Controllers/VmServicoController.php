@@ -44,6 +44,13 @@ class VmServicoController extends Controller
      {
          $servicos = $request->input('servicos');
          Log::info('Serviços selecionados:', $servicos);
+
+         $servico_nome = DB::table('servico')
+          ->where('id_servico', $servicos)
+          ->value('nome');
+          
+          Log::info('Nome do serviço selecionado:', ['servico_nome' => $servico_nome]);
+
      
          $acao = $request->input('acao');
          Log::info('Ação selecionada: ' . $acao);
@@ -79,12 +86,15 @@ class VmServicoController extends Controller
              }
      
              // 3. Buscar o comando na tabela comando_execucao_remoto
-             $comando = DB::table('comando_execucao_remoto')
+             $comando = DB::table('comando_execucao_remota')
                  ->where('acao', $acao)
                  ->where('tipo', $vm->tipo) // Filtra pelo tipo (rdp ou ssh)
                  ->value('comando');
      
              Log::info("Comando para ação '$acao' e tipo '{$vm->tipo}': " . ($comando ?? 'NÃO ENCONTRADO'));
+
+             $comando_completo = str_replace('{servico}', $servico_nome, $comando);
+             Log::info("comando completo $comando_completo");
      
              if (!$comando) {
                  Log::warning("Nenhum comando encontrado para ação '$acao' e tipo '{$vm->tipo}'");
@@ -94,10 +104,11 @@ class VmServicoController extends Controller
              // 4. Executar o comando na VM
              if ($vm->tipo === 'ssh') {
                  Log::info("Executando comando via SSH na VM {$vm->ip_lan}");
-                 $resultado = $this->executarComandoLinux($vm->ip_lan, $vm->porta, $usuarioVM->usuario, $usuarioVM->senha, $comando);
+                 $resultado = $this->executarComandoLinux($vm->ip_lan, $vm->porta, $usuarioVM->usuario, $usuarioVM->senha, $comando_completo);
+                 Log::info("ver qual comando executa $comando_completo");
              } elseif ($vm->tipo === 'rdp') {
                  Log::info("Executando comando via RDP na VM {$vm->ip_lan}");
-                 $resultado = $this->executarComandoWindows($vm->ip_lan, $usuarioVM->usuario, $usuarioVM->senha, $comando);
+                 $resultado = $this->executarComandoWindows($vm->ip_lan, $usuarioVM->usuario, $usuarioVM->senha, $comando_completo);
              }
      
              Log::info("Resultado da execução: " . ($resultado ?? 'Erro na execução'));
@@ -142,17 +153,42 @@ class VmServicoController extends Controller
      /**
       * Executa comando remoto via PowerShell em Windows (RDP)
       */
-     private function executarComandoWindows($ip, $usuario, $senha, $comando)
-     {
-         Log::info("Executando comando via RDP (psexec) na VM $ip");
-         
-         $cmd = "psexec \\\\$ip -u $usuario -p $senha cmd /c \"$comando\"";
-         $output = shell_exec($cmd);
-         
-         Log::info("Saída do comando RDP: " . trim($output));
-     
-         return $output;
-     }
+      private function executarComandoWindows($ip, $usuario, $senha, $comando)
+      {
+          Log::info("Conectando via SSH no Windows em $ip com usuário $usuario");
+      
+          $connection = ssh2_connect($ip, 22); // Porta padrão do SSH
+      
+          if (!$connection) {
+              Log::error("Falha ao conectar via SSH em $ip");
+              return false;
+          }
+      
+          if (!ssh2_auth_password($connection, $usuario, $senha)) {
+              Log::error("Falha ao autenticar no SSH em $ip");
+              return false;
+          }
+      
+          // O comando deve ser executado dentro do `cmd` ou `powershell`
+          $comando = "cmd /c \"$comando\""; // Para rodar no CMD
+          // $comando = "powershell -Command \"$comando\""; // Para rodar no PowerShell
+      
+          $stream = ssh2_exec($connection, $comando);
+      
+          if (!$stream) {
+              Log::error("Falha ao executar comando SSH em $ip");
+              return false;
+          }
+      
+          stream_set_blocking($stream, true);
+          $output = stream_get_contents($stream);
+          fclose($stream);
+      
+          Log::info("Saída do comando SSH no Windows: " . trim($output));
+      
+          return $output;
+      }
+      
      
 
      
