@@ -119,7 +119,7 @@ Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->mi
 //vm servico
 Route::resource('/vm_servico', VmServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::post('/vm_servico/executar', [VmServicoController::class, 'executarAcao'])->name('vmservico.executarAcao')/*->middleware(Autenticador::class)->middleware(ControleAcesso::class)*/;
-
+Route::post('/vm_servico/executar', [VmServicoController::class, 'executarComando'])->name('vmservico.executarComando');
 
 
 

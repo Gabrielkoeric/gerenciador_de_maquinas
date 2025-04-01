@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use phpseclib3\Net\SSH2;
+use phpseclib3\Crypt\PublicKeyLoader;
 
 class VmServicoController extends Controller
 {
@@ -26,9 +28,7 @@ class VmServicoController extends Controller
         'cliente_escala.nome as cliente_nome',
         'servico_vm.porta',
         'servico_vm.tipo'
-    )
-    ->get();
-
+    )->get();
 
         return view('vmservico.index')->with('servicos', $servicos);
 
@@ -187,12 +187,8 @@ class VmServicoController extends Controller
           Log::info("Saída do comando SSH no Windows: " . trim($output));
       
           return $output;
-      }
+        }
       
-     
-
-     
-
     public function create()
     {
         //
@@ -252,5 +248,34 @@ class VmServicoController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function executarComando(Request $request)
+    {
+         // Variáveis fixas para teste
+    $acao = 'status'; // Ou 'start', 'stop', 'restart'
+    $ip_lan = '192.168.1.15'; // IP do destino
+    $usuario = 'teste'; // Nome do usuário
+    $senha = 'teste'; // Senha
+    $servico = 'Spooler'; // Nome do serviço
+    $dominio = ''; // Caso seja em domínio
+
+    // Caminho absoluto do script Python
+    $scriptPath = '/var/www/html/gerenciador_de_maquinas/storage/scripty/executa_windows.py';
+
+    // Monta o comando para chamar o script Python
+    $comando = "python3 " . escapeshellarg($scriptPath) . " "
+        . escapeshellarg($ip_lan) . " "
+        . escapeshellarg($usuario) . " "
+        . escapeshellarg($senha) . " "
+        . escapeshellarg($servico) . " "
+        . escapeshellarg($acao) . " "
+        . escapeshellarg($dominio);
+
+    // Executa o script e captura a saída
+    $saida = shell_exec($comando);
+
+    // Retorna o resultado
+    return response()->json(['resultado' => trim($saida)]);
     }
 }

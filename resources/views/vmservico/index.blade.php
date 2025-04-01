@@ -1,7 +1,7 @@
 <x-layout title="Serviço da VM">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
 
-    <form id="servicoForm" action="{{ route('vmservico.executarAcao') }}" method="POST">
+    <form id="servicoForm" action="{{ route('vmservico.executarComando') }}" method="POST">
         @csrf
         <input type="hidden" name="acao" id="acaoInput">
         
