@@ -153,41 +153,35 @@ class VmServicoController extends Controller
      /**
       * Executa comando remoto via PowerShell em Windows (RDP)
       */
-      private function executarComandoWindows($ip, $usuario, $senha, $comando)
-      {
-          Log::info("Conectando via SSH no Windows em $ip com usuário $usuario");
-      
-          $connection = ssh2_connect($ip, 22); // Porta padrão do SSH
-      
-          if (!$connection) {
-              Log::error("Falha ao conectar via SSH em $ip");
-              return false;
-          }
-      
-          if (!ssh2_auth_password($connection, $usuario, $senha)) {
-              Log::error("Falha ao autenticar no SSH em $ip");
-              return false;
-          }
-      
-          // O comando deve ser executado dentro do `cmd` ou `powershell`
-          $comando = "cmd /c \"$comando\""; // Para rodar no CMD
-          // $comando = "powershell -Command \"$comando\""; // Para rodar no PowerShell
-      
-          $stream = ssh2_exec($connection, $comando);
-      
-          if (!$stream) {
-              Log::error("Falha ao executar comando SSH em $ip");
-              return false;
-          }
-      
-          stream_set_blocking($stream, true);
-          $output = stream_get_contents($stream);
-          fclose($stream);
-      
-          Log::info("Saída do comando SSH no Windows: " . trim($output));
-      
-          return $output;
-        }
+     
+    public function executarComandoWindows(Request $request)
+    {
+         // Variáveis fixas para teste
+    $acao = 'status'; // Ou 'start', 'stop', 'restart'
+    $ip_lan = '192.168.1.15'; // IP do destino
+    $usuario = 'teste'; // Nome do usuário
+    $senha = 'teste'; // Senha
+    $servico = 'Spooler'; // Nome do serviço
+    $dominio = ''; // Caso seja em domínio
+
+    // Caminho absoluto do script Python
+    $scriptPath = '/var/www/html/gerenciador_de_maquinas/storage/scripty/executa_windows.py';
+
+    // Monta o comando para chamar o script Python
+    $comando = "python3 " . escapeshellarg($scriptPath) . " "
+        . escapeshellarg($ip_lan) . " "
+        . escapeshellarg($usuario) . " "
+        . escapeshellarg($senha) . " "
+        . escapeshellarg($servico) . " "
+        . escapeshellarg($acao) . " "
+        . escapeshellarg($dominio);
+
+    // Executa o script e captura a saída
+    $saida = shell_exec($comando);
+
+    // Retorna o resultado
+    return response()->json(['resultado' => trim($saida)]);
+    }
       
     public function create()
     {
@@ -250,32 +244,5 @@ class VmServicoController extends Controller
         //
     }
 
-    public function executarComando(Request $request)
-    {
-         // Variáveis fixas para teste
-    $acao = 'status'; // Ou 'start', 'stop', 'restart'
-    $ip_lan = '192.168.1.15'; // IP do destino
-    $usuario = 'teste'; // Nome do usuário
-    $senha = 'teste'; // Senha
-    $servico = 'Spooler'; // Nome do serviço
-    $dominio = ''; // Caso seja em domínio
-
-    // Caminho absoluto do script Python
-    $scriptPath = '/var/www/html/gerenciador_de_maquinas/storage/scripty/executa_windows.py';
-
-    // Monta o comando para chamar o script Python
-    $comando = "python3 " . escapeshellarg($scriptPath) . " "
-        . escapeshellarg($ip_lan) . " "
-        . escapeshellarg($usuario) . " "
-        . escapeshellarg($senha) . " "
-        . escapeshellarg($servico) . " "
-        . escapeshellarg($acao) . " "
-        . escapeshellarg($dominio);
-
-    // Executa o script e captura a saída
-    $saida = shell_exec($comando);
-
-    // Retorna o resultado
-    return response()->json(['resultado' => trim($saida)]);
-    }
+    
 }

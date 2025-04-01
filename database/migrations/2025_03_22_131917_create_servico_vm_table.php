@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id('id_servico_vm');
             $table->string('porta');
             $table->string('tipo');
+            $table->string('status')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('id_vm');

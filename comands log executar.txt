@@ -1,0 +1,25 @@
+PS C:\Windows\system32> Enable-PSRemoting -Force
+O WinRM foi atualizado para receber solicitações.
+Tipo de serviço WinRM alterado com êxito.
+Serviço WinRM iniciado.
+
+WinRM foi atualizado para gerenciamento remoto.
+Exceção do firewall para WinRM habilitada.
+LocalAccountTokenFilterPolicy configurada para conceder direitos administrativos remotamente a usuários locais.
+
+PS C:\Windows\system32>
+PS C:\Windows\system32> Set-Item WSMan:\localhost\Service\Auth\Basic -Value $true
+PS C:\Windows\system32>
+PS C:\Windows\system32> net localgroup "Remote Management Users"
+Erro de sistema 1376.
+
+O grupo local especificado não existe.
+
+PS C:\Windows\system32> Restart-Service WinRM
+PS C:\Windows\system32> Set-Item -Path WSMan:\localhost\Service\Auth\Basic -Value $true
+PS C:\Windows\system32> Set-Item -Path WSMan:\localhost\Service\AllowUnencrypted -Value $true
+PS C:\Windows\system32> Restart-Service WinRM
+
+
+apt install python3-pip
+pip3 install pywinrm

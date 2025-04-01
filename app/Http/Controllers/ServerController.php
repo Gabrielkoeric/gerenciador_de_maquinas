@@ -33,7 +33,7 @@ class ServerController extends Controller
      */
     public function create()
     {
-        //
+        return view('servers.create');
     }
 
     /**
@@ -44,7 +44,36 @@ class ServerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $nome = $request->input('nome');
+        $dns = $request->input('dns');
+        $ip_wan = $request->input('ip_wan');
+        $ip_lan = $request->input('ip_lan');
+        $porta = $request->input('porta');
+        $dominio = $request->input('dominio');
+        $tipo = $request->input('tipo');
+        $usuario = $request->input('usuario');
+        $senha = $request->input('senha');
+
+        $dados = [
+            'nome' => $nome,
+            'dns' => $dns,
+            'ip_wan' => $ip_wan,
+            'ip_lan' => $ip_lan,
+            'porta' => $porta,
+            'dominio' => $dominio,
+            'tipo' => $tipo,
+        ];
+        $id = DB::table('servidor_fisico')->insertGetId($dados);
+
+        $dados2= [
+            
+            'id_servidor_fisico' => $id,
+            'usuario' => $usuario,
+            'senha' => $senha,
+        ];
+        DB::table('usuario_servidor_fisico')->insertGetId($dados2);
+
+        return redirect('/server')->with('mensagem.sucesso', 'Usuario inserido com sucesso!');
     }
 
     /**

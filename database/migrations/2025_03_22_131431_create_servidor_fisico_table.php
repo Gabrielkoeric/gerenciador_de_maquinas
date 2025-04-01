@@ -16,10 +16,11 @@ return new class extends Migration
         Schema::create('servidor_fisico', function (Blueprint $table) {
             $table->id('id_servidor_fisico');
             $table->string('nome');
-            $table->string('dns');
-            $table->string('ip_wan');
+            $table->string('dns')->nullable();
+            $table->string('ip_wan')->nullable();
             $table->string('ip_lan');
             $table->string('porta');
+            $table->string('dominio')->nullable();
             $table->string('tipo');
             $table->timestamps();
         });
