@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ServicoController extends Controller
 {
@@ -13,7 +14,9 @@ class ServicoController extends Controller
      */
     public function index()
     {
-        //
+        $servicos = DB::table('servico')->get();
+
+        return view('servico.index')->with('servicos', $servicos);
     }
 
     /**
@@ -23,7 +26,7 @@ class ServicoController extends Controller
      */
     public function create()
     {
-        //
+        return view('servico.create');
     }
 
     /**
@@ -34,7 +37,15 @@ class ServicoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $nome = $request->input('nome');
+
+        $dados = [
+            'nome' => $nome,
+        ];
+
+        DB::table('servico')->insertGetId($dados);
+
+        return redirect('/servico');
     }
 
     /**
@@ -56,7 +67,7 @@ class ServicoController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('servico.edit');
     }
 
     /**
