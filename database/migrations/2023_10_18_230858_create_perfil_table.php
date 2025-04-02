@@ -29,6 +29,10 @@ return new class extends Migration
                 'id_perfil' => 2,
                 'nome' => 'ADM',
             ],
+            [
+                'id_perfil' => 3,
+                'nome' => 'Escala',
+            ],
         ]);
     }
 

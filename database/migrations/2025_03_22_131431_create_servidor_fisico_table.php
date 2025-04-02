@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id('id_servidor_fisico');
             $table->string('nome');
             $table->string('dns')->nullable();
-            $table->string('ip_wan')->nullable();
-            $table->string('ip_lan');
+            $table->string('ipwan')->nullable();
+            $table->string('iplan');
             $table->string('porta');
             $table->string('dominio')->nullable();
             $table->string('tipo');

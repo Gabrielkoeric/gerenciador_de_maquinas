@@ -46,8 +46,8 @@ class ServerController extends Controller
     {
         $nome = $request->input('nome');
         $dns = $request->input('dns');
-        $ip_wan = $request->input('ip_wan');
-        $ip_lan = $request->input('ip_lan');
+        $ipwan = $request->input('ipwan');
+        $iplan = $request->input('iplan');
         $porta = $request->input('porta');
         $dominio = $request->input('dominio');
         $tipo = $request->input('tipo');
@@ -57,8 +57,8 @@ class ServerController extends Controller
         $dados = [
             'nome' => $nome,
             'dns' => $dns,
-            'ip_wan' => $ip_wan,
-            'ip_lan' => $ip_lan,
+            'ipwan' => $ipwan,
+            'iplan' => $iplan,
             'porta' => $porta,
             'dominio' => $dominio,
             'tipo' => $tipo,
@@ -95,8 +95,16 @@ class ServerController extends Controller
      */
     public function edit($id)
     {
-        //
+        $dados = DB::table('servidor_fisico')
+        ->join('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
+        ->where('servidor_fisico.id_servidor_fisico', $id)
+        ->select('servidor_fisico.*', 'usuario_servidor_fisico.usuario', 'usuario_servidor_fisico.senha')
+        ->first();
+
+        //dd($dados);
+        return view('servers.edit')->with('dados', $dados);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -107,7 +115,31 @@ class ServerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+       // Atualizar a tabela servidor_fisico
+    DB::table('servidor_fisico')
+    ->where('id_servidor_fisico', $id)
+    ->update([
+        'nome' => $request->nome,
+        'dns' => $request->dns,
+        'ipwan' => $request->ipwan,
+        'iplan' => $request->iplan,
+        'porta' => $request->porta,
+        'dominio' => $request->dominio,
+        'tipo' => $request->tipo,
+        'updated_at' => now(),
+    ]);
+
+// Atualizar a tabela usuario_servidor_fisico
+DB::table('usuario_servidor_fisico')
+    ->where('id_servidor_fisico', $id)
+    ->update([
+        'usuario' => $request->usuario,
+        'senha' => $request->senha, 
+        'updated_at' => now(),
+    ]);
+
+    return redirect('/server');
+
     }
 
     /**

@@ -11,11 +11,11 @@
         <label for="dns" class="form-label">DNS:</label>
         <input type="text" id="dns" name="dns" class="form-control" @isset($dns) value="{{$dns}}" @endisset>
 
-        <label for="ip_wan" class="form-label">IP WAN:</label>
-        <input type="text" id="ip_wan" name="ip_wan" class="form-control" @isset($ip_wan) value="{{$ip_wan}}" @endisset>
+        <label for="ipwan" class="form-label">IP WAN:</label>
+        <input type="text" id="ipwan" name="ipwan" class="form-control" @isset($ipwan) value="{{$ipwan}}" @endisset>
 
-        <label for="ip_lan" class="form-label">IP LAN:</label>
-        <input type="text" id="ip_lan" name="ip_lan" class="form-control" @isset($ip_lan) value="{{$ip_lan}}" @endisset required>
+        <label for="iplan" class="form-label">IP LAN:</label>
+        <input type="text" id="iplan" name="iplan" class="form-control" @isset($iplan) value="{{$iplan}}" @endisset required>
 
         <label for="porta" class="form-label">Porta:</label>
         <input type="text" id="porta" name="porta" class="form-control" @isset($porta) value="{{$porta}}" @endisset required>
@@ -34,7 +34,7 @@
         <input type="text" id="usuario" name="usuario" class="form-control" @isset($usuario) value="{{$usuario}}" @endisset required>
 
         <label for="senha" class="form-label">Senha:</label>
-        <input type="password" id="senha" name="senha" class="form-control" required>
+        <input type="text" id="senha" name="senha" class="form-control" @isset($senha) value="{{$senha}}" @endisset required>
     </div>
     <button type="submit" class="btn btn-primary">Salvar</button>
     <a href="{{route('server.index')}}" class="btn btn-primary">Cancelar</a>
