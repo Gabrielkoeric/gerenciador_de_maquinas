@@ -143,7 +143,7 @@ class VmController extends Controller
     {
        // Atualizar a tabela servidor_fisico
 
-       dd($id);/*
+       //dd($id);
     DB::table('vm')
     ->where('id_vm', $id)
     ->update([
@@ -167,7 +167,7 @@ DB::table('usuario_vm')
         'updated_at' => now(),
     ]);
 
-    return redirect('/vm');*/
+    return redirect('/vm');
     }
 
     /**

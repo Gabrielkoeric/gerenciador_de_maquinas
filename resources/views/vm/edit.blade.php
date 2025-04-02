@@ -1,6 +1,6 @@
 <x-layout title="Editar VM '{{ $dados->nome }}'"> 
 
-    <x-vm.forms :action="route('vm.update', $dados->id_servidor_fisico)"
+    <x-vm.forms :action="route('vm.update', $dados->id_vm)"
                         :nome="$dados->nome"
                         :dns="$dados->dns"
                         :ipwan="$dados->ipwan"
