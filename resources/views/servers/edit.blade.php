@@ -10,8 +10,6 @@
                         :tipo="$dados->tipo"
                         :usuario="$dados->usuario"
                         :senha="$dados->senha"
-                    
-
     >
     </x-servers.forms>
 </x-layout>

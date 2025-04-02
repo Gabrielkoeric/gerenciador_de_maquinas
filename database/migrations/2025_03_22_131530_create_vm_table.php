@@ -16,10 +16,11 @@ return new class extends Migration
         Schema::create('vm', function (Blueprint $table) {
             $table->id('id_vm');
             $table->string('nome');
-            $table->string('dns');
-            $table->string('ip_lan');
-            $table->string('ip_wan');
+            $table->string('dns')->nullable();
+            $table->string('ipwan')->nullable();
+            $table->string('iplan');
             $table->string('porta');
+            $table->string('dominio')->nullable();
             $table->string('tipo');
             $table->timestamps();
 

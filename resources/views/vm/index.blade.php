@@ -1,6 +1,6 @@
 <x-layout title="VM">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
-    <a href="{{route('server.create')}}" class="btn btn-dark my-3">Adicionar</a>
+    <a href="{{route('vm.create')}}" class="btn btn-dark my-3">Adicionar</a>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 
     @isset($mensagemSucesso)
@@ -14,28 +14,32 @@
                     <th scope="col">Nome</th>
                     <th scope="col">Usuario</th>
                     <th scope="col">Senha</th>
+                    <th scope="col">Dominio</th>
                     <th scope="col">IP Lan</th>
                     <th scope="col">IP Wan</th>
                     <th scope="col">DNS</th>
                     <th scope="col">Porta</th>
+                    <th scope="col">Srv Fisico</th>
                     <th scope="col">Acesso</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach ($vms as $vm)
                     <tr>
-                        <td><a href="{{ route('server.edit', $vm->id_vm ) }}" class="text-decoration-none text-dark">{{ $vm->nome }}</a></td>
-                        <td><a href="{{ route('server.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->usuario }}</a></td>
-                        <td><a href="{{ route('server.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->senha }}</a></td>
-                        <td><a href="{{ route('server.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->ip_lan }}</a></td>
-                        <td><a href="{{ route('server.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->ip_wan }}</a></td>
-                        <td><a href="{{ route('server.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dns }}</a></td>
-                        <td><a href="{{ route('server.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->porta }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm ) }}" class="text-decoration-none text-dark">{{ $vm->nome }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->usuario }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->senha }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->iplan }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->ipwan }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dns }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->porta }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->servidor_nome }}</a></td>
                         <td>
                             @if ($vm->tipo === 'ssh')
-                        <a href="{{ route('server.ssh', $vm->id_vm) }}" class="btn btn-primary btn-sm">SSH</a>
+                        <a href="{{ route('vm.ssh', $vm->id_vm) }}" class="btn btn-primary btn-sm">SSH</a>
                         @elseif ($vm->tipo === 'rdp')
-                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $vm->ip_wan }}', '{{ $vm->porta }}', '{{ $vm->usuario }}', '{{ $vm->senha }}')">RDP</button>
+                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $vm->ipwan }}', '{{ $vm->porta }}', '{{ $vm->usuario }}', '{{ $vm->senha }}')">RDP</button>
                         @endif
                         </td>
 
