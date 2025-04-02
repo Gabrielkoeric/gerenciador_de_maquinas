@@ -128,6 +128,30 @@ return new class extends Migration
                 'created_at' => null,
                 'updated_at' => null,
             ],
+            [
+                'nome' => 'Serviços',
+                'nome_tela' => 'servico',
+                'imagem_tela' => 'storage/home/terraform.png',
+                'permite_home' => 1,
+                'created_at' => null,
+                'updated_at' => null,
+            ],
+            [
+                'nome' => 'Cliente',
+                'nome_tela' => 'cliente_escala',
+                'imagem_tela' => 'storage/home/terraform.png',
+                'permite_home' => 1,
+                'created_at' => null,
+                'updated_at' => null,
+            ],
+            [
+                'nome' => 'Comando',
+                'nome_tela' => 'comando',
+                'imagem_tela' => 'storage/home/terraform.png',
+                'permite_home' => 1,
+                'created_at' => null,
+                'updated_at' => null,
+            ],
         ];
 
         DB::table('home')->insert($dadosPadraoHome);

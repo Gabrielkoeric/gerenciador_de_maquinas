@@ -46,6 +46,9 @@ use App\Http\Controllers\Api\ConfereBackupController;
 use App\Http\Controllers\Auth\LocalAuthController;
 use App\Http\Controllers\VmController;
 use App\Http\Controllers\VmServicoController;
+use App\Http\Controllers\ServicoController;
+use App\Http\Controllers\ClienteEscalaController;
+use App\Http\Controllers\ComandoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,6 +123,12 @@ Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->mi
 Route::resource('/vm_servico', VmServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::post('/vm_servico/executar', [VmServicoController::class, 'executarAcao'])->name('vmservico.executarAcao')/*->middleware(Autenticador::class)->middleware(ControleAcesso::class)*/;
 Route::post('/vm_servico/executar', [VmServicoController::class, 'executarComando'])->name('vmservico.executarComando');
+//servico
+Route::resource('/servico', ServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+//cliente_escala
+Route::resource('/cliente_escala', ClienteEscalaController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+//comandos
+Route::resource('/comando', ComandoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 
 
