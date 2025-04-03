@@ -67,7 +67,10 @@ class ServicoController extends Controller
      */
     public function edit($id)
     {
-        return view('servico.edit');
+        $servico = DB::table('servico')->where('id_servico', $id)->first();
+
+        //dd($servico);
+        return view('servico.edit')->with('servico', $servico);
     }
 
     /**
@@ -79,7 +82,12 @@ class ServicoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::table('servico')
+            ->where('id_servico', $id)
+            ->update([
+                'nome' => $request->nome,
+            ]);
+        return redirect('/servico');
     }
 
     /**

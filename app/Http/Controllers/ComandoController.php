@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ComandoController extends Controller
 {
@@ -13,7 +14,9 @@ class ComandoController extends Controller
      */
     public function index()
     {
-        //
+        $comandos = DB::table('comando_execucao_remota')->get();
+
+        return view('comando.index')->with('comandos', $comandos);
     }
 
     /**
@@ -23,7 +26,7 @@ class ComandoController extends Controller
      */
     public function create()
     {
-        //
+        return view('comando.create');
     }
 
     /**
@@ -34,7 +37,19 @@ class ComandoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $tipo = $request->input('tipo');
+        $acao = $request->input('acao');
+        $comando = $request->input('comando');
+
+        $dados = [
+            'tipo' => $tipo,
+            'acao' => $acao,
+            'comando' => $comando,
+        ];
+
+        DB::table('comando_execucao_remota')->insertGetId($dados);
+
+        return redirect('/comando');
     }
 
     /**
@@ -56,7 +71,10 @@ class ComandoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $comando = DB::table('comando_execucao_remota')->where('id_comando_execucao_remota', $id)->first();
+
+        //dd($comando);
+        return view('comando.edit')->with('comando', $comando);
     }
 
     /**
@@ -68,7 +86,14 @@ class ComandoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::table('comando_execucao_remota')
+            ->where('id_comando_execucao_remota', $id)
+            ->update([
+                'tipo' => $request->tipo,
+                'acao' => $request->acao,
+                'comando' => $request->comando,
+            ]);
+        return redirect('/comando');
     }
 
     /**

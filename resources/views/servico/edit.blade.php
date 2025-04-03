@@ -1,11 +1,6 @@
-<x-layout title="Editar Usuario '{{$usuario->nome_completo}}'">
-    <x-usuario.forms :action="route('usuario.update', $usuario)"
-                        :nome="$usuario->nome_completo"
-                        :email="$usuario->email"
-                        :celular="$usuario->celular"
-                        :perfis="$perfis"
-                        :perfilAtual="$perfilAtual"
+<x-layout title="Editar Servico '{{$servico->nome}}'">
+    <x-servico.forms :action="route('servico.update', $servico->id_servico)"
+                        :nome="$servico->nome"
     >
-    </x-usuario.forms>
+    </x-servico.forms>
 </x-layout>
-
