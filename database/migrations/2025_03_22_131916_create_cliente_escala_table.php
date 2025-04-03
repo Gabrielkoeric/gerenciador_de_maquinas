@@ -16,6 +16,10 @@ return new class extends Migration
         Schema::create('cliente_escala', function (Blueprint $table) {
             $table->id('id_cliente_escala');
             $table->string('nome');
+            $table->string('licenca');
+            $table->string('coletor');
+            $table->string('desktop');
+            $table->boolean('ativo')->default(true);
             $table->timestamps();
         });
     }

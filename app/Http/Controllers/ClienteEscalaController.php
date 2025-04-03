@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClienteEscalaController extends Controller
 {
@@ -13,7 +14,9 @@ class ClienteEscalaController extends Controller
      */
     public function index()
     {
-        //
+        $clientes = DB::table('cliente_escala')->get();
+
+        return view('cliente.index')->with('clientes', $clientes);
     }
 
     /**
@@ -81,4 +84,44 @@ class ClienteEscalaController extends Controller
     {
         //
     }
+
+    public function buscarClientes()
+    {   
+        $config = DB::table('config_geral')
+            ->where('nome_config', 'url_api_cliente')
+            ->value('valor_config');
+
+
+        $url = "$config"; // URL da API
+
+        // Fazendo a requisição GET na API
+        $response = file_get_contents($url);
+        $clientes = json_decode($response, true); // Decodifica a resposta JSON
+
+        // Verifica se a resposta da API contém dados válidos
+        if (!is_array($clientes) || empty($clientes)) {
+            return redirect()->route('cliente_escala.index')->with('mensagemSucesso', 'Nenhum cliente encontrado.');
+        }
+
+        // Inserindo os dados na tabela cliente_escala
+        foreach ($clientes as $cliente) {
+            // Verifica se as chaves esperadas existem antes de inserir
+            if (!isset($cliente['Nome']) || !isset($cliente['Licencas'])) {
+                continue; // Pula esse item se os dados estiverem incompletos
+            }
+
+            DB::table('cliente_escala')->updateOrInsert(
+                ['nome' => $cliente['Nome']], // Verifica se já existe
+                [
+                    'licenca' => $cliente['Licencas'],
+                    'coletor' => $cliente['coletor'] ?? 0, // Se não existir, define como 0
+                    'desktop' => $cliente['desktop'] ?? 0,
+                    'ativo' => $cliente['ativo'] ?? 1, // Assume que ativo = 1 (verdadeiro) por padrão
+                    'updated_at' => now(),
+                ]
+            );
+        }
+        return redirect()->route('cliente_escala.index')->with('mensagemSucesso', 'Clientes importados com sucesso!');
+    }
+
 }
