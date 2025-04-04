@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use App\Models\AccessLog;
 
 class LocalAuthController extends Controller
 {
@@ -44,6 +45,12 @@ class LocalAuthController extends Controller
     }
 
     Auth::login($usuario, $request->filled('remember'));
+
+    AccessLog::create([
+        'id' => $usuario->id,
+        'ip_address' => request()->ip(),
+    ]);
+
 
     return redirect()->route('home.index');
 }
@@ -81,6 +88,11 @@ public function register(Request $request)
     //event(new Registered($usuario));
 
     //return response()->json(['message' => 'Usuário cadastrado! Verifique seu e-mail.']);
+
+    AccessLog::create([
+        'id' => $usuario->id,
+        'ip_address' => request()->ip(),
+    ]);
 
     Auth::login($usuario, true); // O `true` ativa o remember_token automaticamente
 

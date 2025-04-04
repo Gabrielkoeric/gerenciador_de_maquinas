@@ -25,6 +25,15 @@ class ControleAcesso
 
         $usuario = Auth::user()->id;
 
+        DB::table('rota_logs')->insert([
+            'id' => auth()->check() ? auth()->id() : null,
+            'rota' => \Route::currentRouteName(),
+            'metodo' => request()->method(),
+            'url_completa' => request()->fullUrl(),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'created_at' => now(),
+        ]);
 
         // Consulta para obter os perfis do usuário
         $perfisDoUsuario = DB::table('usuario_perfil')
@@ -33,6 +42,7 @@ class ControleAcesso
             ->all();
 
         $rotaAtual = $request->route()->getName();
+
         Log::info('rota acessada', ['data' => $rotaAtual]);
         $nomeDaTela = explode('.', $rotaAtual)[0];
         $temPermissao = false;
