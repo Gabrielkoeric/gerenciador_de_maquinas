@@ -18,7 +18,7 @@
                 <th scope="col">Serviço</th>
                 <th scope="col">VM</th>
                 <th scope="col">Porta</th>
-                <th scope="col">Tipo</th>
+                <th scope="col">Status</th>
             </tr>
             </thead>
             <tbody>
@@ -27,11 +27,11 @@
                     <td>
                         <input type="checkbox" name="servicos[]" class="selectItem" value="{{ $servico->id_servico_vm }}">
                     </td>
-                    <td>{{ $servico->cliente_nome }}</td>
-                    <td>{{ $servico->servico_nome }}</td>
-                    <td>{{ $servico->vm_nome }}</td>
+                    <td>{{ $servico->nome_cliente }}</td>
+                    <td>{{ $servico->nome }}</td>
+                    <td>{{ $servico->nome_vm }}</td>
                     <td>{{ $servico->porta }}</td>
-                    <td>{{ $servico->tipo }}</td>
+                    <td>{{ $servico->status }}</td>
                 </tr>
             @endforeach
             </tbody>

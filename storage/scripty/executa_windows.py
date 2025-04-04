@@ -5,9 +5,8 @@ from winrm.protocol import Protocol
 ip = sys.argv[1]
 usuario = sys.argv[2]
 senha = sys.argv[3]
-servico = sys.argv[4]
-acao = sys.argv[5]
-dominio = sys.argv[6] if len(sys.argv) > 6 else ""
+comando_completo = sys.argv[4]
+dominio = sys.argv[5] if len(sys.argv) > 5 else ""
 
 # Se tiver domínio, adiciona ao usuário
 if dominio:
@@ -22,23 +21,14 @@ p = Protocol(
     server_cert_validation="ignore"
 )
 
-# Comando a ser executado
-comandos = {
-    "start": f"Start-Service -Name {servico}",
-    "stop": f"Stop-Service -Name {servico}",
-    "restart": f"Restart-Service -Name {servico}",
-    "status": f"powershell -Command \"(Get-Service -Name {servico}).Status\""
-}
-
-
-if acao in comandos:
+try:
+    # Abre o shell e executa o comando recebido
     shell_id = p.open_shell()
-    command_id = p.run_command(shell_id, "powershell", [comandos[acao]])
+    command_id = p.run_command(shell_id, "powershell", [comando_completo])
     _, stdout, stderr = p.get_command_output(shell_id, command_id)
     p.close_shell(shell_id)
 
     # Exibe a saída para o Laravel capturar
     print(stdout.decode('cp850', errors='replace').strip())
-
-else:
-    print("Ação inválida")
+except Exception as e:
+    print(f"Erro ao executar o comando: {str(e)}")

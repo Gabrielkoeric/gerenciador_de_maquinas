@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('servico_vm', function (Blueprint $table) {
             $table->id('id_servico_vm');
+            $table->string('nome');
             $table->string('porta');
-            $table->string('tipo');
             $table->string('status')->nullable();
             $table->timestamps();
 
@@ -27,7 +27,6 @@ return new class extends Migration
             $table->foreign('id_vm')->references('id_vm')->on('vm');
             $table->foreign('id_servico')->references('id_servico')->on('servico');
             $table->foreign('id_cliente_escala')->references('id_cliente_escala')->on('cliente_escala');
-        
         });
     }
 

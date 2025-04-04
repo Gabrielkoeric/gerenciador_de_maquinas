@@ -92,7 +92,7 @@ class ClienteEscalaController extends Controller
             ->value('valor_config');
 
 
-        $url = "$config"; // URL da API
+        $url = "$config";
 
         // Fazendo a requisição GET na API
         $response = file_get_contents($url);

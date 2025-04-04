@@ -18,17 +18,16 @@ class VmServicoController extends Controller
     public function index(Request $request)
     {
         $servicos = DB::table('servico_vm')
-    ->join('servico', 'servico_vm.id_servico', '=', 'servico.id_servico')
-    ->join('vm', 'servico_vm.id_vm', '=', 'vm.id_vm')
-    ->join('cliente_escala', 'servico_vm.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
-    ->select(
-        'servico_vm.id_servico_vm',
-        'servico.nome as servico_nome',
-        'vm.nome as vm_nome',
-        'cliente_escala.nome as cliente_nome',
-        'servico_vm.porta',
-        'servico_vm.tipo'
-    )->get();
+        ->join('vm', 'servico_vm.id_vm', '=', 'vm.id_vm')
+        ->join('servico', 'servico_vm.id_servico', '=', 'servico.id_servico')
+        ->join('cliente_escala', 'servico_vm.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
+        ->select(
+            'servico_vm.*',
+            'vm.nome as nome_vm',
+            'servico.nome as nome_servico',
+            'cliente_escala.nome as nome_cliente'
+        )
+        ->get();
 
         return view('vmservico.index')->with('servicos', $servicos);
 
@@ -40,17 +39,10 @@ class VmServicoController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function executarAcao(Request $request)
-     {
+     public function executarComando(Request $request)
+     {  
          $servicos = $request->input('servicos');
          Log::info('Serviços selecionados:', $servicos);
-
-         $servico_nome = DB::table('servico')
-          ->where('id_servico', $servicos)
-          ->value('nome');
-          
-          Log::info('Nome do serviço selecionado:', ['servico_nome' => $servico_nome]);
-
      
          $acao = $request->input('acao');
          Log::info('Ação selecionada: ' . $acao);
@@ -60,10 +52,10 @@ class VmServicoController extends Controller
      
              // 1. Buscar os dados da VM
              $vm = DB::table('vm')
-                 ->join('servico_vm', 'vm.id_vm', '=', 'servico_vm.id_vm')
-                 ->where('servico_vm.id_servico_vm', $id_servico_vm)
-                 ->select('vm.ip_lan', 'vm.porta', 'vm.tipo', 'vm.id_vm')
-                 ->first();
+                ->join('servico_vm', 'servico_vm.id_vm', '=', 'vm.id_vm')
+                ->where('servico_vm.id_servico_vm', $id_servico_vm)
+                ->select('vm.*') // ou 'vm.*', 'servico_vm.porta', etc.
+                ->first();
              
              Log::info('Dados da VM:', (array) $vm);
      
@@ -93,6 +85,12 @@ class VmServicoController extends Controller
      
              Log::info("Comando para ação '$acao' e tipo '{$vm->tipo}': " . ($comando ?? 'NÃO ENCONTRADO'));
 
+             $servico_nome = DB::table('servico_vm')
+                ->where('id_servico_vm', $id_servico_vm)
+                ->value('nome');
+
+            Log::info("serviço nome $servico_nome");
+
              $comando_completo = str_replace('{servico}', $servico_nome, $comando);
              Log::info("comando completo $comando_completo");
      
@@ -103,12 +101,12 @@ class VmServicoController extends Controller
      
              // 4. Executar o comando na VM
              if ($vm->tipo === 'ssh') {
-                 Log::info("Executando comando via SSH na VM {$vm->ip_lan}");
-                 $resultado = $this->executarComandoLinux($vm->ip_lan, $vm->porta, $usuarioVM->usuario, $usuarioVM->senha, $comando_completo);
+                 Log::info("Executando comando via SSH na VM {$vm->iplan}");
+                 $resultado = $this->executarComandoLinux($vm->iplan, $vm->porta, $usuarioVM->usuario, $usuarioVM->senha, $comando_completo);
                  Log::info("ver qual comando executa $comando_completo");
              } elseif ($vm->tipo === 'rdp') {
-                 Log::info("Executando comando via RDP na VM {$vm->ip_lan}");
-                 $resultado = $this->executarComandoWindows($vm->ip_lan, $usuarioVM->usuario, $usuarioVM->senha, $comando_completo);
+                 Log::info("Executando comando via RDP na VM {$vm->iplan}");
+                 $resultado = $this->executarComandoWindows($vm->iplan, $usuarioVM->usuario, $usuarioVM->senha, $comando_completo, $vm->dominio);
              }
      
              Log::info("Resultado da execução: " . ($resultado ?? 'Erro na execução'));
@@ -116,11 +114,10 @@ class VmServicoController extends Controller
      
          Log::info('Execução finalizada');
          return back()->with('mensagemSucesso', 'Comandos executados com sucesso.');
+         
      }
-     
-     /**
-      * Executa comando remoto via SSH em Linux
-      */
+    
+      
      private function executarComandoLinux($ip, $porta, $usuario, $senha, $comando)
      {
          Log::info("Conectando via SSH em $ip:$porta com usuário $usuario");
@@ -154,33 +151,20 @@ class VmServicoController extends Controller
       * Executa comando remoto via PowerShell em Windows (RDP)
       */
      
-    public function executarComandoWindows(Request $request)
+      private function executarComandoWindows($iplan, $usuario, $senha, $comando_completo, $dominio)
     {
-         // Variáveis fixas para teste
-    $acao = 'status'; // Ou 'start', 'stop', 'restart'
-    $ip_lan = '192.168.1.15'; // IP do destino
-    $usuario = 'teste'; // Nome do usuário
-    $senha = 'teste'; // Senha
-    $servico = 'Spooler'; // Nome do serviço
-    $dominio = ''; // Caso seja em domínio
-
-    // Caminho absoluto do script Python
     $scriptPath = '/var/www/html/gerenciador_de_maquinas/storage/scripty/executa_windows.py';
 
-    // Monta o comando para chamar o script Python
     $comando = "python3 " . escapeshellarg($scriptPath) . " "
-        . escapeshellarg($ip_lan) . " "
+        . escapeshellarg($iplan) . " "
         . escapeshellarg($usuario) . " "
         . escapeshellarg($senha) . " "
-        . escapeshellarg($servico) . " "
-        . escapeshellarg($acao) . " "
+        . escapeshellarg($comando_completo) . " "
         . escapeshellarg($dominio);
 
-    // Executa o script e captura a saída
     $saida = shell_exec($comando);
 
-    // Retorna o resultado
-    return response()->json(['resultado' => trim($saida)]);
+    return trim($saida);
     }
       
     public function create()

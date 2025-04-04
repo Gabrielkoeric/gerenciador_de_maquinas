@@ -68,7 +68,7 @@ return new class extends Migration
                 'id_comando_execucao_remota' => 8,
                 'tipo' => 'rdp',
                 'acao' => 'status',
-                'comando' => 'Get-Service -Name {servico} | Select-Object Status',
+                'comando' => 'powershell -Command \"(Get-Service -Name {servico}).Status\"',
             ],
         ]);
     }
