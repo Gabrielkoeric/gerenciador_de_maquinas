@@ -49,6 +49,7 @@ use App\Http\Controllers\VmServicoController;
 use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\ClienteEscalaController;
 use App\Http\Controllers\ComandoController;
+use App\Http\Controllers\RotaLogsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,14 +121,17 @@ Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->mid
 //vm
 Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //vm servico
+Route::post('/vm_servico/executar', [VmServicoController::class, 'executarComando'])->name('vm_servico.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
 Route::resource('/vm_servico', VmServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
-Route::post('/vm_servico/executar', [VmServicoController::class, 'executarAcao'])->name('vmservico.executarAcao')/*->middleware(Autenticador::class)->middleware(ControleAcesso::class)*/;
-Route::post('/vm_servico/executar', [VmServicoController::class, 'executarComando'])->name('vmservico.executarComando');
+//Route::post('/vm_servico/executar', [VmServicoController::class, 'executarAcao'])->name('vmservico.executarAcao')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //servico
 Route::resource('/servico', ServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //cliente_escala
-Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar');
+Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/cliente_escala', ClienteEscalaController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+//rota logs
+Route::resource('/rota_logs', RotaLogsController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //comandos
 Route::resource('/comando', ComandoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);

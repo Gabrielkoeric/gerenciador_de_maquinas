@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('url_completa')->nullable();
             $table->string('ip_address')->nullable();
             $table->text('user_agent')->nullable();
+            $table->json('request_data')->nullable();
             $table->timestamp('created_at')->useCurrent();
 
             $table->unsignedBigInteger('id');

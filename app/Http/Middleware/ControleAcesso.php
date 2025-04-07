@@ -24,6 +24,8 @@ class ControleAcesso
         }
 
         $usuario = Auth::user()->id;
+        
+        $requestData = $request->all();
 
         DB::table('rota_logs')->insert([
             'id' => auth()->check() ? auth()->id() : null,
@@ -32,6 +34,7 @@ class ControleAcesso
             'url_completa' => request()->fullUrl(),
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
+            'request_data' => json_encode($requestData),
             'created_at' => now(),
         ]);
 
