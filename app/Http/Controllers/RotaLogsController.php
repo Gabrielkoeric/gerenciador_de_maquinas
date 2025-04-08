@@ -14,7 +14,7 @@ class RotaLogsController extends Controller
      */
     public function index()
     {
-        $logs = DB::table('rota_logs')->get();
+        $logs = DB::table('rota_logs')->paginate(100);
 
         return view('rota_logs.index')->with('logs', $logs);
     }
