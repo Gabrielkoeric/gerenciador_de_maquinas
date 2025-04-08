@@ -169,7 +169,19 @@ class VmServicoController extends Controller
       
     public function create()
     {
-        //
+        $vms = DB::table('vm')
+            ->select('id_vm', 'nome')
+            ->get();
+
+        $servicos = DB::table('servico')
+            ->select('id_servico', 'nome')
+            ->get();
+        
+        $clientes = DB::table('cliente_escala')
+            ->select('id_cliente_escala', 'nome')
+            ->get();
+
+        return view('vmservico.create')->with('vms', $vms)->with('servicos', $servicos)->with('clientes', $clientes);
     }
 
     /**
@@ -180,7 +192,23 @@ class VmServicoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $nome = $request->input('nome');
+        $porta = $request->input('porta');
+        $vm = $request->input('vm');
+        $servico = $request->input('servico');
+        $cliente = $request->input('cliente');
+
+        $dados = [
+            'nome' => $nome,
+            'porta' => $porta,
+            'id_vm' => $vm,
+            'id_servico' => $servico,
+            'id_cliente_escala' => $cliente,
+        ];
+
+        DB::table('servico_vm')->insertGetId($dados);
+
+        return redirect('/vm_servico');
     }
 
     /**

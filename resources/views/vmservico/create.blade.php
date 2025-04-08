@@ -1,3 +1,7 @@
-<x-layout title="Novo Usuario">
-    <x-usuario.forms :action="route('usuario.store')" :perfis="$perfis"></x-usuario.forms>
+<x-layout title="Novo Servico">
+    <x-vmservico.forms :action="route('vm_servico.store')" :vms="$vms"
+                                                          :servicos="$servicos"
+                                                          :clientes="$clientes"
+    
+    ></x-vmservico.forms>
 </x-layout>
