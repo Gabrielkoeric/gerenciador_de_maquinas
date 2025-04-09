@@ -230,7 +230,32 @@ class VmServicoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $vms = DB::table('vm')
+            ->select('id_vm', 'nome')
+            ->get();
+
+        $servicos = DB::table('servico')
+            ->select('id_servico', 'nome')
+            ->get();
+        
+        $clientes = DB::table('cliente_escala')
+            ->select('id_cliente_escala', 'nome')
+            ->get();
+
+            $dadosAtuais = DB::table('servico_vm')
+            ->join('vm', 'vm.id_vm', '=', 'servico_vm.id_vm')
+            ->join('servico', 'servico.id_servico', '=', 'servico_vm.id_servico')
+            ->join('cliente_escala', 'cliente_escala.id_cliente_escala', '=', 'servico_vm.id_cliente_escala')
+            ->where('servico_vm.id_servico_vm', $id)
+            ->select(
+                'servico_vm.*',
+                'vm.id_vm', 'vm.nome as nome_vm',
+                'servico.id_servico', 'servico.nome as nome_servico',
+                'cliente_escala.id_cliente_escala', 'cliente_escala.nome as nome_cliente'
+            )
+            ->first();
+
+        return view('vmservico.edit')->with('vms', $vms)->with('servicos', $servicos)->with('clientes', $clientes)->with('dadosAtuais', $dadosAtuais);
     }
 
     /**
@@ -242,7 +267,26 @@ class VmServicoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $nome = $request->input('nome');
+        $porta = $request->input('porta');
+        $vm = $request->input('vm');
+        $servico = $request->input('servico');
+        $cliente = $request->input('cliente');
+
+        $dados = [
+            'nome' => $nome,
+            'porta' => $porta,
+            'id_vm' => $vm,
+            'id_servico' => $servico,
+            'id_cliente_escala' => $cliente,
+            'updated_at' => now(), // já que usa timestamps, pode atualizar esse campo também
+        ];
+
+        DB::table('servico_vm')
+            ->where('id_servico_vm', $id)
+            ->update($dados);
+
+        return redirect('/vm_servico');
     }
 
     /**

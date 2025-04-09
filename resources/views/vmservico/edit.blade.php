@@ -1,11 +1,9 @@
-<x-layout title="Editar Usuario '{{$usuario->nome_completo}}'">
-    <x-usuario.forms :action="route('usuario.update', $usuario)"
-                        :nome="$usuario->nome_completo"
-                        :email="$usuario->email"
-                        :celular="$usuario->celular"
-                        :perfis="$perfis"
-                        :perfilAtual="$perfilAtual"
+<x-layout title="Editar Serviço da VM '{{$dadosAtuais->nome}}'">
+    <x-vmservico.forms  :action="route('vm_servico.update', $dadosAtuais->id_servico_vm)"
+                        :dadosAtuais="$dadosAtuais"
+                        :vms="$vms"
+                        :servicos="$servicos"
+                        :clientes="$clientes"
     >
-    </x-usuario.forms>
+    </x-vmservico.forms>
 </x-layout>
-

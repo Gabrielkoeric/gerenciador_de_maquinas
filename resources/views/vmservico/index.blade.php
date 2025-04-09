@@ -28,10 +28,10 @@
                     <td>
                         <input type="checkbox" name="servicos[]" class="selectItem" value="{{ $servico->id_servico_vm }}">
                     </td>
-                    <td>{{ $servico->nome_cliente }}</td>
-                    <td>{{ $servico->nome }}</td>
-                    <td>{{ $servico->nome_vm }}</td>
-                    <td>{{ $servico->porta }}</td>
+                    <td><a href="{{ route('vm_servico.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->nome_cliente }}</a></td>
+                    <td><a href="{{ route('vm_servico.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->nome }}</a></td>
+                    <td><a href="{{ route('vm_servico.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->nome_vm }}</a></td>
+                    <td><a href="{{ route('vm_servico.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->porta }}</a></td>
                     <td>{{ $servico->status }}</td>
                 </tr>
             @endforeach

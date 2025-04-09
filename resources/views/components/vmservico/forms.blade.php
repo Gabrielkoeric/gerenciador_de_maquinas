@@ -1,28 +1,28 @@
 <form action="{{$action}}" method="post">
     @csrf
-    @isset($nome)
+    @isset($dadosAtuais->nome)
         @method('PUT')
     @endisset
 
     <div class="mb-3">
         <label for="nome" class=form-label>Nome:</label>
-        <input type="text" id="nome" name="nome" class="form-control" @isset($nome) value="{{$nome}}" @endisset required>
+        <input type="text" id="nome" name="nome" class="form-control" @isset($dadosAtuais->nome) value="{{$dadosAtuais->nome}}" @endisset required>
 
         <label for="porta" class=form-label>Porta</label>
-        <input type="porta" id="porta" name="porta" class="form-control" @isset($porta) value="{{$porta}}" @endisset required>
+        <input type="porta" id="porta" name="porta" class="form-control" @isset($dadosAtuais->porta) value="{{$dadosAtuais->porta}}" @endisset required>
 
         <label for="vm" class=form-label>VM</label>
         <select id="vm" name="vm" class="form-control" required>
-            @if(!isset($vmAtual))
+            @if(!isset($dadosAtuais))
             <option value="">Selecione a VM para o Serviço</option>
             @endif
-            @if(isset($vmAtual))
-                <option value="{{ $vmAtual->id_vm }}">{{ $vmAtual->nome }}</option>
+            @if(isset($dadosAtuais))
+                <option value="{{ $dadosAtuais->id_vm }}">{{ $dadosAtuais->nome_vm }}</option>
             @endif
             @foreach ($vms as $vm)
 
-                    @if (isset($vmAtual))
-                        @if ($vm->id_vm <> $vmAtual->id_vm)
+                    @if (isset($dadosAtuais))
+                        @if ($vm->id_vm <> $dadosAtuais->id_vm)
                             <option value="{{ $vm->id_vm }}">{{ $vm->nome }}</option>
                         @endif
                     @else
@@ -33,16 +33,16 @@
 
         <label for="servico" class=form-label>Serviço</label>
         <select id="servico" name="servico" class="form-control" required>
-            @if(!isset($servicoAtual))
+            @if(!isset($dadosAtuais))
             <option value="">Selecione o Serviço</option>
             @endif
-            @if(isset($servicoAtual))
-                <option value="{{ $servicoAtual->id_servico }}">{{ $servicoAtual->nome }}</option>
+            @if(isset($dadosAtuais))
+                <option value="{{ $dadosAtuais->id_servico }}">{{ $dadosAtuais->nome }}</option>
             @endif
             @foreach ($servicos as $servico)
 
-                    @if (isset($servicoAtual))
-                        @if ($servico->id_servico <> $servicoAtual->id_servico)
+                    @if (isset($dadosAtuais))
+                        @if ($servico->id_servico <> $dadosAtuais->id_servico)
                             <option value="{{ $servico->id_servico }}">{{ $servico->nome }}</option>
                         @endif
                     @else
@@ -53,16 +53,16 @@
 
         <label for="cliente" class=form-label>Cliente</label>
         <select id="cliente" name="cliente" class="form-control" required>
-            @if(!isset($clienteAtual))
-            <option value="">Selecione o Serviço</option>
+            @if(!isset($dadosAtuais))
+            <option value="">Selecione o Cliente</option>
             @endif
-            @if(isset($clienteAtual))
-                <option value="{{ $clienteAtual->id_cliente_escala }}">{{ $clienteAtual->nome }}</option>
+            @if(isset($dadosAtuais))
+                <option value="{{ $dadosAtuais->id_cliente_escala }}">{{ $dadosAtuais->nome_cliente }}</option>
             @endif
             @foreach ($clientes as $cliente)
 
-                    @if (isset($clienteAtual))
-                        @if ($cliente->id_cliente_escala <> $clienteAtual->id_cliente_escala)
+                    @if (isset($dadosAtuais))
+                        @if ($cliente->id_cliente_escala <> $dadosAtuais->id_cliente_escala)
                             <option value="{{ $cliente->id_cliente_escala }}">{{ $cliente->nome }}</option>
                         @endif
                     @else
