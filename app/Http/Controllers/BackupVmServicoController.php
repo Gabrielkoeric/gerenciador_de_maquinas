@@ -151,59 +151,21 @@ class VmServicoController extends Controller
       * Executa comando remoto via PowerShell em Windows (RDP)
       */
      
-      private function executarComandoWindows($iplan, $usuario, $senha, $servico, $dominio = null)
-{
-    Log::info("Iniciando execução do comando via Ansible para IP: {$iplan}, serviço: {$servico}");
+      private function executarComandoWindows($iplan, $usuario, $senha, $comando_completo, $dominio)
+    {
+    $scriptPath = '/var/www/html/gerenciador_de_maquinas/storage/scripty/executa_windows.py';
 
-    // Caminho do diretório onde será salvo o arquivo de hosts
-    $dir = storage_path('app/public/scripty');
-    $hostsFile = $dir . '/hosts';
+    $comando = "python3 " . escapeshellarg($scriptPath) . " "
+        . escapeshellarg($iplan) . " "
+        . escapeshellarg($usuario) . " "
+        . escapeshellarg($senha) . " "
+        . escapeshellarg($comando_completo) . " "
+        . escapeshellarg($dominio);
 
-    // Garante que o diretório existe
-    if (!file_exists($dir)) {
-        mkdir($dir, 0775, true);
-        Log::info("Diretório {$dir} criado.");
-    } else {
-        Log::info("Diretório {$dir} já existe.");
-    }
-
-    // Conteúdo do arquivo de hosts para Ansible
-    $conteudo = <<<EOT
-[windows]
-{$iplan}
-
-[windows:vars]
-ansible_user={$usuario}
-ansible_password={$senha}
-ansible_port=5985
-ansible_connection=winrm
-ansible_winrm_transport=basic
-ansible_winrm_server_cert_validation=ignore
-EOT;
-
-    // Salva o arquivo
-    file_put_contents($hostsFile, $conteudo);
-    Log::info("Arquivo de hosts salvo em: {$hostsFile}");
-    Log::info("Conteúdo do arquivo de hosts:\n{$conteudo}");
-
-    // Caminho do playbook Ansible (ajuste conforme sua estrutura)
-    $playbook = storage_path('app/public/scripty/reinicia_servico.yml');
-    Log::info("Caminho do playbook: {$playbook}");
-
-    // Monta o comando para executar o playbook
-    $cmd = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
-           " " . escapeshellarg($playbook) .
-           " --extra-vars " . escapeshellarg("servico={$servico}");
-
-    Log::info("Comando montado para execução: {$cmd}");
-
-    // Executa o comando
-    $saida = shell_exec($cmd);
-    Log::info("Saída do comando:\n" . $saida);
+    $saida = shell_exec($comando);
 
     return trim($saida);
-}
-      
+    }
       
     public function create()
     {
