@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('licenca');
             $table->string('coletor');
             $table->string('desktop');
+            $table->string('remoteapp')->nullable();
             $table->boolean('ativo')->default(true);
             $table->timestamps();
         });

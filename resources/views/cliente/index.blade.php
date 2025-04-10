@@ -17,6 +17,7 @@
                     <th scope="col">Coletor</th>
                     <th scope="col">Desktop</th>
                     <th scope="col">Ativo</th>
+                    <th scope="col">RemoteApp</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -28,6 +29,18 @@
                         <td><a href="{{ route('cliente_escala.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->coletor }}</a></td>
                         <td><a href="{{ route('cliente_escala.edit', $cliente->id_cliente_escala ) }}" class="text-decoration-none text-dark">{{ $cliente->desktop }}</a></td>
                         <td><a href="{{ route('cliente_escala.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->ativo }}</a></td>
+                        <td>
+                            @if($cliente->remoteapp)
+                                <a href="{{ asset('storage/remoteapp/' . $cliente->remoteapp) }}" 
+                                class="btn btn-sm btn-success" 
+                                target="_blank" 
+                                download>
+                            Baixar RDP
+                        </a>
+                        @else
+                        <span class="text-muted">Nenhum arquivo</span>
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
 

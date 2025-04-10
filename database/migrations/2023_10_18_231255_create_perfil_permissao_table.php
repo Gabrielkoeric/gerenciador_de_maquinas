@@ -42,6 +42,7 @@ return new class extends Migration
             ['id_home' => 14, 'id_perfil' => 2],
             ['id_home' => 15, 'id_perfil' => 2],
             ['id_home' => 16, 'id_perfil' => 2],
+            ['id_home' => 17, 'id_perfil' => 2],
 
             ['id_home' => 1, 'id_perfil' => 3],
             //['id_home' => 2, 'id_perfil' => 2],
@@ -59,6 +60,7 @@ return new class extends Migration
             ['id_home' => 14, 'id_perfil' => 3],
             ['id_home' => 15, 'id_perfil' => 3],
             ['id_home' => 16, 'id_perfil' => 3],
+            ['id_home' => 17, 'id_perfil' => 3],
 
         ];
 

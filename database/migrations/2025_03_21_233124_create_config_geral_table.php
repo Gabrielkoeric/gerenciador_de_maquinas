@@ -31,6 +31,11 @@ return new class extends Migration
                 'nome_config' => 'email_administrador',
                 'valor_config' => 'administrador@gmail.com',
             ],
+            [
+                'id_config_geral' => 3,
+                'nome_config' => 'url_api_cliente',
+                'valor_config' => 'url',
+            ],
         ]);
     }
 
