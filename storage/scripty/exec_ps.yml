@@ -1,0 +1,11 @@
+- name: Executar comando PowerShell remoto
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Executar o comando PowerShell informado
+      ansible.windows.win_shell: "{{ comando }}"
+      register: resultado
+
+    - name: Exibir saída do comando
+      debug:
+        var: resultado.stdout_lines
