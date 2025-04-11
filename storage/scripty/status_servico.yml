@@ -1,0 +1,13 @@
+- name: Verificar status do serviço no Windows
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Verificar status do serviço "{{ servico }}"
+      ansible.windows.win_service_info:
+        name: "{{ servico }}"
+      register: servico_info
+
+    - name: Exibir status
+      debug:
+        var: servico_info
+

@@ -1,0 +1,9 @@
+- name: Parar serviço no Windows
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Parar o serviço "{{ servico }}"
+      ansible.windows.win_service:
+        name: "{{ servico }}"
+        state: stopped
+

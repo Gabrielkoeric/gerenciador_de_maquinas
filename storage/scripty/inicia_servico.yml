@@ -1,0 +1,9 @@
+- name: Iniciar serviço no Windows
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Iniciar o serviço "{{ servico }}"
+      ansible.windows.win_service:
+        name: "{{ servico }}"
+        state: started
+
