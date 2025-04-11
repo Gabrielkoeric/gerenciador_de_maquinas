@@ -106,7 +106,7 @@ class VmServicoController extends Controller
                  Log::info("ver qual comando executa $comando_completo");
              } elseif ($vm->tipo === 'rdp') {
                  Log::info("Executando comando via RDP na VM {$vm->iplan}");
-                 $resultado = $this->executarComandoWindows($vm->iplan, $usuarioVM->usuario, $usuarioVM->senha, $comando_completo, $vm->dominio);
+                 $resultado = $this->executarComandoWindows($vm->iplan, $usuarioVM->usuario, $usuarioVM->senha, $servico_nome, $vm->dominio, $acao);
              }
      
              Log::info("Resultado da execução: " . ($resultado ?? 'Erro na execução'));
@@ -151,15 +151,14 @@ class VmServicoController extends Controller
       * Executa comando remoto via PowerShell em Windows (RDP)
       */
      
-      private function executarComandoWindows($iplan, $usuario, $senha, $servico, $dominio = null)
+      private function executarComandoWindows($iplan, $usuario, $senha, $servico, $dominio, $acao)
 {
-    Log::info("Iniciando execução do comando via Ansible para IP: {$iplan}, serviço: {$servico}");
+     
+    Log::info("Iniciando execução do comando via Ansible para IP: {$iplan}, serviço: {$servico}, ação: {$acao}");
 
-    // Caminho do diretório onde será salvo o arquivo de hosts
     $dir = storage_path('app/public/scripty');
     $hostsFile = $dir . '/hosts';
 
-    // Garante que o diretório existe
     if (!file_exists($dir)) {
         mkdir($dir, 0775, true);
         Log::info("Diretório {$dir} criado.");
@@ -167,7 +166,6 @@ class VmServicoController extends Controller
         Log::info("Diretório {$dir} já existe.");
     }
 
-    // Conteúdo do arquivo de hosts para Ansible
     $conteudo = <<<EOT
 [windows]
 {$iplan}
@@ -181,23 +179,44 @@ ansible_winrm_transport=basic
 ansible_winrm_server_cert_validation=ignore
 EOT;
 
-    // Salva o arquivo
     file_put_contents($hostsFile, $conteudo);
     Log::info("Arquivo de hosts salvo em: {$hostsFile}");
     Log::info("Conteúdo do arquivo de hosts:\n{$conteudo}");
+    Log::info("a ação é :$acao");
+    Log::info("o servico é :$servico");
 
-    // Caminho do playbook Ansible (ajuste conforme sua estrutura)
-    $playbook = storage_path('app/public/scripty/reinicia_servico.yml');
-    Log::info("Caminho do playbook: {$playbook}");
+    // Define o nome do playbook com base na ação
+    switch (strtolower($acao)) {
+        case 'start':
+            $playbookName = 'inicia_servico.yml';
+            break;
+        case 'stop':
+            $playbookName = 'para_servico.yml';
+            break;
+        case 'restart':
+            $playbookName = 'reinicia.yml';
+            break;
+        case 'status':
+            $playbookName = 'status_servico.yml';
+            break;
+        default:
+            Log::error("Ação inválida: {$acao}");
+            return "Ação inválida: {$acao}";
+    }
+    $playbook = $dir . '/' . $playbookName;
+    Log::info("Playbook selecionado: {$playbook}");
 
-    // Monta o comando para executar o playbook
+    if (!file_exists($playbook)) {
+        Log::error("Playbook não encontrado: {$playbook}");
+        return "Playbook não encontrado: {$playbook}";
+    }
+
     $cmd = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
            " " . escapeshellarg($playbook) .
            " --extra-vars " . escapeshellarg("servico={$servico}");
 
     Log::info("Comando montado para execução: {$cmd}");
 
-    // Executa o comando
     $saida = shell_exec($cmd);
     Log::info("Saída do comando:\n" . $saida);
 

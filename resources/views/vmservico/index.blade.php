@@ -20,6 +20,9 @@
                 <th scope="col">VM</th>
                 <th scope="col">Porta</th>
                 <th scope="col">Status</th>
+                <th scope="col">Data</th>
+                <th scope="col">PID</th>
+                <th scope="col">Execução</th>
             </tr>
             </thead>
             <tbody>
