@@ -50,6 +50,7 @@ use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\ClienteEscalaController;
 use App\Http\Controllers\ComandoController;
 use App\Http\Controllers\RotaLogsController;
+use App\Http\Controllers\LogsExecucoesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +91,8 @@ Route::resource('cpu', CpuController::class)->middleware(Autenticador::class)->m
 Route::resource('script', ScriptController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //Executar
 Route::resource('executar', ExecutarController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+//Executar
+Route::resource('logs_execucoes', LogsExecucoesController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //Route::get('login/google', "SocialiteController@redirectToProvider");
 //Route::get('login/google/callback', 'SocialiteController@handleProviderCalback');

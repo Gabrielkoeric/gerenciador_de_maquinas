@@ -1,6 +1,7 @@
 <x-layout title="Serviço da VM">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('vm_servico.create')}}" class="btn btn-dark my-3">Adicionar</a>
+    <a href="{{route('logs_execucoes.index')}}" class="btn btn-dark my-3">Logs Execuçoes</a>
 
     <form id="servicoForm" action="{{ route('vm_servico.executar') }}" method="POST">
         @csrf

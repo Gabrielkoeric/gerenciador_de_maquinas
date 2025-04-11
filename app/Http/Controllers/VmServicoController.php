@@ -106,7 +106,7 @@ class VmServicoController extends Controller
                  Log::info("ver qual comando executa $comando_completo");
              } elseif ($vm->tipo === 'rdp') {
                  Log::info("Executando comando via RDP na VM {$vm->iplan}");
-                 $resultado = $this->executarComandoWindows($vm->iplan, $usuarioVM->usuario, $usuarioVM->senha, $servico_nome, $vm->dominio, $acao);
+                 $resultado = $this->executarComandoWindows($vm->iplan, $usuarioVM->usuario, $usuarioVM->senha, $servico_nome, $vm->dominio, $acao, $id_servico_vm);
              }
      
              Log::info("Resultado da execução: " . ($resultado ?? 'Erro na execução'));
@@ -151,7 +151,7 @@ class VmServicoController extends Controller
       * Executa comando remoto via PowerShell em Windows (RDP)
       */
      
-      private function executarComandoWindows($iplan, $usuario, $senha, $servico, $dominio, $acao)
+      private function executarComandoWindows($iplan, $usuario, $senha, $servico, $dominio, $acao, $id_servico_vm)
 {
      
     Log::info("Iniciando execução do comando via Ansible para IP: {$iplan}, serviço: {$servico}, ação: {$acao}");
@@ -219,6 +219,44 @@ EOT;
 
     $saida = shell_exec($cmd);
     Log::info("Saída do comando:\n" . $saida);
+
+    ////gravar log
+    $status = 'sucesso';
+if (
+    str_contains($saida, 'unreachable=1') ||
+    str_contains($saida, 'failed=1') ||
+    str_contains($saida, 'UNREACHABLE') ||
+    str_contains($saida, 'FAILED') ||
+    empty($saida)
+) {
+    $status = 'falha';
+}
+
+$erro = null;
+if ($status === 'falha') {
+    if (preg_match('/"msg"\s*:\s*"([^"]+)"/', $saida, $matches)) {
+        $erro = $matches[1];
+    } elseif (preg_match('/msg=(.*)/', $saida, $matches)) {
+        $erro = $matches[1];
+    } else {
+        $erro = 'Erro desconhecido';
+    }
+}
+
+DB::table('logs_execucoes')->insert([
+    'acao'          => $acao,
+    'playbook'      => $playbookName ?? null,
+    'comando'       => $cmd ?? null,
+    'saida'         => $saida ?? null,
+    'status'        => $status,
+    'erro'          => $erro,
+    'executado_em'  => now(),
+    'created_at'    => now(),
+    'updated_at'    => now(),
+    'id'            => auth()->id(),
+    'id_servico_vm' => $id_servico_vm,
+]);
+///////////////////
 
     return trim($saida);
 }
