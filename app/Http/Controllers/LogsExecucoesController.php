@@ -13,11 +13,20 @@ class LogsExecucoesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        $logs = DB::table('logs_execucoes')->paginate(100);
+{
+    $logs = DB::table('logs_execucoes')
+        ->join('usuarios', 'logs_execucoes.id', '=', 'usuarios.id')
+        ->join('servico_vm', 'logs_execucoes.id_servico_vm', '=', 'servico_vm.id_servico_vm')
+        ->select(
+            'logs_execucoes.*',
+            'usuarios.nome_completo as nome_usuario',
+            'servico_vm.nome as nome_servico'
+        )
+        ->orderByDesc('logs_execucoes.id_logs_execucoes')
+        ->paginate(100);
 
-        return view('logs_execucoes.index')->with('logs', $logs);
-    }
+    return view('logs_execucoes.index')->with('logs', $logs);
+}
 
     /**
      * Show the form for creating a new resource.
