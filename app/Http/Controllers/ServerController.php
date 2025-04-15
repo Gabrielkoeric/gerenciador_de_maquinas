@@ -170,6 +170,8 @@ DB::table('usuario_servidor_fisico')
             Log::info("Resultado: $resultado");
             //Log::info("Resultado: " . json_encode($server));
         }
+
+        return redirect('/server')->with('success', 'Comando executado com sucesso!');
     }
 
     private function executarComandoWindows($iplan, $usuario, $senha, $dominio)
@@ -213,7 +215,7 @@ EOT;
     Log::info("Arquivo de hosts salvo em: {$hostsFile}");
     Log::info("Conteúdo do arquivo de hosts:\n{$conteudo}");
 
-    $playbookName = 'lista_vm.yml';
+    $playbookName = 'listar_vms_hyperv.yml';
      
     $playbook = $dir . '/' . $playbookName;
     Log::info("Playbook selecionado: {$playbook}");
@@ -224,8 +226,7 @@ EOT;
     }
 
     $cmd = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
-           " " . escapeshellarg($playbook) .
-           " --extra-vars " . escapeshellarg("servico={$servico}");
+           " " . escapeshellarg($playbook);
 
     Log::info("Comando montado para execução: {$cmd}");
 
