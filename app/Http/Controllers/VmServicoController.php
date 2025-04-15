@@ -153,7 +153,7 @@ class VmServicoController extends Controller
      
       private function executarComandoWindows($iplan, $usuario, $senha, $servico, $dominio, $acao, $id_servico_vm)
 {
-     
+
     Log::info("Iniciando execução do comando via Ansible para IP: {$iplan}, serviço: {$servico}, ação: {$acao}");
 
     $dir = storage_path('app/public/scripty');
@@ -166,16 +166,25 @@ class VmServicoController extends Controller
         Log::info("Diretório {$dir} já existe.");
     }
 
-    $conteudo = <<<EOT
+// Verifica se a máquina está no domínio
+if (!empty($dominio)) {
+    $usuarioCompleto = "{$usuario}@{$dominio}";
+    $transporte = "ntlm";
+} else {
+    $usuarioCompleto = $usuario;
+    $transporte = "basic";
+}
+
+$conteudo = <<<EOT
 [windows]
 {$iplan}
 
 [windows:vars]
-ansible_user={$usuario}
+ansible_user={$usuarioCompleto}
 ansible_password={$senha}
 ansible_port=5985
 ansible_connection=winrm
-ansible_winrm_transport=basic
+ansible_winrm_transport={$transporte}
 ansible_winrm_server_cert_validation=ignore
 EOT;
 
@@ -260,8 +269,7 @@ DB::table('logs_execucoes')->insert([
 
     return trim($saida);
 }
-      
-      
+
     public function create()
     {
         $vms = DB::table('vm')
