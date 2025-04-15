@@ -115,6 +115,8 @@ Route::get('/email_novo_usuario', function (){return new \App\Mail\NovoUsuario()
 Route::get('/email_compra', function (){return new \App\Mail\CompraRealizada();});
 
 //usuarios
+// Defina a rota em web.php
+Route::post('/server/executar-comando', [ServerController::class, 'executarComando'])->name('server.executarComando')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/server', ServerController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //ssh
 

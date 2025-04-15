@@ -1,0 +1,15 @@
+# listar_vms_hyperv.yml
+- name: Listar VMs do Hyper-V
+  hosts: windows
+  gather_facts: no
+
+  tasks:
+    - name: Obter lista de VMs
+      ansible.windows.win_shell: |
+        Get-VM | Select-Object Name, State, CPUUsage, MemoryAssigned | ConvertTo-Json -Depth 2
+      register: resultado_vms
+
+    - name: Mostrar lista de VMs
+      debug:
+        var: resultado_vms.stdout
+

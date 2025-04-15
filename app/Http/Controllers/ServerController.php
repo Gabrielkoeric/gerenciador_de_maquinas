@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ServerController extends Controller
 {
@@ -152,4 +153,124 @@ DB::table('usuario_servidor_fisico')
     {
         //
     }
+
+    public function executarComando(Request $request)
+    {
+    $servidores = DB::table('servidor_fisico as s')
+                    ->join('usuario_servidor_fisico as u', 's.id_servidor_fisico', '=', 'u.id_servidor_fisico')
+                    ->where('s.tipo', 'rdp')
+                    ->select('s.*', 'u.usuario', 'u.senha')
+                    ->get();
+
+        foreach ($servidores as $server) {
+            // Aqui você executa o comando Windows para cada servidor
+            $resultado = $this->executarComandoWindows($server->iplan, $server->usuario, $server->senha, $server->dominio);  
+        
+            // Log para acompanhar o resultado
+            Log::info("Resultado: $resultado");
+            //Log::info("Resultado: " . json_encode($server));
+        }
+    }
+
+    private function executarComandoWindows($iplan, $usuario, $senha, $dominio)
+    {
+
+    Log::info("Iniciando execução do comando via Ansible para IP: {$iplan}, serviço: {$usuario}, ação: {$dominio}");
+
+    $dir = storage_path('app/public/scripty');
+    $hostsFile = $dir . '/hosts';
+
+    if (!file_exists($dir)) {
+        mkdir($dir, 0775, true);
+        Log::info("Diretório {$dir} criado.");
+    } else {
+        Log::info("Diretório {$dir} já existe.");
+    }
+
+// Verifica se a máquina está no domínio
+if (!empty($dominio)) {
+    $usuarioCompleto = "{$usuario}@{$dominio}";
+    $transporte = "ntlm";
+} else {
+    $usuarioCompleto = $usuario;
+    $transporte = "basic";
+}
+
+$conteudo = <<<EOT
+[windows]
+{$iplan}
+
+[windows:vars]
+ansible_user={$usuarioCompleto}
+ansible_password={$senha}
+ansible_port=5985
+ansible_connection=winrm
+ansible_winrm_transport={$transporte}
+ansible_winrm_server_cert_validation=ignore
+EOT;
+
+    file_put_contents($hostsFile, $conteudo);
+    Log::info("Arquivo de hosts salvo em: {$hostsFile}");
+    Log::info("Conteúdo do arquivo de hosts:\n{$conteudo}");
+
+    $playbookName = 'lista_vm.yml';
+     
+    $playbook = $dir . '/' . $playbookName;
+    Log::info("Playbook selecionado: {$playbook}");
+
+    if (!file_exists($playbook)) {
+        Log::error("Playbook não encontrado: {$playbook}");
+        return "Playbook não encontrado: {$playbook}";
+    }
+
+    $cmd = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
+           " " . escapeshellarg($playbook) .
+           " --extra-vars " . escapeshellarg("servico={$servico}");
+
+    Log::info("Comando montado para execução: {$cmd}");
+
+    $saida = shell_exec($cmd);
+    Log::info("Saída do comando:\n" . $saida);
+/*
+    ////gravar log
+    $status = 'sucesso';
+if (
+    str_contains($saida, 'unreachable=1') ||
+    str_contains($saida, 'failed=1') ||
+    str_contains($saida, 'UNREACHABLE') ||
+    str_contains($saida, 'FAILED') ||
+    empty($saida)
+) {
+    $status = 'falha';
+}
+
+$erro = null;
+if ($status === 'falha') {
+    if (preg_match('/"msg"\s*:\s*"([^"]+)"/', $saida, $matches)) {
+        $erro = $matches[1];
+    } elseif (preg_match('/msg=(.*)/', $saida, $matches)) {
+        $erro = $matches[1];
+    } else {
+        $erro = 'Erro desconhecido';
+    }
+}
+
+DB::table('logs_execucoes')->insert([
+    'acao'          => $acao,
+    'playbook'      => $playbookName ?? null,
+    'comando'       => $cmd ?? null,
+    'saida'         => $saida ?? null,
+    'status'        => $status,
+    'erro'          => $erro,
+    'executado_em'  => now(),
+    'created_at'    => now(),
+    'updated_at'    => now(),
+    'id'            => auth()->id(),
+    'id_servico_vm' => $id_servico_vm,
+]);
+///////////////////*/
+
+    return trim($saida);
+}
+
 }

@@ -1,6 +1,14 @@
 <x-layout title="Servers Fisicos">
-    <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
-    <a href="{{route('server.create')}}" class="btn btn-dark my-3">Adicionar</a>
+<div class="d-flex align-items-start my-3">
+    <a href="{{ route('home.index') }}" class="btn btn-dark me-1">Home</a>
+    <a href="{{ route('server.create') }}" class="btn btn-dark me-1">Adicionar</a>
+    <form action="{{ route('server.executarComando') }}" method="POST" class="mb-0 me-1">
+        @csrf
+        <button type="submit" class="btn btn-dark">Buscar VM</button>
+    </form>
+</div>
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 
     @isset($mensagemSucesso)
