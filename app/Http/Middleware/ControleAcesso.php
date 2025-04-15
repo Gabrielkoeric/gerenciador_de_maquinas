@@ -20,7 +20,12 @@ class ControleAcesso
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::check()) {
-            return to_route('login');
+            $metodoAutenticacao = DB::table('config_geral')
+                ->where('nome_config', 'metodo_autenticacao')
+                ->value('valor_config');
+
+            $rotaLogin = $metodoAutenticacao === 'google' ? 'login' : 'login_local';
+            return to_route($rotaLogin);
         }
 
         $usuario = Auth::user()->id;
