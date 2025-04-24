@@ -22,8 +22,6 @@
                 <th scope="col">Porta</th>
                 <th scope="col">Status</th>
                 <th scope="col">Data</th>
-                <th scope="col">PID</th>
-                <th scope="col">Execução</th>
             </tr>
             </thead>
             <tbody>
@@ -36,7 +34,8 @@
                     <td><a href="{{ route('vm_servico.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->nome }}</a></td>
                     <td><a href="{{ route('vm_servico.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->nome_vm }}</a></td>
                     <td><a href="{{ route('vm_servico.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->porta }}</a></td>
-                    <td>{{ $servico->status }}</td>
+                    <td><a href="{{ route('vm_servico.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->status }}</a></td>
+                    <td><a href="{{ route('vm_servico.edit', $servico->id_servico_vm ) }}" class="text-decoration-none text-dark">{{ $servico->updated_at }}</a></td>
                 </tr>
             @endforeach
             </tbody>

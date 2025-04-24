@@ -120,9 +120,9 @@ Route::post('/server/executar-comando', [ServerController::class, 'executarComan
 Route::resource('/server', ServerController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //ssh
 
-Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('vm.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //Route::resource('/server', ServerController::class);
-Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('vm.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //vm
 Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //vm servico
@@ -162,10 +162,3 @@ Route::post('/api/ip6', [ApiIp6Controller::class, 'store']);
 Route::post('/api/ip7', [ApiIp7Controller::class, 'store']);
 //confere backup
 Route::post('/api/backup', [ConfereBackupController::class, 'store']);
-
-
-
-
-
-
-

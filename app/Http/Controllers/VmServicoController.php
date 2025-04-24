@@ -165,7 +165,7 @@ class VmServicoController extends Controller
     } else {
         Log::info("Diretório {$dir} já existe.");
     }
-
+    Log::info("dominio da maquina é $dominio");
 // Verifica se a máquina está no domínio
 if (!empty($dominio)) {
     $usuarioCompleto = "{$usuario}@{$dominio}";
@@ -230,6 +230,22 @@ EOT;
     Log::info("Saída do comando:\n" . $saida);
 
     ////gravar log
+
+    $estado = null;
+//captura o status
+if (preg_match('/"state"\s*:\s*"([^"]+)"/', $saida, $matches)) {
+    $estado = $matches[1]; // Vai capturar, por exemplo, "started"
+}
+
+if ($estado) {
+    DB::table('servico_vm')
+        ->where('id_servico_vm', $id_servico_vm)
+        ->update([
+            'status' => $estado,
+            'updated_at' => now(),
+        ]);
+}
+/////////pra atualizar a tabela
     $status = 'sucesso';
 if (
     str_contains($saida, 'unreachable=1') ||
