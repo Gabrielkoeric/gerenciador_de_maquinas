@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EventoXmlController;
+use App\Http\Controllers\ApiServicoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //cor api
 
 Route::get('/cor', [\App\Http\Controllers\Api\CorController::class, 'index']);
+
+
+Route::post('/xml_eventos', [EventoXmlController::class, 'receber']);
+Route::post('/servicos', [ApiServicoController::class, 'receber']);
