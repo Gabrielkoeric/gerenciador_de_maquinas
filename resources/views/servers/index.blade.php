@@ -8,7 +8,6 @@
     </form>
 </div>
 
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 
     @isset($mensagemSucesso)
@@ -25,7 +24,6 @@
                     <th scope="col">Dominio</th>
                     <th scope="col">IP Lan</th>
                     <th scope="col">IP Wan</th>
-                    <th scope="col">DNS</th>
                     <th scope="col">Porta</th>
                     <th scope="col">Acesso</th>
                 </tr>
@@ -39,7 +37,6 @@
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->dominio }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->iplan }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->ipwan }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->dns }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->porta }}</a></td>
                         <td>
                             @if ($server->tipo === 'ssh')
@@ -104,9 +101,4 @@
     }
 </script>
 
-
-
 </x-layout>
-
-
-

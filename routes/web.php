@@ -25,7 +25,7 @@ use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\QRCodeController;
 use App\Http\Controllers\ResultadosController;
-use App\Http\Controllers\ServerController;
+use App\Http\Controllers\ServerFisicoController;
 use App\Http\Controllers\SSHController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\IpController;
@@ -116,8 +116,8 @@ Route::get('/email_compra', function (){return new \App\Mail\CompraRealizada();}
 
 //usuarios
 // Defina a rota em web.php
-Route::post('/server/executar-comando', [ServerController::class, 'executarComando'])->name('server.executarComando')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
-Route::resource('/server', ServerController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::post('/server/executar-comando', [ServerFisicoController::class, 'executarComando'])->name('server.executarComando')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::resource('/server', ServerFisicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //ssh
 
 Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('vm.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);

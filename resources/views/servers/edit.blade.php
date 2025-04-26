@@ -2,7 +2,6 @@
 
     <x-servers.forms :action="route('server.update', $dados->id_servidor_fisico)"
                         :nome="$dados->nome"
-                        :dns="$dados->dns"
                         :ipwan="$dados->ipwan"
                         :iplan="$dados->iplan"
                         :porta="$dados->porta"

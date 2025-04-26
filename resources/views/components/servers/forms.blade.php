@@ -8,9 +8,6 @@
     <label for="nome" class="form-label">Nome:</label>
         <input type="text" id="nome" name="nome" class="form-control" @isset($nome) value="{{$nome}}" @endisset required>
 
-        <label for="dns" class="form-label">DNS:</label>
-        <input type="text" id="dns" name="dns" class="form-control" @isset($dns) value="{{$dns}}" @endisset>
-
         <label for="ipwan" class="form-label">IP WAN:</label>
         <input type="text" id="ipwan" name="ipwan" class="form-control" @isset($ipwan) value="{{$ipwan}}" @endisset>
 
