@@ -128,7 +128,7 @@ Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->mid
 //vm
 Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //vm servico
-Route::post('/vm_servico/executar', [VmServicoController::class, 'executarComando'])->name('vm_servico.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::post('/vm_servico/executar', [ExecutaComandoController::class, 'manipulaServico'])->name('vm_servico.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 Route::resource('/vm_servico', VmServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //Route::post('/vm_servico/executar', [VmServicoController::class, 'executarAcao'])->name('vmservico.executarAcao')->middleware(Autenticador::class)->middleware(ControleAcesso::class);

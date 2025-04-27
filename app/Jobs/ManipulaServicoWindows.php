@@ -8,19 +8,35 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ManipulaServicoWindows implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public $iplan;
+    public $usuario;
+    public $senha;
+    public $dominio;
+    public $nome;
+    public $acao;
+    public $taskId;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($iplan, $usuario, $senha, $dominio, $nome, $acao, $taskId)
     {
-        //
+        $this->iplan = $iplan;
+        $this->usuario = $usuario;
+        $this->senha = $senha;
+        $this->dominio = $dominio;
+        $this->nome = $nome;
+        $this->acao = $acao;
+        $this->taskId = $taskId;
     }
 
     /**
@@ -30,6 +46,97 @@ class ManipulaServicoWindows implements ShouldQueue
      */
     public function handle()
     {
-        //
+        DB::table('async_tasks')
+            ->where('id_async_tasks', $this->taskId)
+            ->update([
+                'horario_inicio' => now(),
+                'status' => 'Iniciado'
+            ]);
+
+        $dir = storage_path('app/public/scripty');
+        $hostsFile = $dir . '/hosts';
+
+        if (!file_exists($dir)) {
+            mkdir($dir, 0775, true);
+            Log::info("Diretório {$dir} criado.");
+        } else {
+            Log::info("Diretório {$dir} já existe.");
+        }
+
+        // Verifica se a máquina está no domínio
+        if (!empty($this->dominio)) {
+            $usuarioCompleto = "{$this->usuario}@{$this->dominio}";
+            $transporte = "ntlm";
+        } else {
+            $usuarioCompleto = $this->usuario;
+            $transporte = "basic";
+        }
+
+        // Conteúdo a ser escrito no arquivo 'hosts'
+        $conteudo = <<<EOD
+        [windows]
+        {$this->iplan}
+
+        [windows:vars]
+        ansible_user={$usuarioCompleto}
+        ansible_password={$this->senha}
+        ansible_port=5985
+        ansible_connection=winrm
+        ansible_winrm_transport={$transporte}
+        ansible_winrm_server_cert_validation=ignore
+        EOD;
+
+        // Escreve o conteúdo no arquivo 'hosts'
+        file_put_contents($hostsFile, $conteudo);
+        // Define o nome do playbook com base na ação
+        switch (strtolower($this->acao)) {
+            case 'start':
+                $playbookName = 'inicia_servico.yml';
+                break;
+            case 'stop':
+                $playbookName = 'para_servico.yml';
+                break;
+            case 'restart':
+                $playbookName = 'reinicia.yml';
+                break;
+            case 'status':
+                $playbookName = 'status_servico.yml';
+                break;
+        }
+        $playbook = $dir . '/' . $playbookName;
+
+        if (!file_exists($playbook)) {
+            Log::error("Playbook não encontrado: {$playbook}");
+            return "Playbook não encontrado: {$playbook}";
+        }
+
+        $comando = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
+           " " . escapeshellarg($playbook) .
+           " --extra-vars " . escapeshellarg("servico={$this->nome}");
+
+        $output = shell_exec($comando);
+       
+         DB::table('async_tasks')
+            ->where('id_async_tasks', $this->taskId)
+            ->update([
+                'horario_fim' => now(),
+                'status' => 'Concluido',
+                'log' => $output
+            ]);
+            $estado = null;
+            //captura o status
+            if (preg_match('/"state"\s*:\s*"([^"]+)"/', $output, $matches)) {
+                $estado = $matches[1]; // Vai capturar, por exemplo, "started"
+            }
+            
+            if ($estado) {
+                DB::table('servico_vm')
+                    ->where('id_servico_vm', $id_servico_vm)
+                    ->update([
+                        'status' => $estado,
+                        'updated_at' => now(),
+                    ]);
+            }
     }
+            
 }

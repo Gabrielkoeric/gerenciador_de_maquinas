@@ -129,6 +129,14 @@ return new class extends Migration
                 'updated_at' => null,
             ],
             [
+                'nome' => 'Async Task',
+                'nome_tela' => 'asynctasks',
+                'imagem_tela' => 'storage/home/terraform.png',
+                'permite_home' => 1,
+                'created_at' => null,
+                'updated_at' => null,
+            ],
+            [
                 'nome' => 'Logs Execuções',
                 'nome_tela' => 'logs_execucoes',
                 'imagem_tela' => 'n/t',
