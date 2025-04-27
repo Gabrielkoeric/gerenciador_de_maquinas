@@ -37,7 +37,9 @@ class ExecutaComandoController extends Controller
             ]);
     
             // Dispara o Job passando o servidor e o ID da task
-            BuscaVm::dispatch($server, $taskId);
+            //BuscaVm::dispatch($server, $taskId);
+            BuscaVm::dispatch($server->iplan, $server->usuario, $server->senha, $server->dominio, $taskId);
+
         }
         return redirect('/server')->with('success', 'Comando executado com sucesso!');
     }
