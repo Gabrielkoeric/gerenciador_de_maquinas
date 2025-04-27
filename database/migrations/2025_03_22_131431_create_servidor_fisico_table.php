@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('servidor_fisico', function (Blueprint $table) {
             $table->id('id_servidor_fisico');
             $table->string('nome');
-            $table->string('dns')->nullable();
             $table->string('ipwan')->nullable();
             $table->string('iplan');
             $table->string('porta');

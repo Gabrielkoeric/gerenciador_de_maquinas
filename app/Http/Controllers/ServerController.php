@@ -46,7 +46,6 @@ class ServerController extends Controller
     public function store(Request $request)
     {
         $nome = $request->input('nome');
-        $dns = $request->input('dns');
         $ipwan = $request->input('ipwan');
         $iplan = $request->input('iplan');
         $porta = $request->input('porta');
@@ -57,7 +56,6 @@ class ServerController extends Controller
 
         $dados = [
             'nome' => $nome,
-            'dns' => $dns,
             'ipwan' => $ipwan,
             'iplan' => $iplan,
             'porta' => $porta,
@@ -121,7 +119,6 @@ class ServerController extends Controller
     ->where('id_servidor_fisico', $id)
     ->update([
         'nome' => $request->nome,
-        'dns' => $request->dns,
         'ipwan' => $request->ipwan,
         'iplan' => $request->iplan,
         'porta' => $request->porta,

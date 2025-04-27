@@ -32,6 +32,17 @@ class ServerFisicoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function create()
+    {
+        return view('servers.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function store(Request $request)
     {
         $nome = $request->input('nome');
@@ -63,6 +74,7 @@ class ServerFisicoController extends Controller
 
         return redirect('/server')->with('mensagem.sucesso', 'Usuario inserido com sucesso!');
     }
+
     /**
      * Display the specified resource.
      *
@@ -82,7 +94,14 @@ class ServerFisicoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $dados = DB::table('servidor_fisico')
+        ->join('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
+        ->where('servidor_fisico.id_servidor_fisico', $id)
+        ->select('servidor_fisico.*', 'usuario_servidor_fisico.usuario', 'usuario_servidor_fisico.senha')
+        ->first();
+
+        //dd($dados);
+        return view('servers.edit')->with('dados', $dados);
     }
 
     /**
@@ -94,7 +113,30 @@ class ServerFisicoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+       // Atualizar a tabela servidor_fisico
+    DB::table('servidor_fisico')
+    ->where('id_servidor_fisico', $id)
+    ->update([
+        'nome' => $request->nome,
+        'ipwan' => $request->ipwan,
+        'iplan' => $request->iplan,
+        'porta' => $request->porta,
+        'dominio' => $request->dominio,
+        'tipo' => $request->tipo,
+        'updated_at' => now(),
+    ]);
+
+// Atualizar a tabela usuario_servidor_fisico
+DB::table('usuario_servidor_fisico')
+    ->where('id_servidor_fisico', $id)
+    ->update([
+        'usuario' => $request->usuario,
+        'senha' => $request->senha, 
+        'updated_at' => now(),
+    ]);
+
+    return redirect('/server');
+
     }
 
     /**
