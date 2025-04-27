@@ -45,7 +45,7 @@ class BuscaVm implements ShouldQueue
             ->where('id_async_tasks', $this->taskId)
             ->update([
                 'horario_inicio' => now(),
-                'status' => 'executando'
+                'status' => 'Iniciado'
             ]);
 
     $dir = storage_path('app/public/scripty');
@@ -83,33 +83,34 @@ class BuscaVm implements ShouldQueue
 
     // Escreve o conteúdo no arquivo 'hosts'
     file_put_contents($hostsFile, $conteudo);
-    Log::info("Arquivo {$hostsFile} atualizado com sucesso.");
+    //
+    //Log::info("Arquivo {$hostsFile} atualizado com sucesso.");
 
     $playbookName = 'listar_vms_hyperv.yml';
      
     $playbook = $dir . '/' . $playbookName;
-    Log::info("Playbook selecionado: {$playbook}");
+    //Log::info("Playbook selecionado: {$playbook}");
 
     if (!file_exists($playbook)) {
-        Log::error("Playbook não encontrado: {$playbook}");
+        //Log::error("Playbook não encontrado: {$playbook}");
         return "Playbook não encontrado: {$playbook}";
     }
 
     $comando = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
            " " . escapeshellarg($playbook);
 
-    Log::info("Comando montado para execução: {$comando}");
+    //Log::info("Comando montado para execução: {$comando}");
 
     // Executa o comando
     $output = shell_exec($comando);
        
     // Registra a saída do comando
-    Log::info("Saída do comando: {$output}");
+    //Log::info("Saída do comando: {$output}");
     DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)
             ->update([
                 'horario_fim' => now(),
-                'status' => 'finalizado',
+                'status' => 'Concluido',
                 'log' => $output
             ]);
 }

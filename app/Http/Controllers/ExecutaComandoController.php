@@ -31,7 +31,7 @@ class ExecutaComandoController extends Controller
                 'nome_async_tasks' => 'BuscaVm',
                 'horario_disparo' => Carbon::now(),
                 'parametros' => json_encode($parametros),
-                'status' => 'pendente',
+                'status' => 'Pendente',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
