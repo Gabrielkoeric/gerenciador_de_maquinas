@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('async_tasks', function (Blueprint $table) {
             $table->id('id_async_tasks');
+            $table->string('nome_async_tasks');
             $table->timestamp('horario_disparo')->useCurrent();
+            $table->text('parametros')->nullable();
             $table->timestamp('horario_inicio')->nullable();
             $table->timestamp('horario_fim')->nullable();
             $table->string('status')->default('pendente');

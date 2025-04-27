@@ -51,6 +51,8 @@ use App\Http\Controllers\ClienteEscalaController;
 use App\Http\Controllers\ComandoController;
 use App\Http\Controllers\RotaLogsController;
 use App\Http\Controllers\LogsExecucoesController;
+use App\Http\Controllers\ExecutaComandoController;
+use App\Http\Controllers\AsyncTasksController;
 
 /*
 |--------------------------------------------------------------------------
@@ -116,7 +118,7 @@ Route::get('/email_compra', function (){return new \App\Mail\CompraRealizada();}
 
 //usuarios
 // Defina a rota em web.php
-Route::post('/server/executar-comando', [ServerFisicoController::class, 'executarComando'])->name('server.executarComando')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::post('/server/executar-comando', [ExecutaComandoController::class, 'executarComando'])->name('server.executarComando')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/server', ServerFisicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //ssh
 
@@ -140,6 +142,9 @@ Route::resource('/rota_logs', RotaLogsController::class)->middleware(Autenticado
 
 //comandos
 Route::resource('/comando', ComandoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//assync task
+Route::resource('/asynctasks', AsyncTasksController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 
 
