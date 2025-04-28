@@ -37,7 +37,7 @@
             <option value="">Selecione o Serviço</option>
             @endif
             @if(isset($dadosAtuais))
-                <option value="{{ $dadosAtuais->id_servico }}">{{ $dadosAtuais->nome }}</option>
+                <option value="{{ $dadosAtuais->id_servico }}">{{ $dadosAtuais->nome_servico }}</option>
             @endif
             @foreach ($servicos as $servico)
 
