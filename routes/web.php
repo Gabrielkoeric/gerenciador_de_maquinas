@@ -122,9 +122,9 @@ Route::post('/server/executar-comando', [ExecutaComandoController::class, 'execu
 Route::resource('/server', ServerFisicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //ssh
 
-Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('conecta.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //Route::resource('/server', ServerController::class);
-Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('server.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('conecta.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //vm
 Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //vm servico

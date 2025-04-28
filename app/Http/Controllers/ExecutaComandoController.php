@@ -58,13 +58,13 @@ class ExecutaComandoController extends Controller
                 ->select(
                     'vm.iplan', 
                     'vm.dominio', 
-                    'vm.tipo', 
+                    'vm.so', 
                     'usuario_vm.usuario', 
                     'usuario_vm.senha', 
                     'servico_vm.nome'
                 )
                 ->first(); // Como você deseja uma linha de informação, usamos `first()` para pegar apenas o primeiro resultado   
-            if ($dados->tipo === 'rdp') {
+            if ($dados->so === 'rdp') {
                 $parametros = [
                     'iplan' => $dados->iplan,
                     'usuario' => $dados->usuario,

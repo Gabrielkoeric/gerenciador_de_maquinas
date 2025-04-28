@@ -5,14 +5,8 @@
     @endisset
 
     <div class="mb-3">
-    <label for="nome" class="form-label">Nome:</label>
+        <label for="nome" class="form-label">Nome:</label>
         <input type="text" id="nome" name="nome" class="form-control" @isset($nome) value="{{$nome}}" @endisset required>
-
-        <label for="dns" class="form-label">DNS:</label>
-        <input type="text" id="dns" name="dns" class="form-control" @isset($dns) value="{{$dns}}" @endisset>
-
-        <label for="ipwan" class="form-label">IP WAN:</label>
-        <input type="text" id="ipwan" name="ipwan" class="form-control" @isset($ipwan) value="{{$ipwan}}" @endisset>
 
         <label for="iplan" class="form-label">IP LAN:</label>
         <input type="text" id="iplan" name="iplan" class="form-control" @isset($iplan) value="{{$iplan}}" @endisset required>
@@ -25,9 +19,21 @@
 
         <label for="tipo" class="form-label">Tipo:</label>
         <select id="tipo" name="tipo" class="form-control" required>
-            <option value="">Selecione o Tipo</option>
-            <option value="ssh" @isset($tipo) @if($tipo == 'ssh') selected @endif @endisset>SSH</option>
+            <option value="">Selecione o tipo</option>
+            <option value="escalaserver" @isset($tipo) @if($tipo == 'escalaserver') selected @endif @endisset>Escala Server</option>
+            <option value="escalaweb" @isset($tipo) @if($tipo == 'escalaweb') selected @endif @endisset>Escala Web</option>
+            <option value="escalaswarm" @isset($tipo) @if($tipo == 'escalaswarm') selected @endif @endisset>Escala Swarm</option>
+            <option value="escalawebswervice" @isset($tipo) @if($tipo == 'escalawebswervice') selected @endif @endisset>Escala Web Service</option>
+            <option value="sgbd" @isset($tipo) @if($tipo == 'sgbd') selected @endif @endisset>SGBD</option>
             <option value="rdp" @isset($tipo) @if($tipo == 'rdp') selected @endif @endisset>RDP</option>
+            <option value="gerencia" @isset($tipo) @if($tipo == 'gerencia') selected @endif @endisset>Gerencia</option>
+        </select>
+
+        <label for="so" class="form-label">Sistema Operacional:</label>
+        <select id="so" name="so" class="form-control" required>
+            <option value="">Selecione o so</option>
+            <option value="ssh" @isset($so) @if($so == 'ssh') selected @endif @endisset>SSH</option>
+            <option value="rdp" @isset($so) @if($so == 'rdp') selected @endif @endisset>RDP</option>
         </select>
 
         <label for="usuario" class="form-label">Usuário:</label>
@@ -55,6 +61,10 @@
                     @endif
             @endforeach
         </select >
+
+        <label for="autostart" class=form-label>Auto Start:</label><br>
+        <input type="checkbox" class="form-control-input" id="autostart" name="autostart" value="1"
+        @isset($autostart) @if($autostart) checked @endif @else checked @endisset>
 
     </div>
     <button type="submit" class="btn btn-primary">Salvar</button>

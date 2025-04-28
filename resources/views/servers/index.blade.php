@@ -40,7 +40,7 @@
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->porta }}</a></td>
                         <td>
                             @if ($server->tipo === 'ssh')
-                        <a href="{{ route('server.ssh', $server->id_servidor_fisico) }}" class="btn btn-primary btn-sm">SSH</a>
+                        <a href="{{ route('conecta.ssh', $server->id_servidor_fisico) }}" class="btn btn-primary btn-sm">SSH</a>
                         @elseif ($server->tipo === 'rdp')
                         <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $server->ipwan }}', '{{ $server->porta }}', '{{ $server->usuario }}', '{{ $server->senha }}')">RDP</button>
                         @endif

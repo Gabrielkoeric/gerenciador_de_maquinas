@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('iplan');
             $table->string('porta');
             $table->string('dominio')->nullable();
+            $table->boolean('autostart')->default(1);
             $table->string('tipo');
             $table->timestamps();
         });

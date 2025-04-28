@@ -15,11 +15,11 @@
                     <th scope="col">Usuario</th>
                     <th scope="col">Senha</th>
                     <th scope="col">Dominio</th>
-                    <th scope="col">IP Lan</th>
-                    <th scope="col">IP Wan</th>
-                    <th scope="col">DNS</th>
+                    <th scope="col">IP Lan</th>                    
                     <th scope="col">Porta</th>
                     <th scope="col">Srv Fisico</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">AutoStart</th>
                     <th scope="col">Acesso</th>
                 </tr>
                 </thead>
@@ -31,15 +31,15 @@
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->senha }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->iplan }}</a></td>
-                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->ipwan }}</a></td>
-                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dns }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->porta }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->servidor_nome }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->tipo }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->autostart }}</a></td>
                         <td>
-                            @if ($vm->tipo === 'ssh')
-                        <a href="{{ route('vm.ssh', $vm->id_vm) }}" class="btn btn-primary btn-sm">SSH</a>
-                        @elseif ($vm->tipo === 'rdp')
-                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $vm->ipwan }}', '{{ $vm->porta }}', '{{ $vm->usuario }}', '{{ $vm->senha }}')">RDP</button>
+                            @if ($vm->so === 'ssh')
+                        <a href="{{ route('conecta.ssh', $vm->id_vm) }}" class="btn btn-primary btn-sm">SSH</a>
+                        @elseif ($vm->so === 'rdp')
+                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $vm->iplan }}', '{{ $vm->porta }}', '{{ $vm->usuario }}', '{{ $vm->senha }}')">RDP</button>
                         @endif
                         </td>
 

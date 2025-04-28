@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nome');
             $table->string('porta');
             $table->string('status')->nullable();
+            $table->boolean('autostart')->default(1);
             $table->timestamps();
 
             $table->unsignedBigInteger('id_vm');
