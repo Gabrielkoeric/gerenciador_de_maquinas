@@ -88,8 +88,8 @@ class ClienteEscalaController extends Controller
     public function buscarClientes()
     {   
         $config = DB::table('config_geral')
-            ->where('nome_config', 'url_api_cliente')
-            ->value('valor_config');
+            ->where('nomeConfig', 'url_api_cliente')
+            ->value('valorConfig');
 
 
         $url = "$config";
