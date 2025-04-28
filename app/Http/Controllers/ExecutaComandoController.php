@@ -80,9 +80,12 @@ class ExecutaComandoController extends Controller
                     'status' => 'Pendente',
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
-                ]); 
+                ]);
+                $usuarioLogado = auth()->id(); 
+                Log::info("usuario logado $usuarioLogado");
                 
-                ManipulaServicoWindows::dispatch($dados->iplan, $dados->usuario, $dados->senha, $dados->dominio, $dados->nome, $acao, $taskId);
+                
+                ManipulaServicoWindows::dispatch($dados->iplan, $dados->usuario, $dados->senha, $dados->dominio, $dados->nome, $acao, $taskId, $id_servico_vm, $usuarioLogado);
             }
         }
         return redirect('/vm_servico');

@@ -22,13 +22,15 @@ class ManipulaServicoWindows implements ShouldQueue
     public $nome;
     public $acao;
     public $taskId;
+    public $id_servico_vm;
+    public $usuarioLogado;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($iplan, $usuario, $senha, $dominio, $nome, $acao, $taskId)
+    public function __construct($iplan, $usuario, $senha, $dominio, $nome, $acao, $taskId, $id_servico_vm, $usuarioLogado)
     {
         $this->iplan = $iplan;
         $this->usuario = $usuario;
@@ -37,6 +39,8 @@ class ManipulaServicoWindows implements ShouldQueue
         $this->nome = $nome;
         $this->acao = $acao;
         $this->taskId = $taskId;
+        $this->id_servico_vm = $id_servico_vm;
+        $this->usuarioLogado = $usuarioLogado;
     }
 
     /**
@@ -116,27 +120,68 @@ class ManipulaServicoWindows implements ShouldQueue
 
         $output = shell_exec($comando);
        
-         DB::table('async_tasks')
+        $estado = null;
+        //captura o status
+        if (preg_match('/"state"\s*:\s*"([^"]+)"/', $output, $matches)) {
+            $estado = $matches[1]; // Vai capturar, por exemplo, "started"
+        }
+            
+        if ($estado) {
+            DB::table('servico_vm')
+                ->where('id_servico_vm', $this->id_servico_vm)
+                ->update([
+                    'status' => $estado,
+                    'updated_at' => now(),
+                ]);
+            }
+        
+         ////gravar log
+        $status = 'sucesso';
+        if (
+            str_contains($output, 'unreachable=1') ||
+            str_contains($output, 'failed=1') ||
+            str_contains($output, 'UNREACHABLE') ||
+            str_contains($output, 'FAILED') ||
+            empty($output)
+        ) {
+            $status = 'falha';
+        }
+     
+        $erro = null;
+        if ($status === 'falha') {
+            if (preg_match('/"msg"\s*:\s*"([^"]+)"/', $output, $matches)) {
+                $erro = $matches[1];
+            } elseif (preg_match('/msg=(.*)/', $output, $matches)) {
+                $erro = $matches[1];
+            } else {
+                $erro = 'Erro desconhecido';
+            }
+        }
+     
+        DB::table('logs_execucoes')->insert([
+            'acao'          => $this->acao,
+            'playbook'      => $playbookName ?? null,
+            'comando'       => $comando ?? null,
+            'saida'         => $output ?? null,
+            'status'        => $status,
+            'erro'          => $erro,
+            'executado_em'  => now(),
+            'created_at'    => now(),
+            'updated_at'    => now(),
+            'id'            => $this->usuarioLogado,
+            'id_servico_vm' => $this->id_servico_vm,
+     ]);
+     ///////////////////
+
+
+        
+        DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)
             ->update([
                 'horario_fim' => now(),
                 'status' => 'Concluido',
                 'log' => $output
-            ]);
-            $estado = null;
-            //captura o status
-            if (preg_match('/"state"\s*:\s*"([^"]+)"/', $output, $matches)) {
-                $estado = $matches[1]; // Vai capturar, por exemplo, "started"
-            }
-            
-            if ($estado) {
-                DB::table('servico_vm')
-                    ->where('id_servico_vm', $id_servico_vm)
-                    ->update([
-                        'status' => $estado,
-                        'updated_at' => now(),
-                    ]);
-            }
+        ]);
     }
             
 }
