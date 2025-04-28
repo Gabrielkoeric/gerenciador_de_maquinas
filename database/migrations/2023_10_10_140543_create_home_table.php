@@ -137,6 +137,14 @@ return new class extends Migration
                 'updated_at' => null,
             ],
             [
+                'nome' => 'Config Geral',
+                'nome_tela' => 'config_geral',
+                'imagem_tela' => 'n/t',
+                'permite_home' => 1,
+                'created_at' => null,
+                'updated_at' => null,
+            ],
+            [
                 'nome' => 'Logs Execuções',
                 'nome_tela' => 'logs_execucoes',
                 'imagem_tela' => 'n/t',

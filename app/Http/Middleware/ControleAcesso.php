@@ -21,8 +21,8 @@ class ControleAcesso
     {
         if (!Auth::check()) {
             $metodoAutenticacao = DB::table('config_geral')
-                ->where('nome_config', 'metodo_autenticacao')
-                ->value('valor_config');
+                ->where('nomeConfig', 'metodo_autenticacao')
+                ->value('valorConfig');
 
             $rotaLogin = $metodoAutenticacao === 'google' ? 'login' : 'login_local';
             return to_route($rotaLogin);

@@ -15,26 +15,31 @@ return new class extends Migration
     {
         Schema::create('config_geral', function (Blueprint $table) {
             $table->id('id_config_geral');
-            $table->string('nome_config')->nullable();
-            $table->string('valor_config')->nullable();
+            $table->string('nomeConfig')->nullable();
+            $table->string('valorConfig')->nullable();
             $table->timestamps();
         });
 
         DB::table('config_geral')->insert([
             [
                 'id_config_geral' => 1,
-                'nome_config' => 'metodo_autenticacao',
-                'valor_config' => 'login_local', #login_local pra rotina local e google pra integração com o google.
+                'nomeConfig' => 'metodo_autenticacao',
+                'valorConfig' => 'login_local', #login_local pra rotina local e google pra integração com o google.
             ],
             [
                 'id_config_geral' => 2,
-                'nome_config' => 'email_administrador',
-                'valor_config' => 'administrador@gmail.com',
+                'nomeConfig' => 'email_administrador',
+                'valorConfig' => 'administrador@gmail.com',
             ],
             [
                 'id_config_geral' => 3,
-                'nome_config' => 'url_api_cliente',
-                'valor_config' => 'url',
+                'nomeConfig' => 'url_api_cliente',
+                'valorConfig' => 'url',
+            ],
+            [
+                'id_config_geral' => 4,
+                'nomeConfig' => 'modo_manutencao',
+                'valorConfig' => '0',
             ],
         ]);
     }

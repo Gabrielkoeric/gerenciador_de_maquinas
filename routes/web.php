@@ -53,6 +53,7 @@ use App\Http\Controllers\RotaLogsController;
 use App\Http\Controllers\LogsExecucoesController;
 use App\Http\Controllers\ExecutaComandoController;
 use App\Http\Controllers\AsyncTasksController;
+use App\Http\Controllers\ConfigGeralController;
 
 /*
 |--------------------------------------------------------------------------
@@ -145,6 +146,9 @@ Route::resource('/comando', ComandoController::class)->middleware(Autenticador::
 
 //assync task
 Route::resource('/asynctasks', AsyncTasksController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//config geral
+Route::resource('/config_geral', ConfigGeralController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 
 
