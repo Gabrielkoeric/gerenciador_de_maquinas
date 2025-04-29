@@ -13,6 +13,7 @@
                 <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Nome</th>
+                    <th scope="col">Sigla</th>
                     <th scope="col">Licença</th>
                     <th scope="col">Coletor</th>
                     <th scope="col">Desktop</th>
@@ -25,6 +26,7 @@
                     <tr>
                         <td><a href="{{ route('cliente_escala.edit', $cliente->id_cliente_escala ) }}" class="text-decoration-none text-dark">{{ $cliente->id_cliente_escala }}</a></td>
                         <td><a href="{{ route('cliente_escala.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->nome }}</a></td>
+                        <td><a href="{{ route('cliente_escala.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->sigla }}</a></td>
                         <td><a href="{{ route('cliente_escala.edit', $cliente->id_cliente_escala ) }}" class="text-decoration-none text-dark">{{ $cliente->licenca }}</a></td>
                         <td><a href="{{ route('cliente_escala.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->coletor }}</a></td>
                         <td><a href="{{ route('cliente_escala.edit', $cliente->id_cliente_escala ) }}" class="text-decoration-none text-dark">{{ $cliente->desktop }}</a></td>

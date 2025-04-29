@@ -26,7 +26,7 @@ class ClienteEscalaController extends Controller
      */
     public function create()
     {
-        //
+        return view('cliente.create');
     }
 
     /**
@@ -37,7 +37,24 @@ class ClienteEscalaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $nome = $request->input('nome');
+        $sigla = $request->input('sigla');
+        $licenca = $request->input('licenca');
+        $coletor = $request->input('coletor');
+        $desktop = $request->input('desktop');
+        $ativo = $request->input('ativo', 0);
+
+        $dados = [
+            'nome' => $nome,
+            'sigla' => $sigla,
+            'licenca' => $licenca,
+            'coletor' => $coletor,
+            'desktop' => $desktop,
+            'ativo' => $ativo,
+        ];
+        $id = DB::table('cliente_escala')->insertGetId($dados);
+
+        return redirect('/cliente_escala');
     }
 
     /**
@@ -59,7 +76,11 @@ class ClienteEscalaController extends Controller
      */
     public function edit($id)
     {
-        //
+        $dados = DB::table('cliente_escala')
+        ->where('id_cliente_escala', $id)
+        ->first();
+
+        return view('cliente.edit')->with('dados', $dados);
     }
 
     /**
@@ -71,7 +92,17 @@ class ClienteEscalaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::table('cliente_escala')
+        ->where('id_cliente_escala', $id)
+        ->update([
+            'nome' => $request->nome,
+            'sigla' => $request->sigla,
+            'licenca' => $request->licenca,
+            'coletor' => $request->coletor,
+            'desktop' => $request->desktop,
+            'ativo' => $request->input('ativo', 0),
+        ]);
+        return redirect('/cliente_escala');
     }
 
     /**
