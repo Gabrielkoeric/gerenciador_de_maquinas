@@ -54,6 +54,7 @@ use App\Http\Controllers\LogsExecucoesController;
 use App\Http\Controllers\ExecutaComandoController;
 use App\Http\Controllers\AsyncTasksController;
 use App\Http\Controllers\ConfigGeralController;
+use App\Http\Controllers\SecaoCloudController;
 
 /*
 |--------------------------------------------------------------------------
@@ -149,6 +150,9 @@ Route::resource('/asynctasks', AsyncTasksController::class)->middleware(Autentic
 
 //config geral
 Route::resource('/config_geral', ConfigGeralController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//config geral
+Route::resource('/secao_cloud', SecaoCloudController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 
 
