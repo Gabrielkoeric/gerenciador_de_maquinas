@@ -28,7 +28,12 @@
                     <tr>
                         <td><a href="{{ route('vm.edit', $vm->id_vm ) }}" class="text-decoration-none text-dark">{{ $vm->nome }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->usuario }}</a></td>
-                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->senha }}</a></td>
+                        
+                        <!-- Alteração no campo Senha -->
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="copyToClipboard('{{ $vm->senha }}')">Senha</button>
+                        </td>
+
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->iplan }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->porta }}</a></td>
