@@ -11,7 +11,7 @@
         <label for="senha" class=form-label>Senha:</label>
         <input type="text" id="senha" name="senha" class="form-control" @isset($senha) value="{{$senha}}" @endisset required>
 
-        <label for="Cliente" class=form-label>Cliente</label>
+        <label for="cliente" class=form-label>Cliente</label>
         <select id="cliente" name="cliente" class="form-control" required>
             @if(!isset($clienteAtual))
             <option value="">Selecione o Cliente</option>
@@ -19,10 +19,14 @@
             @if(isset($clienteAtual))
                 <option value="{{ $clienteAtual->id_cliente_escala }}">{{ $clienteAtual->nome_cliente }}</option>
             @endif
+            @if(isset($clienteAtual))
+                <option value="{{ $clienteAtual->id_cliente_escala }}" selected>{{ $clienteAtual->nome_cliente }}</option>
+            @endif
+
             @foreach ($clientes as $cliente)
 
                     @if (isset($clienteAtual))
-                        @if ($cliente->id_cliente <> $clienteAtual->id_cliente_escala)
+                        @if ($cliente->id_cliente_escala <> $clienteAtual->id_cliente_escala)
                             <option value="{{ $cliente->id_cliente_escala }}">{{ $cliente->nome }}</option>
                         @endif
                     @else

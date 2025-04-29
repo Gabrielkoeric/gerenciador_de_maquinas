@@ -50,7 +50,19 @@ class SecaoCloudController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $usuario = $request->input('usuario');
+        $senha = $request->input('senha');
+        $cliente = $request->input('cliente');
+
+        $dados = [
+            'usuario' => $usuario,
+            'senha' => $senha,
+            'id_cliente_escala' => $cliente,
+        ];
+
+        DB::table('secao_cloud')->insertGetId($dados);
+
+        return redirect('/secao_cloud');
     }
 
     /**
@@ -72,7 +84,20 @@ class SecaoCloudController extends Controller
      */
     public function edit($id)
     {
-        //
+        
+        $clientes = DB::table('cliente_escala')
+            ->select('id_cliente_escala', 'nome')
+            ->get();
+
+            $clienteAtual = DB::table('secao_cloud')
+            ->join('cliente_escala', 'secao_cloud.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
+            ->where('id_secao_cloud', $id)
+            ->select('secao_cloud.*', 'cliente_escala.nome as nome_cliente')
+            ->first();
+        
+
+        return view('secao_cloud.edit')->with('clientes', $clientes)->with('clienteAtual', $clienteAtual);
+        
     }
 
     /**
@@ -84,7 +109,14 @@ class SecaoCloudController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::table('secao_cloud')
+            ->where('id_secao_cloud', $id)
+            ->update([
+                'usuario' => $request->usuario,
+                'senha' => $request->senha,
+                'id_cliente_escala' => $request->cliente,
+            ]);
+        return redirect('/secao_cloud');
     }
 
     /**

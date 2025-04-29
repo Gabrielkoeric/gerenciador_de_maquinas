@@ -1,11 +1,11 @@
-<x-layout title="Editar Usuario '{{$usuario->nome_completo}}'">
-    <x-usuario.forms :action="route('usuario.update', $usuario)"
-                        :nome="$usuario->nome_completo"
-                        :email="$usuario->email"
-                        :celular="$usuario->celular"
-                        :perfis="$perfis"
-                        :perfilAtual="$perfilAtual"
+<x-layout title="Editar Seção '{{$clienteAtual->usuario}}'">
+    <x-secao.forms :action="route('secao_cloud.update', $clienteAtual->id_secao_cloud)"
+                        :usuario="$clienteAtual->usuario"
+                        :senha="$clienteAtual->senha"
+                        :cliente="$clienteAtual->id_cliente_escala"
+                        :clientes="$clientes"
+                        :clienteAtual="$clienteAtual"
     >
-    </x-usuario.forms>
+    </x-secao.forms>
 </x-layout>
 
