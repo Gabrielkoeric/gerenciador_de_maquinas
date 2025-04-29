@@ -28,7 +28,7 @@
                         <td style="max-width: 250px; word-break: break-all;">{{ $log->url_completa }}</td>
                         <td>{{ $log->ip_address }}</td>
                         <td>{{ $log->created_at }}</td>
-                        <td>{{ $log->id }}</td>
+                        <td>{{ $log->nome_usuario }}</td>
                         <td>
                             @if(!empty($log->request_data) && $log->request_data !== '[]')
                                 <button class="btn btn-sm btn-info"

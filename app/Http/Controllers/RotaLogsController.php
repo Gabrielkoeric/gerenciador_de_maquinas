@@ -14,7 +14,13 @@ class RotaLogsController extends Controller
      */
     public function index()
     {
-        $logs = DB::table('rota_logs')->paginate(100);
+        $logs = DB::table('rota_logs')
+            ->join('usuarios', 'rota_logs.id', '=', 'usuarios.id')
+            ->select(
+                'rota_logs.*',
+                'usuarios.nome_completo as nome_usuario'
+            )
+            ->paginate(100);
 
         return view('rota_logs.index')->with('logs', $logs);
     }

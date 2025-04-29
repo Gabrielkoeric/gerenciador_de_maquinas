@@ -21,9 +21,11 @@ class VmController extends Controller
                 'vm.*', 
                 'usuario_vm.usuario', 
                 'usuario_vm.senha', 
-            'servidor_fisico.nome as servidor_nome'
-        )
+                'servidor_fisico.nome as servidor_nome'
+            )
+        ->orderBy('vm.nome')
         ->get();
+
 
         return view('vm.index')->with('vms', $vms);
     }

@@ -20,9 +20,11 @@ class ServerFisicoController extends Controller
         return view('servers.index')->with('servers', $servers);*/
 
         $servers = DB::table('servidor_fisico')
-        ->leftJoin('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
-        ->select('servidor_fisico.*', 'usuario_servidor_fisico.usuario', 'usuario_servidor_fisico.senha')
-        ->get();
+            ->leftJoin('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
+            ->select('servidor_fisico.*', 'usuario_servidor_fisico.usuario', 'usuario_servidor_fisico.senha')
+            ->orderBy('servidor_fisico.nome')
+            ->get();
+
 
         return view('servers.index')->with('servers', $servers);
     }
