@@ -15,16 +15,19 @@ class VmController extends Controller
     public function index(Request $request)
     {
         $vms = DB::table('vm')
-            ->leftJoin('usuario_vm', 'vm.id_vm', '=', 'usuario_vm.id_vm')
-            ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
-            ->select(
-                'vm.*', 
-                'usuario_vm.usuario', 
-                'usuario_vm.senha', 
-                'servidor_fisico.nome as servidor_nome'
-            )
-        ->orderBy('vm.nome')
-        ->get();
+    ->leftJoin('usuario_vm', 'vm.id_vm', '=', 'usuario_vm.id_vm')
+    ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
+    ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
+    ->select(
+        'vm.*', 
+        'usuario_vm.usuario', 
+        'usuario_vm.senha', 
+        'servidor_fisico.nome as servidor_nome',
+        'ip_lan.ip as ip_lan'
+    )
+    ->orderBy('vm.nome')
+    ->get();
+
 
 
         return view('vm.index')->with('vms', $vms);

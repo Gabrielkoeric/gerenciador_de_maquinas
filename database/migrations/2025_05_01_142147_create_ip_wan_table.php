@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -14,22 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('rede', function (Blueprint $table) {
-            $table->id('id_rede');
+        Schema::create('ip_wan', function (Blueprint $table) {
+            $table->id('id_ip_wan');
             $table->string('ip');
-            $table->string('mascara');
-            $table->string('descricao');
         });
-        $dadosPadraoRede = [
+        $dadosPadraoIp = [
             [
-                'id_rede' => 1,
+                'id_ip_wan' => 1,
                 'ip' => '0.0.0.0',
-                'mascara' => '255.255.255.254',
-                'descricao' => 'default',
             ],
-        ];    
-        DB::table('rede')->insert($dadosPadraoRede);
-
+        ];
+        DB::table('ip_wan')->insert($dadosPadraoIp);
     }
 
     /**
@@ -39,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rede');
+        Schema::dropIfExists('ip_wan');
     }
 };

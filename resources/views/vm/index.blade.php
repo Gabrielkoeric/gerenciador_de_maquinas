@@ -35,7 +35,7 @@
                         </td>
 
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio }}</a></td>
-                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->iplan }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->ip_lan }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->porta }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->servidor_nome }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->tipo }}</a></td>
@@ -44,7 +44,7 @@
                             @if ($vm->so === 'ssh')
                         <a href="{{ route('conecta.ssh', $vm->id_vm) }}" class="btn btn-primary btn-sm">SSH</a>
                         @elseif ($vm->so === 'rdp')
-                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $vm->iplan }}', '{{ $vm->porta }}', '{{ $vm->usuario }}', '{{ $vm->senha }}')">RDP</button>
+                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $vm->ip_lan }}', '{{ $vm->porta }}', '{{ $vm->usuario }}', '{{ $vm->senha }}')">RDP</button>
                         @endif
                         </td>
 
