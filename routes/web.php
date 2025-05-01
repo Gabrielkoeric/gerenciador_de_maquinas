@@ -55,6 +55,7 @@ use App\Http\Controllers\ExecutaComandoController;
 use App\Http\Controllers\AsyncTasksController;
 use App\Http\Controllers\ConfigGeralController;
 use App\Http\Controllers\SecaoCloudController;
+use App\Http\Controllers\RedeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -151,9 +152,11 @@ Route::resource('/asynctasks', AsyncTasksController::class)->middleware(Autentic
 //config geral
 Route::resource('/config_geral', ConfigGeralController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
-//config geral
+//seção cloud
 Route::resource('/secao_cloud', SecaoCloudController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
+//rede
+Route::resource('/redes', RedeController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 
 //api
