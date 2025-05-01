@@ -20,21 +20,18 @@ class ServerFisicoController extends Controller
         return view('servers.index')->with('servers', $servers);*/
 
         $servers = DB::table('servidor_fisico')
-    ->leftJoin('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
-    ->leftJoin('ip_lan', 'servidor_fisico.id_ip_lan', '=', 'ip_lan.id_ip_lan')
-    ->leftJoin('ip_wan', 'servidor_fisico.id_ip_wan', '=', 'ip_wan.id_ip_wan')
-    ->select(
-        'servidor_fisico.*',
-        'usuario_servidor_fisico.usuario',
-        'usuario_servidor_fisico.senha',
-        'ip_lan.ip as ip_lan',
-        'ip_wan.ip as ip_wan'
-    )
-    ->orderBy('servidor_fisico.nome')
-    ->get();
-
-
-
+            ->leftJoin('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
+            ->leftJoin('ip_lan', 'servidor_fisico.id_ip_lan', '=', 'ip_lan.id_ip_lan')
+            ->leftJoin('ip_wan', 'servidor_fisico.id_ip_wan', '=', 'ip_wan.id_ip_wan')
+            ->select(
+                'servidor_fisico.*',
+                'usuario_servidor_fisico.usuario',
+                'usuario_servidor_fisico.senha',
+                'ip_lan.ip as ip_lan',
+                'ip_wan.ip as ip_wan'
+            )
+            ->orderBy('servidor_fisico.nome')
+            ->get();
         return view('servers.index')->with('servers', $servers);
     }
 
@@ -44,8 +41,25 @@ class ServerFisicoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        return view('servers.create');
+{
+    // Buscar o ID do IP '0.0.0.0'
+    $ipZero = DB::table('ip_lan')->where('ip', '0.0.0.0')->first();
+
+    $ipslan = DB::table('ip_lan')
+        ->where(function ($query) use ($ipZero) {
+            $query->where('ip_lan.ip', '0.0.0.0') // sempre permitir esse IP
+                ->orWhereNotIn('id_ip_lan', function ($sub) {
+                    $sub->select('id_ip_lan')->from('servidor_fisico')->whereNotNull('id_ip_lan');
+                })
+                ->whereNotIn('id_ip_lan', function ($sub) {
+                    $sub->select('id_ip_lan')->from('vm')->whereNotNull('id_ip_lan');
+                });
+        })
+        ->get();
+
+    $ipswan = DB::table('ip_wan')->get();
+
+        return view('servers.create')->with('ipswan', $ipswan)->with('ipslan', $ipslan);
     }
 
     /**
@@ -67,8 +81,8 @@ class ServerFisicoController extends Controller
 
         $dados = [
             'nome' => $nome,
-            'ipwan' => $ipwan,
-            'iplan' => $iplan,
+            'id_ip_wan' => $ipwan,
+            'id_ip_lan' => $iplan,
             'porta' => $porta,
             'dominio' => $dominio,
             'tipo' => $tipo,
@@ -105,14 +119,52 @@ class ServerFisicoController extends Controller
      */
     public function edit($id)
     {
-        $dados = DB::table('servidor_fisico')
-        ->join('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
-        ->where('servidor_fisico.id_servidor_fisico', $id)
-        ->select('servidor_fisico.*', 'usuario_servidor_fisico.usuario', 'usuario_servidor_fisico.senha')
-        ->first();
+         // Dados principais do servidor
+    $dados = DB::table('servidor_fisico')
+    ->leftJoin('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
+    ->leftJoin('ip_lan', 'servidor_fisico.id_ip_lan', '=', 'ip_lan.id_ip_lan')
+    ->leftJoin('ip_wan', 'servidor_fisico.id_ip_wan', '=', 'ip_wan.id_ip_wan')
+    ->where('servidor_fisico.id_servidor_fisico', $id)
+    ->select(
+        'servidor_fisico.*',
+        'usuario_servidor_fisico.usuario',
+        'usuario_servidor_fisico.senha',
+        'ip_lan.ip as ip_lan_valor',
+        'ip_wan.ip as ip_wan_valor'
+    )
+    ->first();
+
+// IP LAN atual (pode ser null)
+$iplanAtual = null;
+if ($dados->id_ip_lan) {
+    $iplanAtual = DB::table('ip_lan')->where('id_ip_lan', $dados->id_ip_lan)->first();
+}
+
+// IP WAN atual (pode ser null)
+$ipwanAtual = null;
+if ($dados->id_ip_wan) {
+    $ipwanAtual = DB::table('ip_wan')->where('id_ip_wan', $dados->id_ip_wan)->first();
+}
+
+        $ipZero = DB::table('ip_lan')->where('ip', '0.0.0.0')->first();
+
+        $ipslan = DB::table('ip_lan')
+        ->where(function ($query) use ($ipZero) {
+            $query->where('ip_lan.ip', '0.0.0.0') // sempre permitir esse IP
+                ->orWhereNotIn('id_ip_lan', function ($sub) {
+                    $sub->select('id_ip_lan')->from('servidor_fisico')->whereNotNull('id_ip_lan');
+                })
+                ->whereNotIn('id_ip_lan', function ($sub) {
+                    $sub->select('id_ip_lan')->from('vm')->whereNotNull('id_ip_lan');
+                });
+        })
+        ->get();
+
+    $ipswan = DB::table('ip_wan')->get();
 
         //dd($dados);
-        return view('servers.edit')->with('dados', $dados);
+       // return view('servers.edit')->with('dados', $dados)->with('ipswan', $ipswan)->with('ipslan', $ipslan);
+       return view('servers.edit', compact('dados', 'ipswan', 'ipslan', 'iplanAtual', 'ipwanAtual'));
     }
 
     /**
@@ -129,8 +181,8 @@ class ServerFisicoController extends Controller
     ->where('id_servidor_fisico', $id)
     ->update([
         'nome' => $request->nome,
-        'ipwan' => $request->ipwan,
-        'iplan' => $request->iplan,
+        'id_ip_wan' => $request->ipwan,
+        'id_ip_lan' => $request->iplan,
         'porta' => $request->porta,
         'dominio' => $request->dominio,
         'tipo' => $request->tipo,
