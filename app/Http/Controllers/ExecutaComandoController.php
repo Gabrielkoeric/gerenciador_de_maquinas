@@ -14,10 +14,15 @@ class ExecutaComandoController extends Controller
     public function executarComando(Request $request)
     {
         $servidores = DB::table('servidor_fisico as s')
-                    ->join('usuario_servidor_fisico as u', 's.id_servidor_fisico', '=', 'u.id_servidor_fisico')
-                    ->where('s.tipo', 'rdp')
-                    ->select('s.*', 'u.usuario', 'u.senha')
-                    ->get();
+    ->join('usuario_servidor_fisico as u', function ($join) {
+        $join->on('s.id_servidor_fisico', '=', 'u.id_servidor_fisico')
+             ->where('u.principal', 1);
+    })
+    ->leftJoin('ip_lan as i', 's.id_ip_lan', '=', 'i.id_ip_lan')
+    ->where('s.tipo', 'rdp')
+    ->select('s.*', 'u.usuario', 'u.senha', 'i.ip as iplan')
+    ->get();
+
 
         foreach ($servidores as $server) {
             // Define os parâmetros que quer armazenar (em JSON)
@@ -53,17 +58,21 @@ class ExecutaComandoController extends Controller
         foreach ($servicos as $id_servico_vm) {
             $dados = DB::table('servico_vm')
                 ->join('vm', 'servico_vm.id_vm', '=', 'vm.id_vm')
-                ->join('usuario_vm', 'usuario_vm.id_vm', '=', 'vm.id_vm')
-                ->where('servico_vm.id_servico_vm', $id_servico_vm) // Filtrando pelo id_servico_vm específico
-                ->select(
-                    'vm.iplan', 
-                    'vm.dominio', 
-                    'vm.so', 
-                    'usuario_vm.usuario', 
-                    'usuario_vm.senha', 
-                    'servico_vm.nome'
-                )
-                ->first(); // Como você deseja uma linha de informação, usamos `first()` para pegar apenas o primeiro resultado   
+                ->join('usuario_vm', function ($join) {
+                    $join->on('usuario_vm.id_vm', '=', 'vm.id_vm')
+                ->where('usuario_vm.principal', 1); // apenas usuário principal
+            })
+            ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan') // relacionamento com IP
+            ->where('servico_vm.id_servico_vm', $id_servico_vm)
+            ->select(
+                'ip_lan.ip as iplan',
+                'vm.dominio', 
+                'vm.so', 
+                'usuario_vm.usuario', 
+                'usuario_vm.senha', 
+                'servico_vm.nome'
+            )
+            ->first(); // Como você deseja uma linha de informação, usamos `first()` para pegar apenas o primeiro resultado   
             if ($dados->so === 'rdp') {
                 $parametros = [
                     'iplan' => $dados->iplan,
