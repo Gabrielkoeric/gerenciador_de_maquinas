@@ -57,7 +57,7 @@ use App\Http\Controllers\ConfigGeralController;
 use App\Http\Controllers\SecaoCloudController;
 use App\Http\Controllers\RedeController;
 use App\Http\Controllers\IpLanController;
-
+use App\Http\Controllers\DocumentacaoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -160,6 +160,9 @@ Route::resource('/secao_cloud', SecaoCloudController::class)->middleware(Autenti
 Route::resource('/redes', RedeController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //iplan
 Route::resource('/ip_lan', IpLanController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//iplan
+Route::resource('/documentacao', DocumentacaoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 
 //api
