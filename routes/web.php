@@ -56,6 +56,7 @@ use App\Http\Controllers\AsyncTasksController;
 use App\Http\Controllers\ConfigGeralController;
 use App\Http\Controllers\SecaoCloudController;
 use App\Http\Controllers\RedeController;
+use App\Http\Controllers\IpLanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -157,6 +158,8 @@ Route::resource('/secao_cloud', SecaoCloudController::class)->middleware(Autenti
 
 //rede
 Route::resource('/redes', RedeController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+//iplan
+Route::resource('/ip_lan', IpLanController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 
 //api

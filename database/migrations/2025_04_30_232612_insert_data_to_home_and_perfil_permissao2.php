@@ -24,7 +24,7 @@ return new class extends Migration
                 'updated_at' => now(),
             ],
             [
-                'nome' => 'IP',
+                'nome' => 'IP Lan',
                 'nome_tela' => 'ip_lan',
                 'imagem_tela' => 'storage/home/servidor.png',
                 'permite_home' => 1,
