@@ -13,25 +13,26 @@ class VmController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-        $vms = DB::table('vm')
-    ->leftJoin('usuario_vm', 'vm.id_vm', '=', 'usuario_vm.id_vm')
-    ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
-    ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
-    ->select(
-        'vm.*', 
-        'usuario_vm.usuario', 
-        'usuario_vm.senha', 
-        'servidor_fisico.nome as servidor_nome',
-        'ip_lan.ip as ip_lan'
-    )
-    ->orderBy('vm.nome')
-    ->get();
+{
+    $vms = DB::table('vm')
+        ->leftJoin('usuario_vm', function ($join) {
+            $join->on('vm.id_vm', '=', 'usuario_vm.id_vm')
+                 ->where('usuario_vm.principal', 1); // Pega só o usuário principal
+        })
+        ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
+        ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
+        ->select(
+            'vm.*', 
+            'usuario_vm.usuario', 
+            'usuario_vm.senha', 
+            'servidor_fisico.nome as servidor_nome',
+            'ip_lan.ip as ip_lan'
+        )
+        ->orderBy('vm.nome')
+        ->get();
 
-
-
-        return view('vm.index')->with('vms', $vms);
-    }
+    return view('vm.index')->with('vms', $vms);
+}
 
     /**
      * Show the form for creating a new resource.
@@ -45,7 +46,22 @@ class VmController extends Controller
         ->select('id_servidor_fisico', 'nome')
         ->get();
 
-        return view('vm.create')->with('servidores', $servidores);
+        $ipZero = DB::table('ip_lan')->where('ip', '0.0.0.0')->first();
+
+    $ipslan = DB::table('ip_lan')
+        ->where(function ($query) use ($ipZero) {
+            $query->where('ip_lan.ip', '0.0.0.0') // sempre permitir esse IP
+                ->orWhereNotIn('id_ip_lan', function ($sub) {
+                    $sub->select('id_ip_lan')->from('servidor_fisico')->whereNotNull('id_ip_lan');
+                })
+                ->whereNotIn('id_ip_lan', function ($sub) {
+                    $sub->select('id_ip_lan')->from('vm')->whereNotNull('id_ip_lan');
+                });
+        })
+        ->get();
+
+
+        return view('vm.create')->with('servidores', $servidores)->with('ipslan', $ipslan);
     }
 
     /**
@@ -69,7 +85,7 @@ class VmController extends Controller
 
         $dados = [
             'nome' => $nome,
-            'iplan' => $iplan,
+            'id_ip_lan' => $iplan,
             'porta' => $porta,
             'dominio' => $dominio,
             'tipo' => $tipo,
@@ -124,9 +140,32 @@ class VmController extends Controller
         ->select('servidor_fisico.id_servidor_fisico', 'servidor_fisico.nome')
         ->first();
 
+        $iplanAtual = null;
+            if ($dados->id_ip_lan) {
+            $iplanAtual = DB::table('ip_lan')->where('id_ip_lan', $dados->id_ip_lan)->first();
+            }
+
+        $ipZero = DB::table('ip_lan')->where('ip', '0.0.0.0')->first();
+
+        $ipslan = DB::table('ip_lan')
+        ->where(function ($query) use ($ipZero) {
+            $query->where('ip_lan.ip', '0.0.0.0') // sempre permitir esse IP
+                ->orWhereNotIn('id_ip_lan', function ($sub) {
+                    $sub->select('id_ip_lan')->from('servidor_fisico')->whereNotNull('id_ip_lan');
+                })
+                ->whereNotIn('id_ip_lan', function ($sub) {
+                    $sub->select('id_ip_lan')->from('vm')->whereNotNull('id_ip_lan');
+                });
+        })
+        ->get();
 
         //dd($servidorAtual);
-        return view('vm.edit')->with('dados', $dados)->with('servidores', $servidores)->with('servidorAtual', $servidorAtual);
+        return view('vm.edit')
+    ->with('dados', $dados)
+    ->with('servidores', $servidores)
+    ->with('servidorAtual', $servidorAtual)
+    ->with('iplanAtual', $iplanAtual)
+    ->with('ipslan', $ipslan);
     }
 
     /**
@@ -145,7 +184,7 @@ class VmController extends Controller
     ->where('id_vm', $id)
     ->update([
         'nome' => $request->nome,
-        'iplan' => $request->iplan,
+        'id_ip_lan' => $request->iplan,
         'porta' => $request->porta,
         'dominio' => $request->dominio,
         'tipo' => $request->tipo,

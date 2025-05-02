@@ -2,7 +2,8 @@
 
     <x-vm.forms :action="route('vm.update', $dados->id_vm)"
                         :nome="$dados->nome"
-                        :iplan="$dados->iplan"
+                        :ipslan="$ipslan"
+                        :iplanAtual="$iplanAtual"
                         :porta="$dados->porta"
                         :dominio="$dados->dominio"
                         :tipo="$dados->tipo"

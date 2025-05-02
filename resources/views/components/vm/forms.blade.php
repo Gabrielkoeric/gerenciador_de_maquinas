@@ -8,8 +8,25 @@
         <label for="nome" class="form-label">Nome:</label>
         <input type="text" id="nome" name="nome" class="form-control" @isset($nome) value="{{$nome}}" @endisset required>
 
-        <label for="iplan" class="form-label">IP LAN:</label>
-        <input type="text" id="iplan" name="iplan" class="form-control" @isset($iplan) value="{{$iplan}}" @endisset required>
+        <label for="iplan" class=form-label>IP Lan</label>
+        <select id="iplan" name="iplan" class="form-control" required>
+            @if(!isset($iplanAtual))
+            <option value="">Selecione o IP Lan</option>
+            @endif
+            @if(isset($iplanAtual))
+                <option value="{{ $iplanAtual->id_ip_lan }}">{{ $iplanAtual->ip }}</option>
+            @endif
+            @foreach ($ipslan as $iplan)
+
+                    @if (isset($iplanAtual))
+                        @if ($iplan->id_ip_lan <> $iplanAtual->id_ip_lan)
+                            <option value="{{ $iplan->id_ip_lan }}">{{ $iplan->ip }}</option>
+                        @endif
+                    @else
+                        <option value="{{ $iplan->id_ip_lan }}">{{ $iplan->ip }}</option>
+                    @endif
+            @endforeach
+        </select >
 
         <label for="porta" class="form-label">Porta:</label>
         <input type="text" id="porta" name="porta" class="form-control" @isset($porta) value="{{$porta}}" @endisset required>
@@ -31,7 +48,7 @@
 
         <label for="so" class="form-label">Sistema Operacional:</label>
         <select id="so" name="so" class="form-control" required>
-            <option value="">Selecione o so</option>
+            <option value="">Selecione Sistema Operacional</option>
             <option value="ssh" @isset($so) @if($so == 'ssh') selected @endif @endisset>SSH</option>
             <option value="rdp" @isset($so) @if($so == 'rdp') selected @endif @endisset>RDP</option>
         </select>
