@@ -12,19 +12,44 @@ class IpLanController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        $ips = \DB::table('ip_lan')
-        ->leftJoin('vm', 'ip_lan.id_ip_lan', '=', 'vm.id_ip_lan')
-        ->leftJoin('servidor_fisico', 'ip_lan.id_ip_lan', '=', 'servidor_fisico.id_ip_lan')
+{
+    $vms = \DB::table('ip_lan')
+        ->join('vm', 'ip_lan.id_ip_lan', '=', 'vm.id_ip_lan')
         ->select(
             'ip_lan.id_ip_lan',
             'ip_lan.ip',
-            \DB::raw("COALESCE(vm.nome, servidor_fisico.nome) as nomeServidor")
-        )
+            'vm.nome as nomeServidor'
+        );
+
+    $servidores = \DB::table('ip_lan')
+        ->join('servidor_fisico', 'ip_lan.id_ip_lan', '=', 'servidor_fisico.id_ip_lan')
+        ->select(
+            'ip_lan.id_ip_lan',
+            'ip_lan.ip',
+            'servidor_fisico.nome as nomeServidor'
+        );
+
+    $semVinculo = \DB::table('ip_lan')
+        ->leftJoin('vm', 'ip_lan.id_ip_lan', '=', 'vm.id_ip_lan')
+        ->leftJoin('servidor_fisico', 'ip_lan.id_ip_lan', '=', 'servidor_fisico.id_ip_lan')
+        ->whereNull('vm.id_ip_lan')
+        ->whereNull('servidor_fisico.id_ip_lan')
+        ->select(
+            'ip_lan.id_ip_lan',
+            'ip_lan.ip',
+            \DB::raw("NULL as nomeServidor")
+        );
+
+    $union = $vms->unionAll($servidores)->unionAll($semVinculo);
+
+    $ips = \DB::table(\DB::raw("({$union->toSql()}) as sub"))
+        ->mergeBindings($union)
+        ->orderBy('id_ip_lan', 'asc')
         ->get();
 
     return view('iplan.index', compact('ips'));
-    }
+}
+
 
     /**
      * Show the form for creating a new resource.
