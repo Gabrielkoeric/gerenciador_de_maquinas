@@ -7,10 +7,10 @@
         @csrf
         <input type="hidden" name="acao" id="acaoInput">
         
-        <button type="button" class="btn btn-dark my-3" data-action onclick="submeterFormulario('status')">Status</button>
-        <button type="button" class="btn btn-dark my-3" data-action onclick="submeterFormulario('stop')">Parar</button>
-        <button type="button" class="btn btn-dark my-3" data-action onclick="submeterFormulario('start')">Iniciar</button>
-        <button type="button" class="btn btn-dark my-3" data-action onclick="submeterFormulario('restart')">Restart</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('status')">Status</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('stop')">Parar</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('start')">Iniciar</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('restart')">Restart</button>
 
         <table class="table table-striped">
             <thead>
@@ -63,27 +63,35 @@
             document.getElementById('acaoInput').value = acao;
             form.submit();
         }
+
+        // Função de confirmação
+        function confirmAction(acao) {
+            const confirmacao = confirm(`Você está prestes a executar um ${acao} em um host físico. Deseja continuar?`);
+            if (confirmacao) {
+                submeterFormulario(acao);
+            }
+        }
     </script>
 
-<script>
-    const checkboxes = document.querySelectorAll('.selectItem');
-    const actionButtons = document.querySelectorAll('button[data-action]');
+    <script>
+        const checkboxes = document.querySelectorAll('.selectItem');
+        const actionButtons = document.querySelectorAll('button[data-action]');
 
-    function toggleButtons() {
-        const isAnyChecked = [...checkboxes].some(cb => cb.checked);
-        actionButtons.forEach(btn => btn.disabled = !isAnyChecked);
-    }
+        function toggleButtons() {
+            const isAnyChecked = [...checkboxes].some(cb => cb.checked);
+            actionButtons.forEach(btn => btn.disabled = !isAnyChecked);
+        }
 
-    // Escuta alteração em cada checkbox
-    checkboxes.forEach(cb => cb.addEventListener('change', toggleButtons));
-    // Escuta também o selectAll
-    document.getElementById('selectAll').addEventListener('change', function () {
-        checkboxes.forEach(cb => cb.checked = this.checked);
-        toggleButtons();
-    });
+        // Escuta alteração em cada checkbox
+        checkboxes.forEach(cb => cb.addEventListener('change', toggleButtons));
+        // Escuta também o selectAll
+        document.getElementById('selectAll').addEventListener('change', function () {
+            checkboxes.forEach(cb => cb.checked = this.checked);
+            toggleButtons();
+        });
 
-    // Desabilita ao carregar
-    window.onload = toggleButtons;
-</script>
+        // Desabilita ao carregar
+        window.onload = toggleButtons;
+    </script>
 
 </x-layout>
