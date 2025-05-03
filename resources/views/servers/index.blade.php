@@ -7,10 +7,10 @@
         @csrf
         <input type="hidden" name="acao" id="acaoInput">
         
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('status')">Status</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('stop')">Parar</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('start')">Iniciar</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('restart')">Restart</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="submeterFormulario('status')">Status</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="submeterFormulario('stop')">Parar</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="submeterFormulario('start')">Iniciar</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="submeterFormulario('restart')">Restart</button>
 
         <table class="table table-striped">
             <thead>
@@ -43,7 +43,7 @@
                             @if ($server->tipo === 'ssh')
                         <a href="{{ route('conecta.ssh', $server->id_servidor_fisico) }}" class="btn btn-primary btn-sm">SSH</a>
                         @elseif ($server->tipo === 'rdp')
-                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $server->ip_wan }}', '{{ $server->porta }}', '{{ $server->usuario }}', '{{ $server->senha }}')">RDP</button>
+                            <button type="button" class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $server->ip_wan }}', '{{ $server->porta }}', '{{ $server->usuario }}', '{{ $server->senha }}')">RDP</button>
                         @endif
                         </td>
                     </tr>
@@ -64,4 +64,26 @@
             form.submit();
         }
     </script>
+
+<script>
+    const checkboxes = document.querySelectorAll('.selectItem');
+    const actionButtons = document.querySelectorAll('button[data-action]');
+
+    function toggleButtons() {
+        const isAnyChecked = [...checkboxes].some(cb => cb.checked);
+        actionButtons.forEach(btn => btn.disabled = !isAnyChecked);
+    }
+
+    // Escuta alteração em cada checkbox
+    checkboxes.forEach(cb => cb.addEventListener('change', toggleButtons));
+    // Escuta também o selectAll
+    document.getElementById('selectAll').addEventListener('change', function () {
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        toggleButtons();
+    });
+
+    // Desabilita ao carregar
+    window.onload = toggleButtons;
+</script>
+
 </x-layout>

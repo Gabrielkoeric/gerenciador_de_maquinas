@@ -7,10 +7,10 @@
         @csrf
         <input type="hidden" name="acao" id="acaoInput">
         
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('status')">Status</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('stop')">Parar</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('start')">Iniciar</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('restart')">Restart</button>
+        <button type="button" class="btn btn-dark my-3 acaoBtn" onclick="submeterFormulario('status')" disabled>Status</button>
+        <button type="button" class="btn btn-dark my-3 acaoBtn" onclick="submeterFormulario('stop')" disabled>Parar</button>
+        <button type="button" class="btn btn-dark my-3 acaoBtn" onclick="submeterFormulario('start')" disabled>Iniciar</button>
+        <button type="button" class="btn btn-dark my-3 acaoBtn" onclick="submeterFormulario('restart')" disabled>Restart</button>
 
         <table class="table table-striped">
             <thead>
@@ -39,8 +39,8 @@
                         
                         <!-- Alteração no campo Senha -->
                         <td>
-                            <button class="btn btn-warning btn-sm" onclick="copyToClipboard('{{ $vm->senha }}')">Senha</button>
-                        </td>
+                        <button type="button" class="btn btn-warning btn-sm" onclick="copyToClipboard(this)" data-senha="{{ $vm->senha }}">Senha</button>
+</td>
 
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->id_dominio }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->ip_lan }}</a></td>
@@ -49,11 +49,12 @@
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->tipo }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->autostart }}</a></td>
                         <td>
-                            @if ($vm->so === 'ssh')
-                        <a href="{{ route('conecta.ssh', $vm->id_vm) }}" class="btn btn-primary btn-sm">SSH</a>
-                        @elseif ($vm->so === 'rdp')
-                        <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $vm->ip_lan }}', '{{ $vm->porta }}', '{{ $vm->usuario }}', '{{ $vm->senha }}')">RDP</button>
-                        @endif
+                        @if ($vm->so === 'ssh')
+    <a href="{{ route('conecta.ssh', $vm->id_vm) }}" class="btn btn-primary btn-sm" onclick="event.stopPropagation();">SSH</a>
+@elseif ($vm->so === 'rdp')
+    <button type="button" class="btn btn-success btn-sm" onclick="event.stopPropagation(); copyRDPCommand('{{ $vm->ip_lan }}', '{{ $vm->porta }}', '{{ $vm->usuario }}', '{{ $vm->senha }}')">RDP</button>
+@endif
+
                         </td>
                     </tr>
             @endforeach
@@ -75,30 +76,34 @@
     </script>
 
 <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var clipboard = new ClipboardJS('.btn-outline-secondary');
-
-            clipboard.on('success', function (e) {
-                alert('Copiado para a área de transferência!');
-                e.clearSelection();
-            });
-
-            clipboard.on('error', function (e) {
-                alert('Erro ao copiar para a área de transferência. Tente manualmente.');
-            });
-        });
-    </script>
-
-    <script>
-        function copyToClipboard(value) {
-            var tempInput = document.createElement('input');
-            tempInput.value = value;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
+    function copyToClipboard(element) {
+        const value = element.getAttribute('data-senha');
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(value)
+                .then(() => alert('Senha copiada para a área de transferência!'))
+                .catch(() => fallbackCopy(value));
+        } else {
+            fallbackCopy(value);
         }
-    </script>
+    }
+
+    function fallbackCopy(value) {
+        const tempInput = document.createElement('textarea');
+        tempInput.value = value;
+        document.body.appendChild(tempInput);
+        tempInput.focus();
+        tempInput.select();
+        try {
+            document.execCommand('copy');
+            alert('Senha copiada para a área de transferência!');
+        } catch (err) {
+            alert('Erro ao copiar a senha.');
+        }
+        document.body.removeChild(tempInput);
+    }
+</script>
+
+
 
 <script>
     function copyRDPCommand(ip, port, user, password) {
@@ -112,5 +117,25 @@
         alert("Comando copiado! Abra o PowerShell (Win + R, digite 'powershell') e cole o comando para conectar.");
     }
 </script>
+
+<script>
+    // Atualiza os botões quando checkboxes são marcados
+    function updateActionButtons() {
+        const anyChecked = document.querySelectorAll('.selectItem:checked').length > 0;
+        document.querySelectorAll('.acaoBtn').forEach(btn => btn.disabled = !anyChecked);
+    }
+
+    document.getElementById('selectAll').addEventListener('change', function () {
+        document.querySelectorAll('.selectItem').forEach(cb => {
+            cb.checked = this.checked;
+        });
+        updateActionButtons();
+    });
+
+    document.querySelectorAll('.selectItem').forEach(cb => {
+        cb.addEventListener('change', updateActionButtons);
+    });
+</script>
+
 
 </x-layout>
