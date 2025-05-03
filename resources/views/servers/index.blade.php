@@ -34,7 +34,7 @@
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico ) }}" class="text-decoration-none text-dark">{{ $server->nome }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->usuario }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->senha }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->dominio }}</a></td>
+                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->id_dominio }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->ip_lan }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->ip_wan }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->porta }}</a></td>

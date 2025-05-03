@@ -84,7 +84,7 @@ class ServerFisicoController extends Controller
             'id_ip_wan' => $ipwan,
             'id_ip_lan' => $iplan,
             'porta' => $porta,
-            'dominio' => $dominio,
+            'id_dominio' => $dominio,
             'tipo' => $tipo,
         ];
         $id = DB::table('servidor_fisico')->insertGetId($dados);
@@ -184,7 +184,7 @@ if ($dados->id_ip_wan) {
         'id_ip_wan' => $request->ipwan,
         'id_ip_lan' => $request->iplan,
         'porta' => $request->porta,
-        'dominio' => $request->dominio,
+        'id_dominio' => $request->dominio,
         'tipo' => $request->tipo,
         'updated_at' => now(),
     ]);

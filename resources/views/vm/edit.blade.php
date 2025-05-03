@@ -5,7 +5,7 @@
                         :ipslan="$ipslan"
                         :iplanAtual="$iplanAtual"
                         :porta="$dados->porta"
-                        :dominio="$dados->dominio"
+                        :dominio="$dados->id_dominio"
                         :tipo="$dados->tipo"
                         :so="$dados->so"
                         :autostart="$dados->autostart"

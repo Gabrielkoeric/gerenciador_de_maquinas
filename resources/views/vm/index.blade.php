@@ -34,7 +34,7 @@
                             <button class="btn btn-warning btn-sm" onclick="copyToClipboard('{{ $vm->senha }}')">Senha</button>
                         </td>
 
-                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio }}</a></td>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->id_dominio }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->ip_lan }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->porta }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->servidor_nome }}</a></td>

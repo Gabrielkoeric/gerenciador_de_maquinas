@@ -7,7 +7,7 @@
         :iplanAtual="$iplanAtual"
         :ipwanAtual="$ipwanAtual"
         :porta="$dados->porta"
-        :dominio="$dados->dominio"
+        :dominio="$dados->id_dominio"
         :tipo="$dados->tipo"
         :usuario="$dados->usuario"
         :senha="$dados->senha"
