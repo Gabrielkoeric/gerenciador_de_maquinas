@@ -58,6 +58,7 @@ use App\Http\Controllers\SecaoCloudController;
 use App\Http\Controllers\RedeController;
 use App\Http\Controllers\IpLanController;
 use App\Http\Controllers\DocumentacaoController;
+use App\Http\Controllers\DominioController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -164,6 +165,8 @@ Route::resource('/ip_lan', IpLanController::class)->middleware(Autenticador::cla
 //iplan
 Route::resource('/documentacao', DocumentacaoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
+//iplan
+Route::resource('/dominios', DominioController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
