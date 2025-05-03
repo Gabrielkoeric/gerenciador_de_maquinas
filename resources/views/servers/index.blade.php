@@ -1,37 +1,38 @@
 <x-layout title="Servers Fisicos">
-<div class="d-flex align-items-start my-3">
-    <a href="{{ route('home.index') }}" class="btn btn-dark me-1">Home</a>
-    <a href="{{ route('server.create') }}" class="btn btn-dark me-1">Adicionar</a>
-    <form action="{{ route('server.executarComando') }}" method="POST" class="mb-0 me-1">
+    <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
+    <a href="{{route('server.create')}}" class="btn btn-dark my-3">Adicionar</a>
+    <a href="{{route('logs_execucoes.index')}}" class="btn btn-dark my-3">Logs Execuçoes</a>
+
+    <form id="serverForm" action="{{ route('server.executar') }}" method="POST">
         @csrf
-        <button type="submit" class="btn btn-dark">Buscar VM</button>
-    </form>
-</div>
+        <input type="hidden" name="acao" id="acaoInput">
+        
+        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('status')">Status</button>
+        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('stop')">Parar</button>
+        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('start')">Iniciar</button>
+        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('restart')">Restart</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
-
-    @isset($mensagemSucesso)
-        <div class="alert alert-success">{{ $mensagemSucesso }}</div>
-    @endisset
-    <ul class="list-group">
-
-            <table class="table table-striped">
-                <thead>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAll"></th>
+                <th scope="col">Nome</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">Senha</th>
+                <th scope="col">Dominio</th>
+                <th scope="col">IP Lan</th>
+                <th scope="col">IP Wan</th>
+                <th scope="col">Porta</th>
+                <th scope="col">Acesso</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach ($servers as $server)
                 <tr>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Usuario</th>
-                    <th scope="col">Senha</th>
-                    <th scope="col">Dominio</th>
-                    <th scope="col">IP Lan</th>
-                    <th scope="col">IP Wan</th>
-                    <th scope="col">Porta</th>
-                    <th scope="col">Acesso</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($servers as $server)
-                    <tr>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico ) }}" class="text-decoration-none text-dark">{{ $server->nome }}</a></td>
+                    <td>
+                        <input type="checkbox" name="server[]" class="selectItem" value="{{ $server->id_servidor_fisico }}">
+                    </td>
+                    <td><a href="{{ route('server.edit', $server->id_servidor_fisico ) }}" class="text-decoration-none text-dark">{{ $server->nome }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->usuario }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->senha }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->id_dominio }}</a></td>
@@ -45,60 +46,22 @@
                         <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $server->ip_wan }}', '{{ $server->porta }}', '{{ $server->usuario }}', '{{ $server->senha }}')">RDP</button>
                         @endif
                         </td>
-
-                        <td>
-                        <span class="d-flex">
-                            <!--<form action="{{route('usuario.destroy', $server->id_servidor_fisico)}}" method="post" class="ms-2">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger btn-sm">Excluir</button>
-                            </form>-->
-                        </span>
-                        </td>
                     </tr>
-                @endforeach
+            @endforeach
+            </tbody>
+        </table>
+    </form>
 
-                </tbody>
-            </table>
-
-    </ul>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var clipboard = new ClipboardJS('.btn-outline-secondary');
-
-            clipboard.on('success', function (e) {
-                alert('Copiado para a área de transferência!');
-                e.clearSelection();
-            });
-
-            clipboard.on('error', function (e) {
-                alert('Erro ao copiar para a área de transferência. Tente manualmente.');
-            });
+        document.getElementById('selectAll').addEventListener('change', function () {
+            let checkboxes = document.querySelectorAll('.selectItem');
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
         });
-    </script>
 
-    <script>
-        function copyToClipboard(value) {
-            var tempInput = document.createElement('input');
-            tempInput.value = value;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
+        function submeterFormulario(acao) {
+            let form = document.getElementById('serverForm');
+            document.getElementById('acaoInput').value = acao;
+            form.submit();
         }
     </script>
-
-<script>
-    function copyRDPCommand(ip, port, user, password) {
-        var command = `cmdkey /generic:TERMSRV/${ip} /user:${user} /pass:${password}; Start-Process mstsc -ArgumentList "/v:${ip}:${port}"`;
-        var tempInput = document.createElement('textarea');
-        tempInput.value = command;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand('copy');
-        document.body.removeChild(tempInput);
-        alert("Comando copiado! Abra o PowerShell (Win + R, digite 'powershell') e cole o comando para conectar.");
-    }
-</script>
-
 </x-layout>

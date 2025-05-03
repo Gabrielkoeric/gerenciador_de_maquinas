@@ -99,4 +99,14 @@ class ExecutaComandoController extends Controller
         }
         return redirect('/vm_servico');
     }
+
+    public function manipulaHostFisico (Request $request)
+    {
+        dd($request);
+    }
+
+    public function manipulaVm (Request $request)
+    {
+        dd($request);
+    }
 }

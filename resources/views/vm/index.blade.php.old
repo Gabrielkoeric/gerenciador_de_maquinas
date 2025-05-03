@@ -1,22 +1,17 @@
 <x-layout title="VM">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('vm.create')}}" class="btn btn-dark my-3">Adicionar</a>
-    <a href="{{route('logs_execucoes.index')}}" class="btn btn-dark my-3">Logs Execuçoes</a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 
-    <form id="vmForm" action="{{ route('vm.executar') }}" method="POST">
-        @csrf
-        <input type="hidden" name="acao" id="acaoInput">
-        
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('status')">Status</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('stop')">Parar</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('start')">Iniciar</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('restart')">Restart</button>
+    @isset($mensagemSucesso)
+        <div class="alert alert-success">{{ $mensagemSucesso }}</div>
+    @endisset
+    <ul class="list-group">
 
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th><input type="checkbox" id="selectAll"></th>
-                <th scope="col">Nome</th>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Nome</th>
                     <th scope="col">Usuario</th>
                     <th scope="col">Senha</th>
                     <th scope="col">Dominio</th>
@@ -26,15 +21,12 @@
                     <th scope="col">Tipo</th>
                     <th scope="col">AutoStart</th>
                     <th scope="col">Acesso</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach ($vms as $vm)
-                <tr>
-                    <td>
-                        <input type="checkbox" name="vm[]" class="selectItem" value="{{ $vm->id_vm }}">
-                    </td>
-                    <td><a href="{{ route('vm.edit', $vm->id_vm ) }}" class="text-decoration-none text-dark">{{ $vm->nome }}</a></td>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach ($vms as $vm)
+                    <tr>
+                        <td><a href="{{ route('vm.edit', $vm->id_vm ) }}" class="text-decoration-none text-dark">{{ $vm->nome }}</a></td>
                         <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->usuario }}</a></td>
                         
                         <!-- Alteração no campo Senha -->
@@ -55,26 +47,24 @@
                         <button class="btn btn-success btn-sm" onclick="copyRDPCommand('{{ $vm->ip_lan }}', '{{ $vm->porta }}', '{{ $vm->usuario }}', '{{ $vm->senha }}')">RDP</button>
                         @endif
                         </td>
+
+                        <td>
+                        <span class="d-flex">
+                            <!--<form action="{{route('usuario.destroy', $vm->id_vm)}}" method="post" class="ms-2">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm">Excluir</button>
+                            </form>-->
+                        </span>
+                        </td>
                     </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </form>
+                @endforeach
 
+                </tbody>
+            </table>
+
+    </ul>
     <script>
-        document.getElementById('selectAll').addEventListener('change', function () {
-            let checkboxes = document.querySelectorAll('.selectItem');
-            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-        });
-
-        function submeterFormulario(acao) {
-            let form = document.getElementById('vmForm');
-            document.getElementById('acaoInput').value = acao;
-            form.submit();
-        }
-    </script>
-
-<script>
         document.addEventListener('DOMContentLoaded', function () {
             var clipboard = new ClipboardJS('.btn-outline-secondary');
 

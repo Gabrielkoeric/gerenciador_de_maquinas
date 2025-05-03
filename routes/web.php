@@ -123,6 +123,7 @@ Route::get('/email_compra', function (){return new \App\Mail\CompraRealizada();}
 
 //usuarios
 // Defina a rota em web.php
+Route::post('/server/executar', [ExecutaComandoController::class, 'manipulaHostFisico'])->name('server.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::post('/server/executar-comando', [ExecutaComandoController::class, 'executarComando'])->name('server.executarComando')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/server', ServerFisicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //ssh
@@ -131,6 +132,7 @@ Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('conecta.ssh')->mid
 //Route::resource('/server', ServerController::class);
 Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('conecta.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //vm
+Route::post('/vm/executar', [ExecutaComandoController::class, 'manipulaVm'])->name('vm.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //vm servico
 Route::post('/vm_servico/executar', [ExecutaComandoController::class, 'manipulaServico'])->name('vm_servico.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
