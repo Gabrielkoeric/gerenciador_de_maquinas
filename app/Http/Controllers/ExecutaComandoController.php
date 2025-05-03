@@ -11,6 +11,12 @@ use Carbon\Carbon;
 
 class ExecutaComandoController extends Controller
 {
+    public function manipulaHostFisico(Request $request) {
+        $servicos = $request->input('servicos');
+        $acao = $request->input('acao');
+
+        
+    }
     public function executarComando(Request $request)
     {
         $servidores = DB::table('servidor_fisico as s')
