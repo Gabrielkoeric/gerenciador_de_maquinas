@@ -57,7 +57,8 @@ class ManipulaServicoWindows implements ShouldQueue
                 'status' => 'Iniciado'
             ]);
 
-        $dir = storage_path('app/public/scripty');
+        $dir = base_path('scriptyAnsible');
+
         $hostsFile = $dir . '/hosts';
 
         if (!file_exists($dir)) {
