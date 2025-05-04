@@ -12,4 +12,3 @@
     - name: Mostrar lista de VMs
       debug:
         var: resultado_vms.stdout
-

@@ -18,14 +18,7 @@ use Carbon\Carbon;
 class ExecutaComandoController extends Controller
 {
     public function manipulaHostFisico(Request $request) {
-        //dd($request);
-/*
-        "acao" => "status"
-      "server" => array:2 [▼
-        0 => "1"
-        1 => "2"
-      ]
-*/        
+        
         $servers = $request->input('server');
         $acao = $request->input('acao');
 
@@ -107,22 +100,20 @@ class ExecutaComandoController extends Controller
                         InsereVmServer::dispatch($dados, $taskId);
                         break;
                 }    
-            
-        
         }
         return redirect('/server');
     }
     public function executarComando(Request $request)
     {
         $servidores = DB::table('servidor_fisico as s')
-    ->join('usuario_servidor_fisico as u', function ($join) {
+        ->join('usuario_servidor_fisico as u', function ($join) {
         $join->on('s.id_servidor_fisico', '=', 'u.id_servidor_fisico')
              ->where('u.principal', 1);
-    })
-    ->leftJoin('ip_lan as i', 's.id_ip_lan', '=', 'i.id_ip_lan')
-    ->where('s.tipo', 'rdp')
-    ->select('s.*', 'u.usuario', 'u.senha', 'i.ip as iplan')
-    ->get();
+        })
+        ->leftJoin('ip_lan as i', 's.id_ip_lan', '=', 'i.id_ip_lan')
+        ->where('s.tipo', 'rdp')
+        ->select('s.*', 'u.usuario', 'u.senha', 'i.ip as iplan')
+        ->get();
 
 
         foreach ($servidores as $server) {

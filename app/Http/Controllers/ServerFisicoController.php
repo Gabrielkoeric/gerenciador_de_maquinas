@@ -18,7 +18,7 @@ class ServerFisicoController extends Controller
         /*$servers = DB::table('servidor_fisico')->get();
 
         return view('servers.index')->with('servers', $servers);*/
-
+/*
         $servers = DB::table('servidor_fisico')
             ->leftJoin('usuario_servidor_fisico', 'servidor_fisico.id_servidor_fisico', '=', 'usuario_servidor_fisico.id_servidor_fisico')
             ->leftJoin('ip_lan', 'servidor_fisico.id_ip_lan', '=', 'ip_lan.id_ip_lan')
@@ -31,6 +31,27 @@ class ServerFisicoController extends Controller
                 'ip_wan.ip as ip_wan'
             )
             ->orderBy('servidor_fisico.nome')
+            ->get();
+*/
+            $servers = DB::table('servidor_fisico as sf')
+                ->leftJoin('dominio as d', 'sf.id_dominio', '=', 'd.id_dominio')
+                ->leftJoin('usuario_servidor_fisico as usf', function ($join) {
+                    $join->on('usf.id_servidor_fisico', '=', 'sf.id_servidor_fisico')
+                    ->where('usf.principal', '=', 1);
+                })
+                ->leftJoin('ip_lan as il', 'sf.id_ip_lan', '=', 'il.id_ip_lan')
+                ->leftJoin('ip_wan as iw', 'sf.id_ip_wan', '=', 'iw.id_ip_wan')
+                ->select(
+                    'sf.*',
+                    'd.nome as dominio_nome',
+                    'd.usuario as dominio_usuario',
+                    'd.senha as dominio_senha',
+                    'usf.usuario as usuario_servidor',
+                    'usf.senha as senha_servidor',
+                    'il.ip as ip_lan',
+                    'iw.ip as ip_wan'
+                )
+                ->orderBy('sf.nome')
             ->get();
         return view('servers.index')->with('servers', $servers);
     }
