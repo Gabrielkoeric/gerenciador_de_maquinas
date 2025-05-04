@@ -1,0 +1,29 @@
+---
+- name: Verificar status do servidor Windows
+  hosts: windows
+  gather_facts: no
+  tasks:
+
+    - name: Coletar nome do computador
+      win_command: hostname
+      register: hostname_result
+
+    - name: Mostrar hostname
+      debug:
+        msg: "Hostname: {{ hostname_result.stdout }}"
+
+    - name: Coletar tempo de atividade (uptime)
+      win_command: powershell -Command "(get-date) - (gcim Win32_OperatingSystem).LastBootUpTime"
+      register: uptime_result
+
+    - name: Mostrar uptime
+      debug:
+        msg: "Uptime: {{ uptime_result.stdout }}"
+
+    - name: Checar estado do sistema operacional
+      win_command: systeminfo
+      register: systeminfo_result
+
+    - name: Mostrar informações do sistema
+      debug:
+        msg: "{{ systeminfo_result.stdout_lines }}"

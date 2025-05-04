@@ -1,0 +1,10 @@
+---
+- name: Reiniciar servidor Windows
+  hosts: windows
+  gather_facts: no
+
+  tasks:
+    - name: Reiniciar o servidor com segurança
+      win_shell: Restart-Computer -Force
+      async: 1
+      poll: 0

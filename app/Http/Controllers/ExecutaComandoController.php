@@ -12,6 +12,10 @@ use App\Jobs\Server\StopServer;
 use App\Jobs\Server\RestartServer;
 use App\Jobs\Server\ListaVmServer;
 use App\Jobs\Server\InsereVmServer;
+use App\Jobs\Vm\StatusVm;
+use App\Jobs\Vm\StartVm;
+use App\Jobs\Vm\StopVm;
+use App\Jobs\Vm\RestartVm;
 use App\Jobs\ManipulaServicoWindows;
 use Carbon\Carbon;
 
@@ -103,6 +107,76 @@ class ExecutaComandoController extends Controller
         }
         return redirect('/server');
     }
+
+    public function manipulaVm (Request $request)
+    {
+        $vms = $request->input('vm');
+        $acao = $request->input('acao');
+       
+        foreach ($vms as $vm) {
+
+        $dados = DB::table('vm')
+            ->select(
+                'vm.*',
+                'ip_lan.ip as ip_lan_vm',
+                'dominio.nome as dominio_nome',
+                'dominio.usuario as dominio_usuario',
+                'dominio.senha as dominio_senha',
+                'servidor_fisico.nome as nome_servidor_fisico',
+                'usuario_vm.usuario as usuario_local',
+                'usuario_vm.senha as senha_local'
+            )
+            ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
+            ->leftJoin('dominio', 'vm.id_dominio', '=', 'dominio.id_dominio')
+            ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
+            ->leftJoin('usuario_vm', function ($join) {
+                $join->on('vm.id_vm', '=', 'usuario_vm.id_vm')
+                 ->where('usuario_vm.principal', '=', $vm);
+            })
+            ->where('vm.id_vm', '=', 1)
+            ->first();
+
+            switch ($acao) {
+                case 'status':
+                    $taskId = DB::table('async_tasks')->insertGetId([
+                        'nome_async_tasks' => 'StatusVm',
+                        'horario_disparo' => Carbon::now(),
+                        'parametros' => json_encode($dados),
+                        'status' => 'Pendente',
+                    ]);
+                    StatusVm::dispatch($dados, $taskId);
+                    break;
+                case 'start':
+                    $taskId = DB::table('async_tasks')->insertGetId([
+                        'nome_async_tasks' => 'StartVm',
+                        'horario_disparo' => Carbon::now(),
+                        'parametros' => json_encode($dados),
+                        'status' => 'Pendente',
+                    ]);
+                    StartVm::dispatch($dados, $taskId);
+                    break;
+                case 'stop':
+                    $taskId = DB::table('async_tasks')->insertGetId([
+                        'nome_async_tasks' => 'StopVm',
+                        'horario_disparo' => Carbon::now(),
+                        'parametros' => json_encode($dados),
+                        'status' => 'Pendente',
+                    ]);
+                    StopVm::dispatch($dados, $taskId);
+                    break;
+                case 'restart':
+                    $taskId = DB::table('async_tasks')->insertGetId([
+                        'nome_async_tasks' => 'RestartVm',
+                        'horario_disparo' => Carbon::now(),
+                        'parametros' => json_encode($dados),
+                        'status' => 'Pendente',
+                    ]);
+                    RestartVm::dispatch($dados, $taskId);
+                    break;
+            }
+        }
+        return redirect('/vm');    
+    }
     public function executarComando(Request $request)
     {
         $servidores = DB::table('servidor_fisico as s')
@@ -190,10 +264,5 @@ class ExecutaComandoController extends Controller
             }
         }
         return redirect('/vm_servico');
-    }
-
-    public function manipulaVm (Request $request)
-    {
-        dd($request);
     }
 }
