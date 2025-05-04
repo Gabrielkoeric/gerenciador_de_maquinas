@@ -15,21 +15,24 @@ class VmController extends Controller
     public function index(Request $request)
 {
     $vms = DB::table('vm')
-        ->leftJoin('usuario_vm', function ($join) {
-            $join->on('vm.id_vm', '=', 'usuario_vm.id_vm')
-                 ->where('usuario_vm.principal', 1); // Pega só o usuário principal
-        })
-        ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
-        ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
-        ->select(
-            'vm.*', 
-            'usuario_vm.usuario', 
-            'usuario_vm.senha', 
-            'servidor_fisico.nome as servidor_nome',
-            'ip_lan.ip as ip_lan'
-        )
-        ->orderBy('vm.nome')
-        ->get();
+    ->select(
+        'vm.*',
+        'ip_lan.ip as ip_lan_vm',
+        'dominio.nome as dominio_nome',
+        'dominio.usuario as dominio_usuario',
+        'dominio.senha as dominio_senha',
+        'servidor_fisico.nome as nome_servidor_fisico',
+        'usuario_vm.usuario as usuario_local',
+        'usuario_vm.senha as senha_local'
+    )
+    ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
+    ->leftJoin('dominio', 'vm.id_dominio', '=', 'dominio.id_dominio')
+    ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
+    ->leftJoin('usuario_vm', function ($join) {
+        $join->on('vm.id_vm', '=', 'usuario_vm.id_vm')
+             ->where('usuario_vm.principal', '=', 1);
+    })
+    ->get();
 
     return view('vm.index')->with('vms', $vms);
 }
