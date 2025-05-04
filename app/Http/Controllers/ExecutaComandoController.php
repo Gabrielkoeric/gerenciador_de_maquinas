@@ -6,16 +6,111 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\BuscaVm;
+use App\Jobs\Server\StatusServer;
+use App\Jobs\Server\StartServer;
+use App\Jobs\Server\StopServer;
+use App\Jobs\Server\RestartServer;
+use App\Jobs\Server\ListaVmServer;
+use App\Jobs\Server\InsereVmServer;
 use App\Jobs\ManipulaServicoWindows;
 use Carbon\Carbon;
 
 class ExecutaComandoController extends Controller
 {
     public function manipulaHostFisico(Request $request) {
-        $servicos = $request->input('servicos');
+        //dd($request);
+/*
+        "acao" => "status"
+      "server" => array:2 [▼
+        0 => "1"
+        1 => "2"
+      ]
+*/        
+        $servers = $request->input('server');
         $acao = $request->input('acao');
 
+        foreach ($servers as $server) {
+            $dados = DB::table('servidor_fisico as sf')
+                ->leftJoin('dominio as d', 'sf.id_dominio', '=', 'd.id_dominio')
+                ->leftJoin('usuario_servidor_fisico as usf', function ($join) {
+                    $join->on('usf.id_servidor_fisico', '=', 'sf.id_servidor_fisico')
+                    ->where('usf.principal', '=', 1);
+                })
+                ->leftJoin('ip_lan as il', 'sf.id_ip_lan', '=', 'il.id_ip_lan')
+                ->leftJoin('ip_wan as iw', 'sf.id_ip_wan', '=', 'iw.id_ip_wan')
+                ->select(
+                    'sf.*',
+                    'd.nome as dominio_nome',
+                    'd.usuario as dominio_usuario',
+                    'd.senha as dominio_senha',
+                    'usf.usuario as usuario_servidor',
+                    'usf.senha as senha_servidor',
+                    'il.ip as ip_lan',
+                    'iw.ip as ip_wan'
+                )
+                ->where('sf.id_servidor_fisico', $server)
+                ->first();
+
+                switch ($acao) {
+                    case 'status':
+                        $taskId = DB::table('async_tasks')->insertGetId([
+                            'nome_async_tasks' => 'StatusServer',
+                            'horario_disparo' => Carbon::now(),
+                            'parametros' => json_encode($dados),
+                            'status' => 'Pendente',
+                        ]);
+                        StatusServer::dispatch($dados, $taskId);
+                        break;
+                    case 'start':
+                        $taskId = DB::table('async_tasks')->insertGetId([
+                            'nome_async_tasks' => 'StartServer',
+                            'horario_disparo' => Carbon::now(),
+                            'parametros' => json_encode($dados),
+                            'status' => 'Pendente',
+                        ]);
+                        StartServer::dispatch($dados, $taskId);
+                        break;
+                    case 'stop':
+                        $taskId = DB::table('async_tasks')->insertGetId([
+                            'nome_async_tasks' => 'StopServer',
+                            'horario_disparo' => Carbon::now(),
+                            'parametros' => json_encode($dados),
+                            'status' => 'Pendente',
+                        ]);
+                        StopServer::dispatch($dados, $taskId);
+                        break;
+                    case 'restart':
+                        $taskId = DB::table('async_tasks')->insertGetId([
+                            'nome_async_tasks' => 'RestartServer',
+                            'horario_disparo' => Carbon::now(),
+                            'parametros' => json_encode($dados),
+                            'status' => 'Pendente',
+                        ]);
+                        RestartServer::dispatch($dados, $taskId);
+                        break;
+                    case 'listaVm':
+                        $taskId = DB::table('async_tasks')->insertGetId([
+                            'nome_async_tasks' => 'ListaVmServer',
+                            'horario_disparo' => Carbon::now(),
+                            'parametros' => json_encode($dados),
+                            'status' => 'Pendente',
+                        ]);
+                        ListaVmServer::dispatch($dados, $taskId);
+                        break;
+                    case 'insereVM':
+                        $taskId = DB::table('async_tasks')->insertGetId([
+                            'nome_async_tasks' => 'InsereVmServer',
+                            'horario_disparo' => Carbon::now(),
+                            'parametros' => json_encode($dados),
+                            'status' => 'Pendente',
+                        ]);
+                        InsereVmServer::dispatch($dados, $taskId);
+                        break;
+                }    
+            
         
+        }
+        return redirect('/server');
     }
     public function executarComando(Request $request)
     {
@@ -104,11 +199,6 @@ class ExecutaComandoController extends Controller
             }
         }
         return redirect('/vm_servico');
-    }
-
-    public function manipulaHostFisico (Request $request)
-    {
-        dd($request);
     }
 
     public function manipulaVm (Request $request)

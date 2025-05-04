@@ -1,0 +1,10 @@
+---
+- name: Desligar servidor Windows de forma segura
+  hosts: windows
+  gather_facts: no
+
+  tasks:
+    - name: Desligar o servidor
+      win_shell: Stop-Computer -Force
+      async: 1
+      poll: 0
