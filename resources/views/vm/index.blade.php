@@ -1,7 +1,7 @@
 <x-layout title="VM">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('vm.create')}}" class="btn btn-dark my-3">Adicionar</a>
-    <a href="{{route('logs_execucoes.index')}}" class="btn btn-dark my-3">Logs Execuçoes</a>
+    <!--<a href="{{route('logs_execucoes.index')}}" class="btn btn-dark my-3">Logs Execuçoes</a>-->
 
     <form id="vmForm" action="{{ route('vm.executar') }}" method="POST">
         @csrf
@@ -9,7 +9,7 @@
         
         <button type="button" class="btn btn-dark my-3 acaoBtn" onclick="confirmAction('status')" disabled>Status</button>
         <button type="button" class="btn btn-dark my-3 acaoBtn" onclick="confirmAction('stop')" disabled>Parar</button>
-        <button type="button" class="btn btn-dark my-3 acaoBtn" onclick="confirmAction('start')" disabled>Iniciar</button>
+        <!--<button type="button" class="btn btn-dark my-3 acaoBtn" onclick="confirmAction('start')" disabled>Iniciar</button>-->
         <button type="button" class="btn btn-dark my-3 acaoBtn" onclick="confirmAction('restart')" disabled>Restart</button>
 
         <table class="table table-striped">
