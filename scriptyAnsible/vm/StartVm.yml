@@ -1,0 +1,10 @@
+---
+- name: Iniciar máquina virtual Hyper-V
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Iniciar a máquina virtual via PowerShell
+      win_command: |
+        Start-VM -Name "{{ nome_vm }}"  # Usando a variável correta
+      args:
+        chdir: 'C:\Program Files\Hyper-V\'

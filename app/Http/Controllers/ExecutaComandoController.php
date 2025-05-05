@@ -153,7 +153,7 @@ class ExecutaComandoController extends Controller
                         'parametros' => json_encode($dados),
                         'status' => 'Pendente',
                     ]);
-                    StartVm::dispatch($dados, $taskId);
+                    StartVm::dispatch($dados->id_servidor_fisico, $taskId, $dados->nome);
                     break;
                 case 'stop':
                     $taskId = DB::table('async_tasks')->insertGetId([
