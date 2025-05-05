@@ -131,9 +131,9 @@ class ExecutaComandoController extends Controller
             ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
             ->leftJoin('usuario_vm', function ($join) {
                 $join->on('vm.id_vm', '=', 'usuario_vm.id_vm')
-                 ->where('usuario_vm.principal', '=', $vm);
+                 ->where('usuario_vm.principal', '=', 1);
             })
-            ->where('vm.id_vm', '=', 1)
+            ->where('vm.id_vm', '=', $vm)
             ->first();
 
             switch ($acao) {
