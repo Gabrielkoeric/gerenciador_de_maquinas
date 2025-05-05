@@ -11,7 +11,7 @@
         <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('stop')">Parar</button>
         <!--<button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('start')">Iniciar</button>-->
         <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('restart')">Restart</button>
-        <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('listaVm')">Buscar VM</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('listaVm')">Lista VM</button>
         <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('insereVm')">Insere VM</button>
 
         <table class="table table-striped">

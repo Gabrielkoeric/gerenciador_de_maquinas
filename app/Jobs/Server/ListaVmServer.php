@@ -81,32 +81,7 @@ class ListaVmServer implements ShouldQueue
 
     $output = shell_exec($comando);
 
-    // Tenta capturar o JSON de retorno
-preg_match('/\[\s*{.*}\s*\]/s', $output, $matches);
-
-$listaVms = [];
-
-if (!empty($matches)) {
-    $jsonString = $matches[0];
-    $listaVms = json_decode($jsonString, true);
-    
-    if (is_array($listaVms)) {
-        foreach ($listaVms as $vm) {
-            DB::table('vms')->insert([
-                'nome' => $vm['Name'],
-                'id_ip_lan' => 1,
-                'porta' => 3389,
-                'id_dominio' => 1,
-                'tipo' => 'escalaserver',
-                'so' => rdp,
-                'id_servidor_fisico' => $this->dados->id_servidor_fisico,
-                'autostart' => 
-            ]);
-        }
-    }
-}
-
-    DB::table('async_tasks')
+        DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)
             ->update([
                 'horario_fim' => now(),
@@ -114,4 +89,5 @@ if (!empty($matches)) {
                 'log' => $output
             ]);
     }
+
 }

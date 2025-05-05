@@ -22,7 +22,7 @@ use Carbon\Carbon;
 class ExecutaComandoController extends Controller
 {
     public function manipulaHostFisico(Request $request) {
-        
+        //dd($request);
         $servers = $request->input('server');
         $acao = $request->input('acao');
 
@@ -94,7 +94,7 @@ class ExecutaComandoController extends Controller
                         ]);
                         ListaVmServer::dispatch($dados, $taskId);
                         break;
-                    case 'insereVM':
+                    case 'insereVm':
                         $taskId = DB::table('async_tasks')->insertGetId([
                             'nome_async_tasks' => 'InsereVmServer',
                             'horario_disparo' => Carbon::now(),
