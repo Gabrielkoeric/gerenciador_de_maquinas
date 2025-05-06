@@ -15,14 +15,9 @@ class ManipulaServicoWindows implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $iplan;
-    public $usuario;
-    public $senha;
-    public $dominio;
-    public $nome;
+    public $dados;
     public $acao;
     public $taskId;
-    public $id_servico_vm;
     public $usuarioLogado;
 
     /**
@@ -30,16 +25,11 @@ class ManipulaServicoWindows implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($iplan, $usuario, $senha, $dominio, $nome, $acao, $taskId, $id_servico_vm, $usuarioLogado)
+    public function __construct($dados, $acao, $taskId, $usuarioLogado)
     {
-        $this->iplan = $iplan;
-        $this->usuario = $usuario;
-        $this->senha = $senha;
-        $this->dominio = $dominio;
-        $this->nome = $nome;
+        $this->dados = $dados;
         $this->acao = $acao;
         $this->taskId = $taskId;
-        $this->id_servico_vm = $id_servico_vm;
         $this->usuarioLogado = $usuarioLogado;
     }
 
@@ -57,34 +47,29 @@ class ManipulaServicoWindows implements ShouldQueue
                 'status' => 'Iniciado'
             ]);
 
-        $dir = base_path('scriptyAnsible');
+        $dir = base_path('scriptyAnsible/vm');
 
         $hostsFile = $dir . '/hosts';
 
-        if (!file_exists($dir)) {
-            mkdir($dir, 0775, true);
-            Log::info("Diretório {$dir} criado.");
-        } else {
-            Log::info("Diretório {$dir} já existe.");
-        }
-
         // Verifica se a máquina está no domínio
-        if (!empty($this->dominio)) {
-            $usuarioCompleto = "{$this->usuario}@{$this->dominio}";
+        if (!empty($this->dados->id_dominio)) {
+            $usuarioCompleto = "{$this->dados->dominio_usuario}@{$this->dados->dominio_nome}";
+            $senha = $this->dados->dominio_senha;
             $transporte = "ntlm";
         } else {
-            $usuarioCompleto = $this->usuario;
+            $usuarioCompleto = $this->dados->usuario_local;
+            $senha = $this->dados->senha_local;
             $transporte = "basic";
         }
 
         // Conteúdo a ser escrito no arquivo 'hosts'
         $conteudo = <<<EOD
         [windows]
-        {$this->iplan}
+        {$this->dados->ip_lan}
 
         [windows:vars]
         ansible_user={$usuarioCompleto}
-        ansible_password={$this->senha}
+        ansible_password={$senha}
         ansible_port=5985
         ansible_connection=winrm
         ansible_winrm_transport={$transporte}
@@ -102,7 +87,7 @@ class ManipulaServicoWindows implements ShouldQueue
                 $playbookName = 'para_servico.yml';
                 break;
             case 'restart':
-                $playbookName = 'reinicia.yml';
+                $playbookName = 'reinicia_servico.yml';
                 break;
             case 'status':
                 $playbookName = 'status_servico.yml';
@@ -110,14 +95,9 @@ class ManipulaServicoWindows implements ShouldQueue
         }
         $playbook = $dir . '/' . $playbookName;
 
-        if (!file_exists($playbook)) {
-            Log::error("Playbook não encontrado: {$playbook}");
-            return "Playbook não encontrado: {$playbook}";
-        }
-
         $comando = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
            " " . escapeshellarg($playbook) .
-           " --extra-vars " . escapeshellarg("servico={$this->nome}");
+           " --extra-vars " . escapeshellarg("servico={$this->dados->nome}");
 
         $output = shell_exec($comando);
        
@@ -129,7 +109,7 @@ class ManipulaServicoWindows implements ShouldQueue
             
         if ($estado) {
             DB::table('servico_vm')
-                ->where('id_servico_vm', $this->id_servico_vm)
+                ->where('id_servico_vm', $this->dados->id_servico_vm)
                 ->update([
                     'status' => $estado,
                     'updated_at' => now(),
@@ -170,7 +150,7 @@ class ManipulaServicoWindows implements ShouldQueue
             'created_at'    => now(),
             'updated_at'    => now(),
             'id'            => $this->usuarioLogado,
-            'id_servico_vm' => $this->id_servico_vm,
+            'id_servico_vm' => $this->dados->id_servico_vm,
      ]);
      ///////////////////
 

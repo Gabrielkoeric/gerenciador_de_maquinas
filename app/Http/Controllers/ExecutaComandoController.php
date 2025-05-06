@@ -177,6 +177,7 @@ class ExecutaComandoController extends Controller
         }
         return redirect('/vm');    
     }
+    /*
     public function executarComando(Request $request)
     {
         $servidores = DB::table('servidor_fisico as s')
@@ -215,35 +216,44 @@ class ExecutaComandoController extends Controller
         }
         return redirect('/server')->with('success', 'Comando executado com sucesso!');
     }
-
+*/
     public function manipulaServico (Request $request)
     {
         //dd($request);
         $servicos = $request->input('servicos');
         $acao = $request->input('acao');
         foreach ($servicos as $id_servico_vm) {
-            $dados = DB::table('servico_vm')
-                ->join('vm', 'servico_vm.id_vm', '=', 'vm.id_vm')
-                ->join('usuario_vm', function ($join) {
-                    $join->on('usuario_vm.id_vm', '=', 'vm.id_vm')
-                ->where('usuario_vm.principal', 1); // apenas usuário principal
+            $dados = DB::table('servico_vm as sv')
+            ->join('vm as v', 'sv.id_vm', '=', 'v.id_vm')
+            ->join('ip_lan as ip', 'v.id_ip_lan', '=', 'ip.id_ip_lan')
+            ->leftJoin('dominio as d', 'v.id_dominio', '=', 'd.id_dominio')
+            ->leftJoin('usuario_vm as u', function ($join) {
+                $join->on('v.id_vm', '=', 'u.id_vm')
+                     ->where('u.principal', '=', 1);
             })
-            ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan') // relacionamento com IP
-            ->where('servico_vm.id_servico_vm', $id_servico_vm)
+            ->where('sv.id_servico_vm', $id_servico_vm)
             ->select(
-                'ip_lan.ip as iplan',
-                'vm.dominio', 
-                'vm.so', 
-                'usuario_vm.usuario', 
-                'usuario_vm.senha', 
-                'servico_vm.nome'
+                'sv.*',
+                'v.nome as vm_nome',
+                'v.id_ip_lan',
+                'v.id_dominio',
+                'v.so',
+                'ip.ip as ip_lan',
+                'd.nome as dominio_nome',
+                'd.usuario as dominio_usuario',
+                'd.senha as dominio_senha',
+                'u.usuario as usuario_local',
+                'u.senha as senha_local'
             )
-            ->first(); // Como você deseja uma linha de informação, usamos `first()` para pegar apenas o primeiro resultado   
+            ->first();   
             if ($dados->so === 'rdp') {
                 $parametros = [
-                    'iplan' => $dados->iplan,
-                    'usuario' => $dados->usuario,
-                    'dominio' => $dados->dominio ?? null,
+                    'iplan' => $dados->ip_lan,
+                    'usuario_local' => $dados->usuario_local,
+                    'senha_local' => $dados->senha_local,
+                    'dominio_usuario' => $dados->dominio_usuario ?? null,
+                    'dominio_senha' => $dados->dominio_senha ?? null,
+                    'dominio' => $dados->dominio_nome ?? null,
                     'servico' => $dados->nome,
                     'acao' => $acao,
                 ];
@@ -253,14 +263,12 @@ class ExecutaComandoController extends Controller
                     'horario_disparo' => Carbon::now(),
                     'parametros' => json_encode($parametros),
                     'status' => 'Pendente',
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
                 ]);
                 $usuarioLogado = auth()->id(); 
                 Log::info("usuario logado $usuarioLogado");
                 
                 
-                ManipulaServicoWindows::dispatch($dados->iplan, $dados->usuario, $dados->senha, $dados->dominio, $dados->nome, $acao, $taskId, $id_servico_vm, $usuarioLogado);
+                ManipulaServicoWindows::dispatch($dados, $acao, $taskId, $usuarioLogado);
             }
         }
         return redirect('/vm_servico');
