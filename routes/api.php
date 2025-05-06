@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventoXmlController;
 use App\Http\Controllers\ApiServicoController;
 use App\Http\Controllers\StatusServicoController;
+use App\Http\Middleware\Autenticador;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,6 @@ use App\Http\Controllers\StatusServicoController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 //cor api
 
 Route::get('/cor', [\App\Http\Controllers\Api\CorController::class, 'index']);
@@ -30,4 +30,10 @@ Route::post('/xml_eventos', [EventoXmlController::class, 'receber']);
 Route::post('/servicos', [ApiServicoController::class, 'receber']);
 
 
-Route::post('/status_servico', [StatusServicoController::class, 'store']);
+//Route::post('/status_servico', [StatusServicoController::class, 'store']);
+//Route::middleware([])->post('/status_servico', [StatusServicoController::class, 'store']);
+
+
+
+Route::post('/status_servico', [StatusServicoController::class, 'store'])
+    ->withoutMiddleware([Autenticador::class]);
