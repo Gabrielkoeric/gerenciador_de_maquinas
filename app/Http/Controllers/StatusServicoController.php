@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class StatusServicoController extends Controller
 {
-    public function receber(Request $request)
+    public function store(Request $request)
     {
         // Validação básica
         $dados = $request->validate([

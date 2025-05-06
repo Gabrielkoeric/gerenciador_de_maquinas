@@ -30,4 +30,4 @@ Route::post('/xml_eventos', [EventoXmlController::class, 'receber']);
 Route::post('/servicos', [ApiServicoController::class, 'receber']);
 
 
-Route::post('/status_servico', [StatusServicoController::class, 'receber']);
+Route::post('/status_servico', [StatusServicoController::class, 'store']);
