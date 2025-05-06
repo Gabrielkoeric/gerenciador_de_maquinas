@@ -42,4 +42,8 @@ return [
         'access_token' => env('MERCADO_PAGO_ACCESS_TOKEN'),
     ],
 
+    'telegram-bot-api' => [
+        'token' => env('TELEGRAM_BOT_TOKEN'),
+    ],
+
 ];
