@@ -1,0 +1,44 @@
+---
+- name: Instalar EscalaServer no cliente
+  hosts: windows
+  gather_facts: no
+  vars:
+    cliente: FAPA               # Nome do disco (ex: FAPA => F:)
+    porta: 1366
+    nomeservico: "escalaserver_{{ cliente | lower }}"
+    drive: "{{ cliente }}:"     # F:
+    base_path: "{{ drive }}\\Escalasoft\\Ferramentas"
+    atualizacao_path: "{{ base_path }}\\Atualizacao"
+    arquivos_necessarios:
+      - EscalaServer.exe
+      - EscalaServerManager.exe
+      - EscalaServerUpdate.exe
+
+  tasks:
+
+    - name: Garante que os diretórios existem
+      win_file:
+        path: "{{ atualizacao_path }}"
+        state: directory
+
+    - name: Verifica se os arquivos existem
+      win_stat:
+        path: "{{ atualizacao_path }}\\{{ item }}"
+      register: stat_result
+      loop: "{{ arquivos_necessarios }}"
+
+    - name: Copia arquivos ausentes para o cliente
+      win_copy:
+        src: "executaveis/{{ item }}"
+        dest: "{{ atualizacao_path }}\\{{ item }}"
+      when: not stat_result.results[loop.index0].stat.exists
+      loop: "{{ arquivos_necessarios }}"
+
+    - name: Executa comando de instalação do serviço
+      win_shell: >
+        "{{ atualizacao_path }}\\EscalaServer.exe"
+        /NOMESERVICO:{{ nomeservico }}
+        /PORTA:{{ porta }}
+        /install
+      args:
+        chdir: "{{ atualizacao_path }}"

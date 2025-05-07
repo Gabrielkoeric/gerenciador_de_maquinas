@@ -59,6 +59,7 @@ use App\Http\Controllers\RedeController;
 use App\Http\Controllers\IpLanController;
 use App\Http\Controllers\DocumentacaoController;
 use App\Http\Controllers\DominioController;
+use App\Http\Controllers\DeployController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -169,6 +170,10 @@ Route::resource('/documentacao', DocumentacaoController::class)->middleware(Aute
 
 //iplan
 Route::resource('/dominios', DominioController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//deploy
+Route::post('/deploy/server', [DeployController::class, 'server'])->name('deploy.server')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::resource('/deploy', DeployController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
