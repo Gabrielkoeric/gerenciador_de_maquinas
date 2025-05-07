@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs\Vm;
+namespace App\Jobs\Deploy;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -9,25 +9,29 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use App\Notifications\AlertaTelegram;
-use Illuminate\Support\Facades\Notification;
 
-class RestartVm implements ShouldQueue
+class Server implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $dados;
+    public $ultimaPorta;
+    public $clienteApelido;
+    public $vm;
     public $taskId;
+    public $dados;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($dados, $taskId)
+    public function __construct($ultimaPorta, $clienteApelido, $vm, $taskId, $dados)
     {
-        $this->dados = $dados;
+        $this->ultimaPorta = $ultimaPorta;
+        $this->clienteApelido = $clienteApelido;
+        $this->vm = $vm;
         $this->taskId = $taskId;
+        $this->dados = $dados;
     }
 
     /**
@@ -44,10 +48,9 @@ class RestartVm implements ShouldQueue
                 'status' => 'Iniciado'
             ]);
 
-        $dir = base_path('scriptyAnsible/vm');
+        $dir = base_path('scriptyAnsible/deploy');
         $hostsFile = $dir . '/hosts';
 
-        // Verifica se a máquina está no domínio
         if (!empty($this->dados->dominio_nome)) {
             $usuarioCompleto = "{$this->dados->dominio_usuario}@{$this->dados->dominio_nome}";
             $senha = $this->dados->dominio_senha;
@@ -74,21 +77,19 @@ class RestartVm implements ShouldQueue
 
         file_put_contents($hostsFile, $conteudo);
 
-        $playbookName = 'RestartVm.yml';
+        $playbookName = 'EscalaServer.yml';
      
         $playbook = $dir . '/' . $playbookName;
 
-    $comando = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
-           " " . escapeshellarg($playbook);
+        $porta = $this->ultimaPorta + 1;
 
-    $output = shell_exec($comando);
-        /*
-    Notification::route('telegram', 5779378630)
-    ->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId}
-    Reiniciado a VM "));
-    */
-    
-    DB::table('async_tasks')
+        $comando = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
+           " " . escapeshellarg($playbook) .
+           " --extra-vars " . escapeshellarg("cliente=$this->clienteApelido porta=$porta");
+
+        $output = shell_exec($comando);
+
+        DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)
             ->update([
                 'horario_fim' => now(),

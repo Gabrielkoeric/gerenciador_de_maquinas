@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Jobs\Deploy\Server;
+use Carbon\Carbon;
 
 class DeployController extends Controller
 {
@@ -55,9 +58,7 @@ class DeployController extends Controller
                 ->limit(1)
                 ->value('sv.porta');
 
-            if $ultimaPorta == null{
-                $ultimaPorta == 2000;
-            }
+            $ultimaPorta = (int) $ultimaPorta ?: 2000;
 
             $vms = DB::table('vm')
                 ->select(
@@ -133,6 +134,49 @@ class DeployController extends Controller
     }
 
     public function server(Request $request) {
-        dd($request);
+        
+        $ultimaPorta = $request->input('ultimaPorta');
+        $cliente = $request->input('cliente');
+        $vm = $request->input('vm');
+
+        $clienteApelido = DB::table('cliente_escala')
+            ->where('id_cliente_escala', $cliente)
+            ->value('apelido');
+
+        $dados = DB::table('vm')
+            ->select(
+                'vm.*',
+                'ip_lan.ip as ip_lan_vm',
+                'dominio.nome as dominio_nome',
+                'dominio.usuario as dominio_usuario',
+                'dominio.senha as dominio_senha',
+                'servidor_fisico.nome as nome_servidor_fisico',
+                'usuario_vm.usuario as usuario_local',
+                'usuario_vm.senha as senha_local'
+            )
+            ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
+            ->leftJoin('dominio', 'vm.id_dominio', '=', 'dominio.id_dominio')
+            ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
+            ->leftJoin('usuario_vm', function ($join) {
+                $join->on('vm.id_vm', '=', 'usuario_vm.id_vm')
+                 ->where('usuario_vm.principal', '=', 1);
+            })
+            ->where('vm.id_vm', '=', $vm)
+            ->first();
+
+        $dado = [
+            'ultimaPorta' => $ultimaPorta,
+            'cliente' => $cliente,
+            'vm' => $vm,
+        ];
+
+        $taskId = DB::table('async_tasks')->insertGetId([
+            'nome_async_tasks' => 'DeployServer',
+            'horario_disparo' => Carbon::now(),
+            'parametros' => json_encode($dado),
+            'status' => 'Pendente',
+        ]);
+    
+        Server::dispatch($ultimaPorta, $clienteApelido, $vm, $taskId, $dados);
     }
 }

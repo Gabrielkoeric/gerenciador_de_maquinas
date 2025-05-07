@@ -3,8 +3,8 @@
   hosts: windows
   gather_facts: no
   vars:
-    cliente: FAPA               # Nome do disco (ex: FAPA => F:)
-    porta: 1366
+    #cliente: FAPA               # Nome do disco (ex: FAPA => F:)
+    #porta: 1366
     nomeservico: "escalaserver_{{ cliente | lower }}"
     drive: "{{ cliente }}:"     # F:
     base_path: "{{ drive }}\\Escalasoft\\Ferramentas"
