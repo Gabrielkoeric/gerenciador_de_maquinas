@@ -48,7 +48,44 @@ class DeployController extends Controller
     switch ($id) {
         case 'EscalaServer':
             // Retornar view específica
-            return view('deploy.server');
+            $ultimaPorta = DB::table('servico_vm as sv')
+                ->join('servico as s', 'sv.id_servico', '=', 's.id_servico')
+                ->where('s.nome', 'EscalaServer') // Substitua pelo nome desejado
+                ->orderByRaw('CAST(sv.porta AS UNSIGNED) DESC')
+                ->limit(1)
+                ->value('sv.porta');
+
+            if $ultimaPorta == null{
+                $ultimaPorta == 2000;
+            }
+
+            $vms = DB::table('vm')
+                ->select(
+                'vm.*',
+                'ip_lan.ip as ip_lan_vm',
+                'dominio.nome as dominio_nome',
+                'dominio.usuario as dominio_usuario',
+                'dominio.senha as dominio_senha',
+                'servidor_fisico.nome as nome_servidor_fisico',
+                'usuario_vm.usuario as usuario_local',
+                'usuario_vm.senha as senha_local'
+                )
+                ->leftJoin('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
+                ->leftJoin('dominio', 'vm.id_dominio', '=', 'dominio.id_dominio')
+                ->leftJoin('servidor_fisico', 'vm.id_servidor_fisico', '=', 'servidor_fisico.id_servidor_fisico')
+                ->leftJoin('usuario_vm', function ($join) {
+                $join->on('vm.id_vm', '=', 'usuario_vm.id_vm')
+                    ->where('usuario_vm.principal', '=', 1);
+                })
+            ->where('vm.tipo', 'escalaserver')
+            ->get();
+
+            $clientes = DB::table('cliente_escala')
+                ->whereNotNull('apelido')
+                ->where('apelido', '!=', '')
+                ->get();
+
+            return view('deploy.server')->with('ultimaPorta', $ultimaPorta)->with('vms', $vms)->with('clientes', $clientes);
             //dd("Escala server");
         case 'EscalaSwarm':
             //return view('deploy.swarm');

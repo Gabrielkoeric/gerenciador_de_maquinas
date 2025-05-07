@@ -8,8 +8,8 @@
         <label for="nome" class=form-label>Nome:</label>
         <input type="text" id="nome" name="nome" class="form-control" @isset($nome) value="{{$nome}}" @endisset required>
 
-        <label for="sigla" class=form-label>Sigla</label>
-        <input type="text" id="sigla" name="sigla" class="form-control" @isset($sigla) value="{{$sigla}}" @endisset required>
+        <label for="apelido" class=form-label>Apelido</label>
+        <input type="text" id="apelido" name="apelido" class="form-control" @isset($apelido) value="{{$apelido}}" @endisset required>
 
         <label for="licenca" class=form-label>Licenca</label>
         <input type="text" id="licenca" name="licenca" class="form-control" @isset($licenca) value="{{$licenca}}" @endisset required>

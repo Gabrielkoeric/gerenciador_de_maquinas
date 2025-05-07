@@ -38,7 +38,7 @@ class ClienteEscalaController extends Controller
     public function store(Request $request)
     {
         $nome = $request->input('nome');
-        $sigla = $request->input('sigla');
+        $apelido = $request->input('apelido');
         $licenca = $request->input('licenca');
         $coletor = $request->input('coletor');
         $desktop = $request->input('desktop');
@@ -46,7 +46,7 @@ class ClienteEscalaController extends Controller
 
         $dados = [
             'nome' => $nome,
-            'sigla' => $sigla,
+            'apelido' => $apelido,
             'licenca' => $licenca,
             'coletor' => $coletor,
             'desktop' => $desktop,
@@ -96,7 +96,7 @@ class ClienteEscalaController extends Controller
         ->where('id_cliente_escala', $id)
         ->update([
             'nome' => $request->nome,
-            'sigla' => $request->sigla,
+            'apelido' => $request->apelido,
             'licenca' => $request->licenca,
             'coletor' => $request->coletor,
             'desktop' => $request->desktop,
