@@ -3,12 +3,7 @@
   hosts: windows
   gather_facts: no
   vars:
-    #cliente: FAPA               # Nome do disco (ex: FAPA => F:)
-    #porta: 1366
     nomeservico: "escalaserver_{{ cliente | lower }}"
-    drive: "{{ cliente }}:"     # F:
-    base_path: "{{ drive }}\\Escalasoft\\Ferramentas"
-    atualizacao_path: "{{ base_path }}\\Atualizacao"
     arquivos_necessarios:
       - EscalaServer.exe
       - EscalaServerManager.exe
@@ -16,29 +11,82 @@
 
   tasks:
 
-    - name: Garante que os diretórios existem
+    - name: Obtém letra do drive pelo nome do volume (rótulo)
+      win_shell: |
+        (Get-Volume | Where-Object {$_.FileSystemLabel -eq '{{ cliente }}'}).DriveLetter
+      register: letra_drive_result
+
+    - name: Falha se drive com rótulo não for encontrado
+      fail:
+        msg: "Não foi encontrado nenhum drive com o rótulo '{{ cliente }}'."
+      when: letra_drive_result.stdout | trim == ""
+
+    - name: Define variáveis com base na letra do drive
+      set_fact:
+        drive: "{{ letra_drive_result.stdout | trim }}:"
+        base_path: "{{ letra_drive_result.stdout | trim }}:\\escalasoft"
+        ferramentas_path: "{{ letra_drive_result.stdout | trim }}:\\escalasoft\\ferramentas"
+        sistema_path: "{{ letra_drive_result.stdout | trim }}:\\escalasoft\\sistema"
+        atualizacao_path: "{{ letra_drive_result.stdout | trim }}:\\escalasoft\\ferramentas\\atualizacao"
+
+    - name: Cria a pasta Escalasoft
+      win_file:
+        path: "{{ base_path }}"
+        state: directory
+
+    - name: Cria a pasta Ferramentas
+      win_file:
+        path: "{{ ferramentas_path }}"
+        state: directory
+
+    - name: Cria a pasta Sistema
+      win_file:
+        path: "{{ sistema_path }}"
+        state: directory
+
+    - name: Cria a pasta Atualizacao
       win_file:
         path: "{{ atualizacao_path }}"
         state: directory
 
-    - name: Verifica se os arquivos existem
+    - name: Verifica se os arquivos estão na pasta Ferramentas
       win_stat:
-        path: "{{ atualizacao_path }}\\{{ item }}"
-      register: stat_result
+        path: "{{ ferramentas_path }}\\{{ item }}"
+      register: stat_ferramentas
       loop: "{{ arquivos_necessarios }}"
 
-    - name: Copia arquivos ausentes para o cliente
+    - name: Copia arquivos ausentes para Ferramentas
+      win_copy:
+        src: "executaveis/{{ item }}"
+        dest: "{{ ferramentas_path }}\\{{ item }}"
+      when: >
+        (stat_ferramentas.results |
+        selectattr('item', 'equalto', item) |
+        first).stat.exists == false
+      loop: "{{ arquivos_necessarios }}"
+
+
+    - name: Verifica se os arquivos estão na pasta Atualizacao
+      win_stat:
+        path: "{{ atualizacao_path }}\\{{ item }}"
+      register: stat_atualizacao
+      loop: "{{ arquivos_necessarios }}"
+
+    - name: Copia arquivos ausentes para Atualizacao
       win_copy:
         src: "executaveis/{{ item }}"
         dest: "{{ atualizacao_path }}\\{{ item }}"
-      when: not stat_result.results[loop.index0].stat.exists
+      when: >
+        (stat_atualizacao.results |
+        selectattr('item', 'equalto', item) |
+        first).stat.exists == false
       loop: "{{ arquivos_necessarios }}"
 
-    - name: Executa comando de instalação do serviço
-      win_shell: >
-        "{{ atualizacao_path }}\\EscalaServer.exe"
-        /NOMESERVICO:{{ nomeservico }}
-        /PORTA:{{ porta }}
-        /install
+    - name: Executa comando de instalação do serviço como administrador via PowerShell
+      win_shell: |
+        Start-Process -FilePath "{{ atualizacao_path }}\\EscalaServer.exe" `
+                      -ArgumentList "/NOMESERVICO:{{ nomeservico }} /PORTA:{{ porta }} /install" `
+                      -WorkingDirectory "{{ atualizacao_path }}" `
+                      -Verb RunAs -WindowStyle Hidden
       args:
-        chdir: "{{ atualizacao_path }}"
+        executable: powershell
