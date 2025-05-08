@@ -15,23 +15,25 @@ class Server implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $ultimaPorta;
-    public $clienteApelido;
+    public $clienteDados;
     public $vm;
     public $taskId;
     public $dados;
+    public $idServico;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($ultimaPorta, $clienteApelido, $vm, $taskId, $dados)
+    public function __construct($ultimaPorta, $clienteDados, $vm, $taskId, $dados, $idServico)
     {
         $this->ultimaPorta = $ultimaPorta;
-        $this->clienteApelido = $clienteApelido;
+        $this->clienteDados = $clienteDados;
         $this->vm = $vm;
         $this->taskId = $taskId;
         $this->dados = $dados;
+        $this->idServico = $idServico;
     }
 
     /**
@@ -82,12 +84,26 @@ class Server implements ShouldQueue
         $playbook = $dir . '/' . $playbookName;
 
         $porta = $this->ultimaPorta + 1;
+        $apelido = $this->clienteDados->apelido;
 
         $comando = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
            " " . escapeshellarg($playbook) .
-           " --extra-vars " . escapeshellarg("cliente=$this->clienteApelido porta=$porta");
+           " --extra-vars " . escapeshellarg("cliente=$apelido porta=$porta");
 
         $output = shell_exec($comando);
+/*
+        if (str_contains($output, 'failed=0') && str_contains($output, 'fatal:') === false) {
+            // Sucesso: serviço foi instalado corretamente
+            DB::table('servicos')->insert([
+                'nome' => 'escalaserver_' . $this->clienteDados->apelido,
+                'porta' => $porta,
+                'autostart' => 1,
+                'id_vm' => $this->dados->id_vm,
+                'id_servico' => $this->idServico,
+                'id_cliente_escala' => $this->clienteDados->id_cliente_escala,
+            ]);
+        }
+*/
 
         DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)

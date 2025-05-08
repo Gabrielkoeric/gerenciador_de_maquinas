@@ -139,9 +139,11 @@ class DeployController extends Controller
         $cliente = $request->input('cliente');
         $vm = $request->input('vm');
 
-        $clienteApelido = DB::table('cliente_escala')
+        $clienteDados = DB::table('cliente_escala')
+            ->select('id_cliente_escala', 'apelido')
             ->where('id_cliente_escala', $cliente)
-            ->value('apelido');
+            ->first();
+
 
         $dados = DB::table('vm')
             ->select(
@@ -170,6 +172,10 @@ class DeployController extends Controller
             'vm' => $vm,
         ];
 
+        $idServico = DB::table('servico')
+            ->where('nome', 'EscalaServer') 
+            ->value('id_servico');
+
         $taskId = DB::table('async_tasks')->insertGetId([
             'nome_async_tasks' => 'DeployServer',
             'horario_disparo' => Carbon::now(),
@@ -177,6 +183,8 @@ class DeployController extends Controller
             'status' => 'Pendente',
         ]);
     
-        Server::dispatch($ultimaPorta, $clienteApelido, $vm, $taskId, $dados);
+        Server::dispatch($ultimaPorta, $clienteDados, $vm, $taskId, $dados, $idServico);
+
+        return redirect('/deploy');
     }
 }
