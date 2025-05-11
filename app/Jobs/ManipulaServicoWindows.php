@@ -10,6 +10,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Notifications\AlertaTelegram;
+use Illuminate\Support\Facades\Notification;
 
 class ManipulaServicoWindows implements ShouldQueue
 {
@@ -100,6 +102,11 @@ class ManipulaServicoWindows implements ShouldQueue
            " --extra-vars " . escapeshellarg("servico={$this->dados->nome}");
 
         $output = shell_exec($comando);
+
+        Notification::route('telegram', 5779378630)
+        ->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId} 
+                Ação: {$this->acao} 
+                Serviço: {$this->dados->nome} "));
        
         $estado = null;
         //captura o status

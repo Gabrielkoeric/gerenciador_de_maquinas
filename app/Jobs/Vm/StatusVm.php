@@ -9,6 +9,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\AlertaTelegram;
+use Illuminate\Support\Facades\Notification;
 
 class StatusVm implements ShouldQueue
 {
@@ -80,6 +82,11 @@ class StatusVm implements ShouldQueue
            " " . escapeshellarg($playbook);
 
     $output = shell_exec($comando);
+    
+    Notification::route('telegram', 5779378630)
+    ->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId}
+    Status a VM 
+    {$this->dados->nome} "));
 
     DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)

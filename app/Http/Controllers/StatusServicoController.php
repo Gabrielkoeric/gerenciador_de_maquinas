@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Notification;
 class StatusServicoController extends Controller
 {
     public function store(Request $request)
-{
-    $retorno = $request->all();
+    {
+        $retorno = $request->all();
 
         foreach ($retorno as $item) {
 
@@ -21,6 +21,8 @@ class StatusServicoController extends Controller
         $status = $item['status'];
 
         Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("🚫 Serviço: $nomeServico está com o status: $status"));
+        
+        if ($status == 'stop') {
 
         $dados = DB::table('servico_vm as sv')
             ->join('vm as v', 'sv.id_vm', '=', 'v.id_vm')
@@ -58,11 +60,11 @@ class StatusServicoController extends Controller
             if ($dados->autostart == 1) {
                 ManipulaServicoWindows::dispatch($dados, $acao, $taskId, $usuarioLogado);
             }
+        }
     }
 
     return response()->json([
-        'message' => 'Status recebido com sucesso.',
-        'dados' => $dados,
+        'message' => 'Status recebido com sucesso.'
     ]);
     
 }
