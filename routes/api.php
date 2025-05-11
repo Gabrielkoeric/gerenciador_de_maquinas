@@ -30,10 +30,9 @@ Route::post('/xml_eventos', [EventoXmlController::class, 'receber']);
 Route::post('/servicos', [ApiServicoController::class, 'receber']);
 
 
-//Route::post('/status_servico', [StatusServicoController::class, 'store']);
+Route::post('/status_servico', [StatusServicoController::class, 'store']);
 //Route::middleware([])->post('/status_servico', [StatusServicoController::class, 'store']);
 
 
 
-Route::post('/status_servico', [StatusServicoController::class, 'store'])
-    ->withoutMiddleware([Autenticador::class]);
+//Route::post('/status_servico', [StatusServicoController::class, 'store'])->withoutMiddleware([Autenticador::class]);

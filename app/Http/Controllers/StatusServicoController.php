@@ -3,22 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Jobs\ManipulaServicoWindows;
+use App\Notifications\AlertaTelegram;
+use Illuminate\Support\Facades\Notification;
 
 class StatusServicoController extends Controller
 {
     public function store(Request $request)
 {
-    $retorno = $request->validate([
-        'servicos' => 'required|array',
-        'servicos.*.servico' => 'required|string',
-        'servicos.*.status' => 'required|string',
-    ]);
+    $retorno = $request->all();
 
-    $servicosRecebidos = [];
-
-    foreach ($retorno['servicos'] as $item) {
+        foreach ($retorno as $item) {
 
         $nomeServico = $item['servico'];
+        $status = $item['status'];
+
+        Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("🚫 Serviço: $nomeServico está com o status: $status"));
 
         $dados = DB::table('servico_vm as sv')
             ->join('vm as v', 'sv.id_vm', '=', 'v.id_vm')
@@ -28,7 +30,7 @@ class StatusServicoController extends Controller
                 $join->on('v.id_vm', '=', 'u.id_vm')
                      ->where('u.principal', '=', 1);
             })
-            ->where('sv.nome', $nome)
+            ->where('sv.nome', $nomeServico)
             ->select(
                 'sv.*',
                 'v.nome as vm_nome',
@@ -51,9 +53,9 @@ class StatusServicoController extends Controller
                 'parametros' => json_encode($dados),
                 'status' => 'Pendente',
             ]);
-            $usuarioLogado = 'system';
+            $usuarioLogado = 100;
 
-            if ($dados->autstart == 1) {
+            if ($dados->autostart == 1) {
                 ManipulaServicoWindows::dispatch($dados, $acao, $taskId, $usuarioLogado);
             }
     }
@@ -62,6 +64,8 @@ class StatusServicoController extends Controller
         'message' => 'Status recebido com sucesso.',
         'dados' => $dados,
     ]);
+    
 }
+    
 
 }

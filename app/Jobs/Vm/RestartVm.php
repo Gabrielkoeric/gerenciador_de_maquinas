@@ -82,11 +82,12 @@ class RestartVm implements ShouldQueue
            " " . escapeshellarg($playbook);
 
     $output = shell_exec($comando);
-        /*
+
     Notification::route('telegram', 5779378630)
     ->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId}
-    Reiniciado a VM "));
-    */
+    Reiniciado a VM 
+    {$this->dados->nome} "));
+    
     
     DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)

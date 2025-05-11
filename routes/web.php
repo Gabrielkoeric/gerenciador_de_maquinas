@@ -74,9 +74,8 @@ use App\Http\Controllers\DeployController;
 //home
 Route::get('/', [HomeController::class, 'index'])->name('home.index')->middleware(Autenticador::class);
 //Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware(Autenticador::class);
-Route::get('/home', [HomeController::class, 'index'])
-    ->name('home.index')
-    ->middleware(['auth', 'verified', Autenticador::class]);
+//Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware(['auth', 'verified', Autenticador::class]);
+Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware([Autenticador::class]);
 
 //gera
 //usuarios
