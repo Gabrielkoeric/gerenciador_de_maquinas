@@ -103,10 +103,14 @@ class ManipulaServicoWindows implements ShouldQueue
 
         $output = shell_exec($comando);
 
+        Log::info("id job {$this->taskId}, ação {$this->acao}, serviço nome {$this->dados->nome}");
+
+        $nome = str_replace('_', '', $this->dados->nome);
+
         Notification::route('telegram', 5779378630)
         ->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId} 
                 Ação: {$this->acao} 
-                Serviço: {$this->dados->nome} "));
+                Serviço: {$nome} "));
        
         $estado = null;
         //captura o status

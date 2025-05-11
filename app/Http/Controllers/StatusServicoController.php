@@ -13,6 +13,8 @@ class StatusServicoController extends Controller
 {
     public function store(Request $request)
     {
+        \Log::info('Requisição recebida:', $request->all());
+
         $retorno = $request->all();
 
         foreach ($retorno as $item) {
@@ -20,9 +22,11 @@ class StatusServicoController extends Controller
         $nomeServico = $item['servico'];
         $status = $item['status'];
 
-        Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("🚫 Serviço: $nomeServico está com o status: $status"));
+        $nome = str_replace('_', '', $nomeServico);
+
+        Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("🚫 Serviço: $nome está com o status: $status"));
         
-        if ($status == 'stop') {
+        if ($status == 'stopped') {
 
         $dados = DB::table('servico_vm as sv')
             ->join('vm as v', 'sv.id_vm', '=', 'v.id_vm')
