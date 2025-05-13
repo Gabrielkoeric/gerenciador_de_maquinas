@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\Notificacao\Telegram;
 
 class RestartServer implements ShouldQueue
 {
@@ -80,6 +81,8 @@ class RestartServer implements ShouldQueue
            " " . escapeshellarg($playbook);
 
     $output = shell_exec($comando);
+
+    Telegram::dispatch("✅ Job finalizado: {$this->taskId}Reiniciado o HostFisico {$this->dados->nome} ");
 
     DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)
