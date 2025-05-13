@@ -13,44 +13,48 @@ class StatusServicoController extends Controller
 {
     public function store(Request $request)
     {
-        \Log::info('Requisição recebida:', $request->all());
+       
+        $valor = DB::table('config_geral')
+            ->where('nomeConfig', 'modo_manutencao')
+            ->value('valorConfig');
 
-        $retorno = $request->all();
+        if ($valor == 0){
+            
+            $retorno = $request->all();
 
-        foreach ($retorno as $item) {
+            foreach ($retorno as $item) {
+                $nomeServico = $item['servico'];
+                $status = $item['status'];
 
-        $nomeServico = $item['servico'];
-        $status = $item['status'];
+                $nome = str_replace('_', '', $nomeServico);
 
-        $nome = str_replace('_', '', $nomeServico);
-
-        Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("🚫 Serviço: $nome está com o status: $status"));
+                Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("🚫 Serviço: $nome está com o status: $status"));
         
-        if ($status == 'stopped') {
+                if ($status == 'stopped') {
 
-        $dados = DB::table('servico_vm as sv')
-            ->join('vm as v', 'sv.id_vm', '=', 'v.id_vm')
-            ->join('ip_lan as ip', 'v.id_ip_lan', '=', 'ip.id_ip_lan')
-            ->leftJoin('dominio as d', 'v.id_dominio', '=', 'd.id_dominio')
-            ->leftJoin('usuario_vm as u', function ($join) {
-                $join->on('v.id_vm', '=', 'u.id_vm')
-                     ->where('u.principal', '=', 1);
-            })
-            ->where('sv.nome', $nomeServico)
-            ->select(
-                'sv.*',
-                'v.nome as vm_nome',
-                'v.id_ip_lan',
-                'v.id_dominio',
-                'v.so',
-                'ip.ip as ip_lan',
-                'd.nome as dominio_nome',
-                'd.usuario as dominio_usuario',
-                'd.senha as dominio_senha',
-                'u.usuario as usuario_local',
-                'u.senha as senha_local'
-            )
-            ->first();
+                    $dados = DB::table('servico_vm as sv')
+                        ->join('vm as v', 'sv.id_vm', '=', 'v.id_vm')
+                        ->join('ip_lan as ip', 'v.id_ip_lan', '=', 'ip.id_ip_lan')
+                        ->leftJoin('dominio as d', 'v.id_dominio', '=', 'd.id_dominio')
+                        ->leftJoin('usuario_vm as u', function ($join) {
+                            $join->on('v.id_vm', '=', 'u.id_vm')
+                        ->where('u.principal', '=', 1);
+                    })
+                    ->where('sv.nome', $nomeServico)
+                    ->select(
+                        'sv.*',
+                        'v.nome as vm_nome',
+                        'v.id_ip_lan',
+                        'v.id_dominio',
+                        'v.so',
+                        'ip.ip as ip_lan',
+                        'd.nome as dominio_nome',
+                        'd.usuario as dominio_usuario',
+                        'd.senha as dominio_senha',
+                        'u.usuario as usuario_local',
+                        'u.senha as senha_local'
+                    )
+                    ->first();
 
             $acao = 'start';
             $taskId = DB::table('async_tasks')->insertGetId([
@@ -65,6 +69,7 @@ class StatusServicoController extends Controller
                 ManipulaServicoWindows::dispatch($dados, $acao, $taskId, $usuarioLogado);
             }
         }
+    }
     }
 
     return response()->json([

@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\AlertaTelegram;
 use Illuminate\Support\Facades\Notification;
+use App\Jobs\Notificacao\Telegram;
 
 class StartVm implements ShouldQueue
 {
@@ -107,10 +108,9 @@ class StartVm implements ShouldQueue
 
     $output = shell_exec($comando);
 
-    Notification::route('telegram', 5779378630)
-    ->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId}
-    Start na VM 
-    {$this->dados->nome} "));
+    //Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId}Start na VM{$this->dados->nome} "));
+
+    Telegram::dispatch("✅ Job finalizado: {$this->taskId}Start na VM{$this->dados->nome}");
 
     DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)
