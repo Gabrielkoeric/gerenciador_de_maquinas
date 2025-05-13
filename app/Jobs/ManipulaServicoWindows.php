@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Notifications\AlertaTelegram;
 use Illuminate\Support\Facades\Notification;
+use App\Jobs\Notificacao\Telegram;
 
 class ManipulaServicoWindows implements ShouldQueue
 {
@@ -107,10 +108,9 @@ class ManipulaServicoWindows implements ShouldQueue
 
         $nome = str_replace('_', '', $this->dados->nome);
 
-        Notification::route('telegram', 5779378630)
-        ->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId} 
-                Ação: {$this->acao} 
-                Serviço: {$nome} "));
+        //Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId} Ação: {$this->acao} Serviço: {$nome} "));
+
+        Telegram::dispatch("✅ Job finalizado:{$this->taskId} Ação:{$this->acao} Serviço:{$nome}");
        
         $estado = null;
         //captura o status
