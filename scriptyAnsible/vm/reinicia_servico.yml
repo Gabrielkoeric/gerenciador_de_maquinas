@@ -2,7 +2,7 @@
   hosts: windows
   gather_facts: no
   tasks:
-    - name: Reiniciar o serviço "Spooler"
+    - name: Reiniciar o serviço "{{ servico }}"
       ansible.windows.win_service:
-        name: Spooler
+        name: "{{ servico }}"
         state: restarted
