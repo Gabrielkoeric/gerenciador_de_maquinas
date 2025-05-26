@@ -27,6 +27,8 @@
                 <th scope="col">IP Lan</th>
                 <th scope="col">IP Wan</th>
                 <th scope="col">Porta</th>
+                <th scope="col">MAC</th>
+                <th scope="col">Serial</th>
                 <th scope="col">Autostart</th>
                 <th scope="col">Acesso</th>
             </tr>
@@ -46,6 +48,8 @@
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->ip_lan }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->ip_wan }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->porta }}</a></td>
+                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->mac }}</a></td>
+                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->serial }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->autostart }}</a></td>
                         <td>
                             @if ($server->tipo === 'ssh')

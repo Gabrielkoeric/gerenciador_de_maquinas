@@ -61,6 +61,12 @@
             <option value="rdp" @isset($tipo) @if($tipo == 'rdp') selected @endif @endisset>RDP</option>
         </select>
 
+        <label for="mac" class="form-label">MAC:</label>
+        <input type="text" id="mac" name="mac" class="form-control" @isset($mac) value="{{$mac}}" @endisset required>
+
+        <label for="serial" class="form-label">Serial:</label>
+        <input type="text" id="serial" name="serial" class="form-control" @isset($serial) value="{{$serial}}" @endisset required>
+
         <label for="usuario" class="form-label">Usuário:</label>
         <input type="text" id="usuario" name="usuario" class="form-control" @isset($usuario) value="{{$usuario}}" @endisset required>
 

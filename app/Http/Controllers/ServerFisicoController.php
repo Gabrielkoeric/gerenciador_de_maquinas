@@ -97,6 +97,8 @@ class ServerFisicoController extends Controller
         $porta = $request->input('porta');
         $dominio = $request->input('dominio');
         $tipo = $request->input('tipo');
+        $mac = $request->input('mac');
+        $serial = $request->input('serial');
         $usuario = $request->input('usuario');
         $senha = $request->input('senha');
 
@@ -104,6 +106,8 @@ class ServerFisicoController extends Controller
             'nome' => $nome,
             'id_ip_wan' => $ipwan,
             'id_ip_lan' => $iplan,
+            'mac' => $mac,
+            'serial' => $serial,
             'porta' => $porta,
             'id_dominio' => $dominio,
             'tipo' => $tipo,
@@ -115,6 +119,7 @@ class ServerFisicoController extends Controller
             'id_servidor_fisico' => $id,
             'usuario' => $usuario,
             'senha' => $senha,
+            'principal' => 1,
         ];
         DB::table('usuario_servidor_fisico')->insertGetId($dados2);
 
@@ -206,6 +211,8 @@ if ($dados->id_ip_wan) {
         'id_ip_lan' => $request->iplan,
         'porta' => $request->porta,
         'id_dominio' => $request->dominio,
+        'mac' => $request->mac,
+        'serial' => $request->serial,
         'tipo' => $request->tipo,
         'updated_at' => now(),
     ]);
@@ -215,7 +222,7 @@ DB::table('usuario_servidor_fisico')
     ->where('id_servidor_fisico', $id)
     ->update([
         'usuario' => $request->usuario,
-        'senha' => $request->senha, 
+        'senha' => $request->senha,
         'updated_at' => now(),
     ]);
 
