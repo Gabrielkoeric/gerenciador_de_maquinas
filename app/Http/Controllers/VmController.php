@@ -32,6 +32,7 @@ class VmController extends Controller
         $join->on('vm.id_vm', '=', 'usuario_vm.id_vm')
              ->where('usuario_vm.principal', '=', 1);
     })
+    ->orderBy('vm.nome', 'asc')
     ->get();
 
     return view('vm.index')->with('vms', $vms);

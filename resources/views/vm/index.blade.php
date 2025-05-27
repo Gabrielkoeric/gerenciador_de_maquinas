@@ -16,7 +16,7 @@
             <thead>
             <tr>
                 <th><input type="checkbox" id="selectAll"></th>
-                <th scope="col">ID</th>
+                <th scope="col">Nº</th>
                 <th scope="col">Nome</th>
                 <th scope="col">Usuario Local</th>
                 <th scope="col">Senha Local</th>
@@ -37,7 +37,7 @@
                     <td>
                         <input type="checkbox" name="vm[]" class="selectItem" value="{{ $vm->id_vm }}">
                     </td>
-                    <td><a href="{{ route('vm.edit', $vm->id_vm ) }}" class="text-decoration-none text-dark">{{ $vm->id_vm }}</a></td>
+                    <td>{{ $loop->iteration }}</td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm ) }}" class="text-decoration-none text-dark">{{ $vm->nome }}</a></td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->usuario_local }}</a></td>
                     <td>
