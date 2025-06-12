@@ -142,6 +142,7 @@ Route::resource('/vm_servico', VmServicoController::class)->middleware(Autentica
 //servico
 Route::resource('/servico', ServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //cliente_escala
+Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/cliente_escala', ClienteEscalaController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //rota logs

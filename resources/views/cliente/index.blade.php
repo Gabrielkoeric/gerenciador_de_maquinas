@@ -2,6 +2,7 @@
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('cliente_escala.create')}}" class="btn btn-dark my-3">Adicionar</a>
     <a href="{{route('cliente_escala.buscar') }}" class="btn btn-dark my-3">Buscar</a>
+    <a href="{{route('cliente_escala.gerardm') }}" class="btn btn-dark my-3">Baixar RDM</a>
 
     @isset($mensagemSucesso)
         <div class="alert alert-success">{{ $mensagemSucesso }}</div>

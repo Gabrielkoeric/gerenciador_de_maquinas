@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
 
 class ClienteEscalaController extends Controller
 {
@@ -156,6 +158,56 @@ class ClienteEscalaController extends Controller
             );
         }
         return redirect()->route('cliente_escala.index')->with('mensagemSucesso', 'Clientes importados com sucesso!');
+    }
+
+    public function gerardm()
+    {
+        $clientes = DB::table('cliente_escala')
+    ->where('ativo', 1)
+    ->whereNotNull('porta_rdp')
+    ->get();
+
+    $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><RDMExport></RDMExport>');
+    $connections = $xml->addChild('Connections');
+
+    // Adiciona o grupo "local"
+    $grupo = $connections->addChild('Connection');
+    $grupo->addChild('AppVersion', '2025.1');
+    $grupo->addChild('ConnectionType', 'Group');
+    $grupo->addChild('Group', 'local');
+    $grupo->addChild('ID', Str::uuid());
+    $grupo->addChild('Name', 'local');
+    $grupo->addChild('TemplateSourceID', Str::uuid());
+
+    foreach ($clientes as $cliente) {
+        //$url = strtoupper($cliente->apelido) . '.cloud.escalasoft.com.br:' . $cliente->porta_rdp;
+
+        $url = $cliente->apelido 
+    ? "{$cliente->apelido}.cloud.escalasoft.com.br:{$cliente->porta_rdp}" 
+    : "cloud.escalasoft.com.br:{$cliente->porta_rdp}";
+
+        $connection = $connections->addChild('Connection');
+        $connection->addChild('Url', $url);
+        $connection->addChild('AppVersion', '2025.1');
+        $connection->addChild('ConnectionType', 'RDPConfigured');
+        $connection->addChild('Group', 'local');
+        $connection->addChild('ID', Str::uuid());
+        $connection->addChild('Name', $cliente->nome);
+        $connection->addChild('OpenEmbedded', 'true');
+    }
+
+    $xml->addChild('DatabaseID', Str::uuid());
+    $xml->addChild('Version', '2');
+
+    // Formatando o XML com indentação
+    $dom = dom_import_simplexml($xml)->ownerDocument;
+    $dom->formatOutput = true;
+    $rdmContent = $dom->saveXML();
+
+    return Response::make($rdmContent, 200, [
+        'Content-Type' => 'application/xml',
+        'Content-Disposition' => 'attachment; filename="clientes.rdm"',
+    ]);
     }
 
 }
