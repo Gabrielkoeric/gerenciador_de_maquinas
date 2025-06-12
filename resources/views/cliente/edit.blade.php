@@ -2,6 +2,7 @@
     <x-cliente.forms :action="route('cliente_escala.update', $dados->id_cliente_escala)"
                         :nome="$dados->nome"
                         :apelido="$dados->apelido"
+                        :porta="$dados->porta_rdp"
                         :licenca="$dados->licenca"
                         :coletor="$dados->coletor"
                         :desktop="$dados->desktop"

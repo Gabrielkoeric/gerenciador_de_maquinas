@@ -11,6 +11,9 @@
         <label for="apelido" class=form-label>Apelido</label>
         <input type="text" id="apelido" name="apelido" class="form-control" @isset($apelido) value="{{$apelido}}" @endisset required>
 
+        <label for="porta" class=form-label>Porta RDP</label>
+        <input type="text" id="porta" name="porta" class="form-control" @isset($porta) value="{{$porta}}" @endisset required>
+
         <label for="licenca" class=form-label>Licenca</label>
         <input type="text" id="licenca" name="licenca" class="form-control" @isset($licenca) value="{{$licenca}}" @endisset required>
 

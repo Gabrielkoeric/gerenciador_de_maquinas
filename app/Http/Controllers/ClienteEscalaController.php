@@ -39,6 +39,7 @@ class ClienteEscalaController extends Controller
     {
         $nome = $request->input('nome');
         $apelido = $request->input('apelido');
+        $porta = $request->input('porta');
         $licenca = $request->input('licenca');
         $coletor = $request->input('coletor');
         $desktop = $request->input('desktop');
@@ -47,6 +48,7 @@ class ClienteEscalaController extends Controller
         $dados = [
             'nome' => $nome,
             'apelido' => $apelido,
+            'porta_rdp' => $porta,
             'licenca' => $licenca,
             'coletor' => $coletor,
             'desktop' => $desktop,
@@ -97,6 +99,7 @@ class ClienteEscalaController extends Controller
         ->update([
             'nome' => $request->nome,
             'apelido' => $request->apelido,
+            'porta_rdp' => $request->porta,
             'licenca' => $request->licenca,
             'coletor' => $request->coletor,
             'desktop' => $request->desktop,
