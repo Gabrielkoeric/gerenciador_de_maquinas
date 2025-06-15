@@ -126,7 +126,10 @@ class SecaoCloudController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-        //
-    }
+{
+    DB::table('secao_cloud')->where('id_secao_cloud', $id)->delete();
+    
+    return redirect()->route('secao_cloud.index')
+        ->with('mensagemSucesso', 'Registro excluído com sucesso!');
+}
 }
