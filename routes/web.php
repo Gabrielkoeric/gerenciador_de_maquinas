@@ -158,6 +158,7 @@ Route::resource('/asynctasks', AsyncTasksController::class)->middleware(Autentic
 Route::resource('/config_geral', ConfigGeralController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //seção cloud
+Route::post('/secao_cloud/{id}/resetar', [SecaoCloudController::class, 'resetar'])->name('secao_cloud.resetar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/secao_cloud', SecaoCloudController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //rede

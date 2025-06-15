@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SecaoCloudController extends Controller
 {
@@ -131,5 +132,22 @@ class SecaoCloudController extends Controller
     
     return redirect()->route('secao_cloud.index')
         ->with('mensagemSucesso', 'Registro excluído com sucesso!');
+}
+
+public function resetar($id)
+{
+    $novaSenha = Str::random(8); // Gera string aleatória
+
+    // Se quiser incluir caracteres especiais, use a versão abaixo
+    $novaSenha = substr(str_shuffle(
+        str_repeat('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*', 8)
+    ), 0, 8);
+
+    DB::table('secao_cloud')
+        ->where('id_secao_cloud', $id)
+        ->update(['senha' => $novaSenha]);
+
+    return redirect()->route('secao_cloud.index')
+        ->with('mensagemSucesso', "Senha resetada com sucesso para o ID $id. Nova senha: $novaSenha");
 }
 }
