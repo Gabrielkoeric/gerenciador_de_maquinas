@@ -11,7 +11,7 @@ use App\Jobs\Server\StartServer;
 use App\Jobs\Server\StopServer;
 use App\Jobs\Server\RestartServer;
 use App\Jobs\Server\ListaVmServer;
-use App\Jobs\Server\InsereVmServer;
+use App\Jobs\Server\RealocaVmServer;
 use App\Jobs\Vm\StatusVm;
 use App\Jobs\Vm\StartVm;
 use App\Jobs\Vm\StopVm;
@@ -94,14 +94,14 @@ class ExecutaComandoController extends Controller
                         ]);
                         ListaVmServer::dispatch($dados, $taskId);
                         break;
-                    case 'insereVm':
+                    case 'realocaVm':
                         $taskId = DB::table('async_tasks')->insertGetId([
-                            'nome_async_tasks' => 'InsereVmServer',
+                            'nome_async_tasks' => 'RealocaVmServer',
                             'horario_disparo' => Carbon::now(),
                             'parametros' => json_encode($dados),
                             'status' => 'Pendente',
                         ]);
-                        InsereVmServer::dispatch($dados, $taskId);
+                        RealocaVmServer::dispatch($dados, $taskId);
                         break;
                 }    
         }

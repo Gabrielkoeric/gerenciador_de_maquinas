@@ -135,5 +135,5 @@
             cb.addEventListener('change', updateActionButtons);
         });
     </script>
-
+    
 </x-layout>

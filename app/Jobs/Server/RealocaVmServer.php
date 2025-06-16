@@ -9,8 +9,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Jobs\Notificacao\Telegram;
 
-class InsereVmServer implements ShouldQueue
+class RealocaVmServer implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     public $dados;
@@ -85,25 +87,27 @@ class InsereVmServer implements ShouldQueue
 
     $listaVms = [];
 
-        if (!empty($matches)) {
-            $jsonString = $matches[0];
-            $listaVms = json_decode($jsonString, true);
-            
-            if (is_array($listaVms)) {
-                foreach ($listaVms as $vm) {
-                    DB::table('vm')->insert([
-                        'nome' => $vm['Name'],
-                        'id_ip_lan' => 1,
-                        'porta' => 3389,
-                        'id_dominio' => 1,
-                        'tipo' => 'escalaserver',
-                        'so' => 'rdp',
-                        'id_servidor_fisico' => $this->dados->id_servidor_fisico,
-                        'autostart' => 1,
-                    ]);
+if (!empty($matches)) {
+    $jsonString = $matches[0];
+    $listaVms = json_decode($jsonString, true);
+
+    if (is_array($listaVms)) {
+        foreach ($listaVms as $vm) {
+            $vmExistente = DB::table('vm')->where('nome', $vm['Name'])->first();
+
+            if ($vmExistente) {
+                // VM existe, verifica se está relacionada ao servidor físico correto
+                if ($vmExistente->id_servidor_fisico != $this->dados->id_servidor_fisico) {
+                    DB::table('vm')
+                        ->where('id_vm', $vmExistente->id_vm)
+                        ->update(['id_servidor_fisico' => $this->dados->id_servidor_fisico]);
                 }
+            } else {
+                Telegram::dispatch("✅ Job finalizado: VM não encontrada na tabela vm: " . $vm['Name']);
             }
         }
+    }
+}
 
         DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)
