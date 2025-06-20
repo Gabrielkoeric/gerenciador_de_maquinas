@@ -12,7 +12,7 @@
         <!--<button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('start')">Iniciar</button>-->
         <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('restart')">Restart</button>
         <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('listaVm')">Lista VM</button>
-        <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('insereVm')">Insere VM</button>
+        <button type="button" class="btn btn-dark my-3" data-action onclick="confirmAction('realocaVm')">Realoca VM</button>
 
         <table class="table table-striped">
             <thead>
