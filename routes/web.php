@@ -60,6 +60,8 @@ use App\Http\Controllers\IpLanController;
 use App\Http\Controllers\DocumentacaoController;
 use App\Http\Controllers\DominioController;
 use App\Http\Controllers\DeployController;
+use App\Http\Controllers\BancodedadosController;
+use App\Http\Controllers\RcloneExecucoesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -175,6 +177,13 @@ Route::resource('/dominios', DominioController::class)->middleware(Autenticador:
 //deploy
 Route::post('/deploy/server', [DeployController::class, 'server'])->name('deploy.server')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/deploy', DeployController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//banco de dados
+Route::resource('/bancodedados', BancodedadosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//rclone execucoes
+Route::get('/rclone/executa', [RcloneExecucoesController::class, 'executa'])->name('rclone.executa')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::resource('/rclone', RcloneExecucoesController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
