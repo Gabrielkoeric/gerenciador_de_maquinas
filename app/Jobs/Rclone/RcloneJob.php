@@ -26,12 +26,12 @@ class RcloneJob implements ShouldQueue
     {
         // Buscar a execução
         $execucao = DB::table('rclone_execucoes')->where('id_execucao', $this->id_execucao)->first();
-
+/*
         DB::table('rclone_execucoes')->where('id_execucao', $this->id_execucao)->update([
             'status' => 'executando',
             'inicio' => now(),
         ]);
-
+*/
         $repo = DB::table('repositorios')->where('id_repositorios', $execucao->id_repositorio)->first();
 
         $remotePath = "\"{$repo->rclone}:{$repo->origem}\"";
@@ -47,6 +47,7 @@ class RcloneJob implements ShouldQueue
         $sshCommand = "sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@192.168.x.x \"$cmd\"";
 
         $process = Process::fromShellCommandline($sshCommand);
+        $process->setTimeout(null);
         $process->run();
 
             if ($process->isSuccessful()) {
@@ -69,8 +70,18 @@ class RcloneJob implements ShouldQueue
             ->first();
 
         if ($proxima) {
-            self::dispatch($proxima->id_execucao)->onQueue('rclone');
-        }
+    $updated = DB::table('rclone_execucoes')
+        ->where('id_execucao', $proxima->id_execucao)
+        ->where('status', 'pendente')
+        ->update([
+            'status' => 'executando',
+            'inicio' => now(),
+        ]);
+
+    if ($updated) {
+        self::dispatch($proxima->id_execucao)->onQueue('rclone');
+    }
+}
             
     }
 }

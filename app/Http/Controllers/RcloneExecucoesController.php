@@ -120,7 +120,18 @@ class RcloneExecucoesController extends Controller
         ->get();
 
     foreach ($execucoesPendentes as $execucao) {
-        RcloneJob::dispatch($execucao->id_execucao)->onQueue('rclone');
+    // Tenta marcar como "executando" apenas se ainda estiver pendente
+    $updated = DB::table('rclone_execucoes')
+        ->where('id_execucao', $execucao->id_execucao)
+        ->where('status', 'pendente')
+        ->update([
+            'status' => 'executando',
+            'inicio' => now(),
+        ]);
+
+        if ($updated) {
+            RcloneJob::dispatch($execucao->id_execucao)->onQueue('rclone');
+        }
     }
 
     return redirect('/rclone')->with('success', 'Execuções criadas com sucesso!');
