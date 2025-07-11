@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Process\Process;
 
 class RcloneJob implements ShouldQueue
 {
@@ -26,12 +27,12 @@ class RcloneJob implements ShouldQueue
     {
         // Buscar a execução
         $execucao = DB::table('rclone_execucoes')->where('id_execucao', $this->id_execucao)->first();
-/*
+
         DB::table('rclone_execucoes')->where('id_execucao', $this->id_execucao)->update([
             'status' => 'executando',
             'inicio' => now(),
         ]);
-*/
+
         $repo = DB::table('repositorios')->where('id_repositorios', $execucao->id_repositorio)->first();
 
         $remotePath = "\"{$repo->rclone}:{$repo->origem}\"";
@@ -44,7 +45,12 @@ class RcloneJob implements ShouldQueue
         Log::info("Comando Rclone montado para execução {$this->id_execucao}: {$cmd}");
         
         // Comando para executar via SSH remoto
-        $sshCommand = "sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@192.168.x.x \"$cmd\"";
+        //$sshCommand = "sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@192.168.x.x \"$cmd\"";
+
+        $senha = '';
++       $senhaSegura = escapeshellarg($senha); 
++       $sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no root@192.168.x.x \"$cmd\"";
+
 
         $process = Process::fromShellCommandline($sshCommand);
         $process->setTimeout(null);
@@ -64,24 +70,33 @@ class RcloneJob implements ShouldQueue
                     'log_path' => $logFile,
                 ]);
             }
-        $proxima = DB::table('rclone_execucoes')
+        /*$proxima = DB::table('rclone_execucoes')
             ->where('status', 'pendente')
             ->orderBy('id_execucao')
             ->first();
-
-        if ($proxima) {
-    $updated = DB::table('rclone_execucoes')
-        ->where('id_execucao', $proxima->id_execucao)
+*/
+$proxima = DB::transaction(function () {
+    $execucao = DB::table('rclone_execucoes')
         ->where('status', 'pendente')
-        ->update([
-            'status' => 'executando',
-            'inicio' => now(),
-        ]);
+        ->orderBy('id_execucao')
+        ->limit(1)
+        ->lockForUpdate(skipLocked: true)
+        ->first();
 
-    if ($updated) {
-        self::dispatch($proxima->id_execucao)->onQueue('rclone');
+    if ($execucao) {
+        DB::table('rclone_execucoes')
+            ->where('id_execucao', $execucao->id_execucao)
+            ->update([
+                'status' => 'em fila',
+                'inicio' => now(),
+            ]);
     }
-}
+
+    return $execucao;
+});
+        if ($proxima) {
+            self::dispatch($proxima->id_execucao)->onQueue('rclone');
+        }
             
     }
 }
