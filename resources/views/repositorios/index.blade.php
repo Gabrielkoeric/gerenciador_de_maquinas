@@ -2,6 +2,7 @@
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <!--<a href="{{route('cliente_escala.create')}}" class="btn btn-dark my-3">Adicionar</a>-->
     <a href="{{route('rclone.executa') }}" class="btn btn-dark my-3">Executar Rclone</a>
+    <a href="{{route('rclonelogs.index') }}" class="btn btn-dark my-3">Logs Execuções</a>
     
     <ul class="list-group">
 
