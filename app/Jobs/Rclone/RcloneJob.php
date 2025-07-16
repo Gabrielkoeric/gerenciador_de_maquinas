@@ -75,7 +75,7 @@ class RcloneJob implements ShouldQueue
             ->orderBy('id_execucao')
             ->first();
 */
-$proxima = DB::transaction(function () {
+/*$proxima = DB::transaction(function () {
     $execucao = DB::table('rclone_execucoes')
         ->where('status', 'pendente')
         ->orderBy('id_execucao')
@@ -93,7 +93,28 @@ $proxima = DB::transaction(function () {
     }
 
     return $execucao;
+});*/
+$proxima = DB::transaction(function () {
+    $execucao = DB::selectOne("
+        SELECT * FROM rclone_execucoes
+        WHERE status = 'pendente'
+        ORDER BY id_execucao
+        LIMIT 1
+        FOR UPDATE SKIP LOCKED
+    ");
+
+    if ($execucao) {
+        DB::table('rclone_execucoes')
+            ->where('id_execucao', $execucao->id_execucao)
+            ->update([
+                'status' => 'em fila',
+                'inicio' => now(),
+            ]);
+    }
+
+    return $execucao;
 });
+
         if ($proxima) {
             self::dispatch($proxima->id_execucao)->onQueue('rclone');
         }
