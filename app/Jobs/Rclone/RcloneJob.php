@@ -48,8 +48,8 @@ class RcloneJob implements ShouldQueue
         //$sshCommand = "sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@192.168.x.x \"$cmd\"";
 
         $senha = '';
-+       $senhaSegura = escapeshellarg($senha); 
-+       $sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no root@192.168.x.x \"$cmd\"";
+        $senhaSegura = escapeshellarg($senha); 
+        $sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no root@192.168.x.x \"$cmd\"";
 
 
         $process = Process::fromShellCommandline($sshCommand);
