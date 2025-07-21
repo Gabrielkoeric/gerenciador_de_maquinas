@@ -44,7 +44,8 @@ class LocalAuthController extends Controller
         return back()->withErrors(['email' => 'Credenciais inválidas.'])->withInput();
     }
 
-    Auth::login($usuario, $request->filled('remember'));
+    //Auth::login($usuario, $request->filled('remember')); server para salvar e validar o token lembrar me
+    Auth::login($usuario);
 
     AccessLog::create([
         'id' => $usuario->id,
@@ -94,7 +95,8 @@ public function register(Request $request)
         'ip_address' => request()->ip(),
     ]);
 
-    Auth::login($usuario, true); // O `true` ativa o remember_token automaticamente
+    //Auth::login($usuario, true); // O `true` ativa o remember_token automaticamente
+    Auth::login($usuario); // O `true` ativa o remember_token automaticamente
 
     return redirect()->route('home.index');
 }
