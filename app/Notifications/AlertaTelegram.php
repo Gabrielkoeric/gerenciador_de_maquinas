@@ -44,7 +44,8 @@ class AlertaTelegram extends Notification
     public function toTelegram($notifiable = null)
     {
         return TelegramMessage::create()
-            ->to(5779378630) // <-- seu chat_id fixo aqui
+            //->to(5779378630) // <-- seu chat_id fixo aqui
+            ->to(-1002841506181)
             ->content($this->mensagem);
     }
 

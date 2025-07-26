@@ -38,6 +38,8 @@ class Telegram implements ShouldQueue
      */
     public function handle()
     {
-        Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("{$this->mensagem}"));
+        //Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("{$this->mensagem}"));
+        Notification::route('telegram', '-1002841506181')->notify(new AlertaTelegram("{$this->mensagem}"));
+
     }
 }
