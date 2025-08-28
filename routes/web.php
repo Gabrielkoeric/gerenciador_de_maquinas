@@ -63,6 +63,7 @@ use App\Http\Controllers\DeployController;
 use App\Http\Controllers\BancodedadosController;
 use App\Http\Controllers\RcloneExecucoesController;
 use App\Http\Controllers\RcloneLogsExecucoesController;
+use App\Http\Controllers\AcessosController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -188,6 +189,9 @@ Route::resource('/rclone', RcloneExecucoesController::class)->middleware(Autenti
 
 //logs rclone execuções
 Route::resource('/rclonelogs', RcloneLogsExecucoesController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//acessos
+Route::resource('/acessos', AcessosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
