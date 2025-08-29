@@ -33,7 +33,17 @@ class RcloneJob implements ShouldQueue
             'inicio' => now(),
         ]);
 
-        $repo = DB::table('repositorios')->where('id_repositorios', $execucao->id_repositorio)->first();
+        $repo = DB::table('repositorios as r')
+            ->join('vm as v', 'r.id_server_bkp', '=', 'v.id_vm')
+            ->join('ip_lan as ip', 'v.id_ip_lan', '=', 'ip.id_ip_lan')
+            ->select(
+                'r.*',        // todas as colunas da tabela repositorios
+                'ip.ip'       // IP da tabela ip_lan
+            )
+        ->where('r.id_repositorios', $execucao->id_repositorio)
+        ->first();
+
+        $credenciais = DB::table('usuario_vm')->where('id_vm', $repo->id_server_bkp)->first();
 
         $remotePath = "\"{$repo->rclone}:{$repo->origem}\"";
         $destino = $repo->destino;
@@ -47,9 +57,17 @@ class RcloneJob implements ShouldQueue
         // Comando para executar via SSH remoto
         //$sshCommand = "sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@192.168.x.x \"$cmd\"";
 
-        $senha = '';
+        $senha = $credenciais->senha;
         $senhaSegura = escapeshellarg($senha); 
-        $sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no root@192.168.x.x \"$cmd\"";
+        //$sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no $credenciais->usuario@$repo->ip_lan \"$cmd\"";
+        $sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no {$credenciais->usuario}@{$repo->ip} \"$cmd\"";
+        //Log::info("senha segura: $senhaSegura");
+        //Log::info("senha: $senha");
+        //Log::info("credenciais usuario: $credenciais->usuario");
+        //Log::info("repo ip: $repo->ip");
+        //Log::info("sshCommand: $sshCommand");
+
+
 
 
         $process = Process::fromShellCommandline($sshCommand);

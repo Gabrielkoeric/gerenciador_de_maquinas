@@ -116,7 +116,7 @@ class RcloneExecucoesController extends Controller
     $execucoesPendentes = DB::table('rclone_execucoes')
         ->where('status', 'pendente')
         ->orderBy('id_execucao')
-        ->limit(3)
+        ->limit(1)
         ->get();
     foreach ($execucoesPendentes as $execucao) {
     RcloneJob::dispatch($execucao->id_execucao)->onQueue('rclone');
