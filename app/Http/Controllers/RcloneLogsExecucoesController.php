@@ -15,16 +15,19 @@ class RcloneLogsExecucoesController extends Controller
     public function index()
 {
     $logs = DB::table('rclone_execucoes')
-        ->join('repositorios', 'rclone_execucoes.id_repositorio', '=', 'repositorios.id_repositorios')
-        ->join('cliente_escala', 'repositorios.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
-        ->select(
-            'rclone_execucoes.*',
-            'repositorios.nome as repositorioNome',
-            'cliente_escala.nome as clienteNome'
-        )
-        ->get();
+    ->join('repositorios', 'rclone_execucoes.id_repositorio', '=', 'repositorios.id_repositorios')
+    ->join('cliente_escala', 'repositorios.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
+    ->select(
+        'rclone_execucoes.*',
+        'repositorios.nome as repositorioNome',
+        'cliente_escala.nome as clienteNome'
+    )
+    ->orderByRaw('inicio IS NULL DESC') // NULLs primeiro
+    ->orderBy('inicio', 'desc')        // depois ordem decrescente
+    ->get();
 
-    return view('rclone_execucoes.index')->with('logs', $logs);
+return view('rclone_execucoes.index')->with('logs', $logs);
+
 }
 
     /**

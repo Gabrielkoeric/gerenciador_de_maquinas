@@ -1,4 +1,4 @@
-<x-layout title="Logas Rclone Execuções">
+<x-layout title="Logs Rclone Execuções">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('rclone.index')}}" class="btn btn-dark my-3 pr">Repositórios</a>
 
