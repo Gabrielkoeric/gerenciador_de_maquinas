@@ -1,0 +1,20 @@
+- name: Finalizar processos no Windows
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Finalizar processos
+      ansible.windows.win_command: TASKKILL /F /IM {{ item }}
+      loop:
+        - ESCALAPROCESSSYSTEM.EXE
+        - Escalasoft.Tecnologia.EscalaSwarm.exe
+        - Escala.exe
+
+- name: Reiniciar serviços que contenham "escala"
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Reiniciar todos os serviços que contenham "escala"
+      ansible.windows.win_shell: |
+        Get-Service | Where-Object { $_.Name -like "*escala*" -or $_.DisplayName -like "*escala*" } | ForEach-Object {
+            Restart-Service -Name $_.Name -Force
+        }

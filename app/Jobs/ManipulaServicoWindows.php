@@ -95,6 +95,9 @@ class ManipulaServicoWindows implements ShouldQueue
             case 'status':
                 $playbookName = 'status_servico.yml';
                 break;
+            case 'kill':
+                $playbookName = 'kill_servico.yml';
+                break;
         }
         $playbook = $dir . '/' . $playbookName;
 
