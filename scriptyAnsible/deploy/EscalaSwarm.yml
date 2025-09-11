@@ -1,0 +1,35 @@
+---
+- name: Instalar Escala Swarm
+  hosts: windows
+  gather_facts: no
+  
+  tasks:
+
+    - name: Garantir que a pasta C:\escalasoft existe
+      win_file:
+        path: C:\escalasoft
+        state: directory
+
+    - name: Garantir que a pasta C:\escalasoft\ferramentas existe
+      win_file:
+        path: C:\escalasoft\ferramentas
+        state: directory
+
+    - name: Garantir que a pasta escalaswarm do cliente existe
+      win_file:
+        path: "C:\\escalasoft\\ferramentas\\escalaswarm_{{ apelido }}"
+        state: directory
+
+    - name: Copiar todos os arquivos de executaveis/swarm para a pasta do cliente
+      win_copy:
+        src: "executaveis/swarm/"
+        dest: "C:\\escalasoft\\ferramentas\\escalaswarm_{{ apelido }}\\"
+        overwrite: yes
+
+    - name: Instalar o serviço Escala Swarm
+      win_command: >
+        C:\Windows\Microsoft.NET\Framework\v4.0.30319\installUtil.exe
+        /NOMESERVICO={{ nomeservico }}
+        /SERVIDOR={{ server }}
+        /SISTEMA={{ sistema }}
+        C:\escalasoft\ferramentas\escalaswarm_{{ apelido }}\Escalasoft.Tecnologia.EscalaSwarm.exe
