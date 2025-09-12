@@ -177,6 +177,7 @@ Route::resource('/documentacao', DocumentacaoController::class)->middleware(Aute
 Route::resource('/dominios', DominioController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //deploy
+Route::post('/deploy/ws', [DeployController::class, 'ws'])->name('deploy.ws')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::post('/deploy/swarm', [DeployController::class, 'swarm'])->name('deploy.swarm')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::post('/deploy/server', [DeployController::class, 'server'])->name('deploy.server')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/deploy', DeployController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
