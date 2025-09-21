@@ -64,6 +64,7 @@ use App\Http\Controllers\BancodedadosController;
 use App\Http\Controllers\RcloneExecucoesController;
 use App\Http\Controllers\RcloneLogsExecucoesController;
 use App\Http\Controllers\AcessosController;
+use App\Http\Controllers\ResumoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -194,6 +195,9 @@ Route::resource('/rclonelogs', RcloneLogsExecucoesController::class)->middleware
 
 //acessos
 Route::resource('/acessos', AcessosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//acessos
+Route::resource('/resumo', ResumoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
