@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventoXmlController;
 use App\Http\Controllers\ApiServicoController;
 use App\Http\Controllers\StatusServicoController;
+use App\Http\Controllers\SecaoCloudController;
 use App\Http\Middleware\Autenticador;
 
 /*
@@ -33,6 +34,6 @@ Route::post('/servicos', [ApiServicoController::class, 'receber']);
 Route::post('/status_servico', [StatusServicoController::class, 'store']);
 //Route::middleware([])->post('/status_servico', [StatusServicoController::class, 'store']);
 
-
+Route::post('/secao', [SecaoCloudController::class, 'api']);
 
 //Route::post('/status_servico', [StatusServicoController::class, 'store'])->withoutMiddleware([Autenticador::class]);

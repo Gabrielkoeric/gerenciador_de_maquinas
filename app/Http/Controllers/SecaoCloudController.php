@@ -150,4 +150,29 @@ public function resetar($id)
     return redirect()->route('secao_cloud.index')
         ->with('mensagemSucesso', "Senha resetada com sucesso para o ID $id. Nova senha: $novaSenha");
 }
+
+public function api(Request $request)
+    {
+        // validação básica
+        $validated = $request->validate([
+            'usuario' => 'required|string|max:255',
+            'senha'   => 'required|string|max:255',
+            'cliente' => 'required|integer|exists:secao_cloud,id_cliente_escala',
+        ]);
+
+        // dados que serão inseridos
+        $dados = [
+            'usuario' => $validated['usuario'],
+            'senha'   => $validated['senha'],
+            'id_cliente_escala' => $validated['cliente'],
+        ];
+
+        // insere no banco e pega o id
+        $id = DB::table('secao_cloud')->insertGetId($dados);
+
+        // retorna resposta em JSON
+        return response()->json([
+            'message' => 'Registro inserido com sucesso',
+        ], 201);
+    }
 }
