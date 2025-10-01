@@ -101,6 +101,7 @@ class RcloneExecucoesController extends Controller
     foreach ($repositorios as $repositorio) {
         DB::table('rclone_execucoes')->insert([
             'id_repositorio' => $repositorio->id_repositorios,
+            'tipo' => 'manual',
             'status' => 'pendente',
             'disparo' => Carbon::now(),
             'inicio' => null,
@@ -115,6 +116,7 @@ class RcloneExecucoesController extends Controller
 
     $execucoesPendentes = DB::table('rclone_execucoes')
         ->where('status', 'pendente')
+        ->where('tipo', 'manual')
         ->orderBy('id_execucao')
         ->limit(1)
         ->get();

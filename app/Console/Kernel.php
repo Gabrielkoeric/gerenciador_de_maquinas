@@ -15,7 +15,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        //$schedule->command('servicos:processar')->cron('0 6,12,18,0 * * *');
+
+        //$schedule->command('servicos:processar')->cron('37 23 * * *');
+        $schedule->command('bkp:diario')->cron('1 * * * *');
+        
     }
 
     /**

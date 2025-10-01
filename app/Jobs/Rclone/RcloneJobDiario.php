@@ -11,8 +11,10 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
+use Carbon\Carbon;
+use App\Jobs\Rclone\RcloneJobDiario;
 
-class RcloneJob implements ShouldQueue
+class RcloneJobDiario implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -45,30 +47,27 @@ class RcloneJob implements ShouldQueue
 
         $credenciais = DB::table('usuario_vm')->where('id_vm', $repo->id_server_bkp)->first();
 
-        $remotePath = "\"{$repo->rclone}:{$repo->origem}\"";
-        $destino = $repo->destino;
+        //$remotePath = "\"{$repo->rclone}:{$repo->origem}\"";
+        //$destino = $repo->destino;
+
+        $data = Carbon::now()->subHour();
+        $dataPath = $data->format('Y/m/d');
+
+        // Monta origem e destino com a data
+        $remotePath = "\"{$repo->rclone}:{$repo->origem}{$dataPath}/\"";
+        $destino = "{$repo->destino}{$dataPath}/";
+
         $logFile = $repo->log_dir;
         $tags = $repo->tags ?? '';
         $tipoCopia = $repo->tipo_copia;
 
-        $cmd = "/usr/bin/rclone {$tipoCopia} {$remotePath} {$destino} --log-file=\"{$logFile}\" {$tags}";
+        $cmd = "rclone {$tipoCopia} {$remotePath} {$destino} --log-file=\"{$logFile}\" {$tags}";
         Log::info("Comando Rclone montado para execução {$this->id_execucao}: {$cmd}");
-        
-        // Comando para executar via SSH remoto
-        //$sshCommand = "sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@192.168.x.x \"$cmd\"";
 
         $senha = $credenciais->senha;
         $senhaSegura = escapeshellarg($senha); 
         //$sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no $credenciais->usuario@$repo->ip_lan \"$cmd\"";
         $sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no {$credenciais->usuario}@{$repo->ip} \"$cmd\"";
-        //Log::info("senha segura: $senhaSegura");
-        //Log::info("senha: $senha");
-        //Log::info("credenciais usuario: $credenciais->usuario");
-        //Log::info("repo ip: $repo->ip");
-        //Log::info("sshCommand: $sshCommand");
-
-
-
 
         $process = Process::fromShellCommandline($sshCommand);
         $process->setTimeout(null);
@@ -90,30 +89,7 @@ class RcloneJob implements ShouldQueue
                     'log_path' => $logFile,
                 ]);
             }
-        /*$proxima = DB::table('rclone_execucoes')
-            ->where('status', 'pendente')
-            ->orderBy('id_execucao')
-            ->first();
-*/
-/*$proxima = DB::transaction(function () {
-    $execucao = DB::table('rclone_execucoes')
-        ->where('status', 'pendente')
-        ->orderBy('id_execucao')
-        ->limit(1)
-        ->lockForUpdate(skipLocked: true)
-        ->first();
-
-    if ($execucao) {
-        DB::table('rclone_execucoes')
-            ->where('id_execucao', $execucao->id_execucao)
-            ->update([
-                'status' => 'em fila',
-                'inicio' => now(),
-            ]);
-    }
-
-    return $execucao;
-});*/
+/*
 $proxima = DB::transaction(function () {
     $execucao = DB::selectOne("
         SELECT * FROM rclone_execucoes
@@ -133,11 +109,22 @@ $proxima = DB::transaction(function () {
     }
 
     return $execucao;
-});
+});*
 
         if ($proxima) {
             self::dispatch($proxima->id_execucao)->onQueue('rclone');
         }
-            
+         */
+        
+        $execucoesPendentes = DB::table('rclone_execucoes')
+        ->where('status', 'pendente')
+        ->where('tipo', 'diario')
+        ->orderBy('id_execucao')
+        ->limit(1)
+        ->get();
+
+    foreach ($execucoesPendentes as $execucao) {
+    RcloneJobDiario::dispatch($execucao->id_execucao)->onQueue('diario');
+    }
     }
 }
