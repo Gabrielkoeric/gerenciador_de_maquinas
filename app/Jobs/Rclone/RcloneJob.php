@@ -54,22 +54,9 @@ class RcloneJob implements ShouldQueue
         $cmd = "/usr/bin/rclone {$tipoCopia} {$remotePath} {$destino} --log-file=\"{$logFile}\" {$tags}";
         Log::info("Comando Rclone montado para execução {$this->id_execucao}: {$cmd}");
         
-        // Comando para executar via SSH remoto
-        //$sshCommand = "sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@192.168.x.x \"$cmd\"";
-
         $senha = $credenciais->senha;
         $senhaSegura = escapeshellarg($senha); 
-        //$sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no $credenciais->usuario@$repo->ip_lan \"$cmd\"";
         $sshCommand = "sshpass -p $senhaSegura ssh -o StrictHostKeyChecking=no {$credenciais->usuario}@{$repo->ip} \"$cmd\"";
-        //Log::info("senha segura: $senhaSegura");
-        //Log::info("senha: $senha");
-        //Log::info("credenciais usuario: $credenciais->usuario");
-        //Log::info("repo ip: $repo->ip");
-        //Log::info("sshCommand: $sshCommand");
-
-
-
-
         $process = Process::fromShellCommandline($sshCommand);
         $process->setTimeout(null);
         $process->run();
@@ -90,30 +77,51 @@ class RcloneJob implements ShouldQueue
                     'log_path' => $logFile,
                 ]);
             }
-        /*$proxima = DB::table('rclone_execucoes')
-            ->where('status', 'pendente')
-            ->orderBy('id_execucao')
-            ->first();
-*/
-/*$proxima = DB::transaction(function () {
-    $execucao = DB::table('rclone_execucoes')
-        ->where('status', 'pendente')
-        ->orderBy('id_execucao')
-        ->limit(1)
-        ->lockForUpdate(skipLocked: true)
-        ->first();
-
-    if ($execucao) {
-        DB::table('rclone_execucoes')
-            ->where('id_execucao', $execucao->id_execucao)
-            ->update([
-                'status' => 'em fila',
-                'inicio' => now(),
-            ]);
+     /*
+            if ($process->isSuccessful()) {
+    // Pega a última linha do log
+    $ultimaLinha = '';
+    if (file_exists($logFile)) {
+        $linhas = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $ultimaLinha = end($linhas);
     }
 
-    return $execucao;
-});*/
+    // Inicializa os valores
+    $qtdTransferidos = null;
+    $qtdCheck = null;
+    $bytesTransferidos = null;
+    $resumo = $ultimaLinha;
+
+    // Tenta decodificar como JSON
+    $json = json_decode($ultimaLinha, true);
+    if (json_last_error() === JSON_ERROR_NONE && is_array($json)) {
+        $qtdTransferidos   = $json['transferred'] ?? null;
+        $qtdCheck          = $json['checks'] ?? null;
+        $bytesTransferidos = $json['bytes'] ?? null;
+        $resumo            = json_encode($json, JSON_UNESCAPED_UNICODE);
+    }
+
+    DB::table('rclone_execucoes')->where('id_execucao', $this->id_execucao)->update([
+        'status'                  => 'concluido',
+        'comando_rclone'          => $cmd,
+        'fim'                     => now(),
+        'log_path'                => $logFile,
+        'erro'                    => $resumo, // mesmo em sucesso guarda o resumo
+        'qtd_arquivos_transferidos' => $qtdTransferidos,
+        'qtd_arquivos_check'        => $qtdCheck,
+        'bytes_transferidos'        => $bytesTransferidos,
+    ]);
+} else {
+    DB::table('rclone_execucoes')->where('id_execucao', $this->id_execucao)->update([
+        'status' => 'erro',
+        'comando_rclone' => $cmd,
+        'fim' => now(),
+        'erro' => $process->getErrorOutput(),
+        'log_path' => $logFile,
+    ]);
+}
+
+     */
 $proxima = DB::transaction(function () {
     $execucao = DB::selectOne("
         SELECT * FROM rclone_execucoes
