@@ -117,7 +117,7 @@ class RcloneJob implements ShouldQueue
 $proxima = DB::transaction(function () {
     $execucao = DB::selectOne("
         SELECT * FROM rclone_execucoes
-        WHERE status = 'pendente'
+        WHERE status = 'pendente' and tipo = 'manual'
         ORDER BY id_execucao
         LIMIT 1
         FOR UPDATE SKIP LOCKED
