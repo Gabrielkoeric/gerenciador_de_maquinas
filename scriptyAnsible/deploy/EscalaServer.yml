@@ -57,7 +57,7 @@
 
     - name: Copia arquivos ausentes para Ferramentas
       win_copy:
-        src: "executaveis/{{ item }}"
+        src: "executaveis/server/{{ item }}"
         dest: "{{ ferramentas_path }}\\{{ item }}"
       when: >
         (stat_ferramentas.results |
@@ -74,7 +74,7 @@
 
     - name: Copia arquivos ausentes para Atualizacao
       win_copy:
-        src: "executaveis/{{ item }}"
+        src: "executaveis/server/{{ item }}"
         dest: "{{ atualizacao_path }}\\{{ item }}"
       when: >
         (stat_atualizacao.results |
