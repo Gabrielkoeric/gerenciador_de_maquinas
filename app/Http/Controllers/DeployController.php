@@ -62,6 +62,8 @@ class DeployController extends Controller
 
             $ultimaPorta = (int) $ultimaPorta ?: 2000;
 
+            $ultimaPorta = $ultimaPorta + 1;
+
             $vms = DB::table('vm')
                 ->select(
                 'vm.*',

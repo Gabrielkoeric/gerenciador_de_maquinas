@@ -83,7 +83,7 @@ class Server implements ShouldQueue
      
         $playbook = $dir . '/' . $playbookName;
 
-        $porta = $this->ultimaPorta + 1;
+        $porta = $this->ultimaPorta;
         $apelido = $this->clienteDados->apelido;
 
         $comando = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
@@ -91,19 +91,18 @@ class Server implements ShouldQueue
            " --extra-vars " . escapeshellarg("cliente=$apelido porta=$porta");
 
         $output = shell_exec($comando);
-/*
+
         if (str_contains($output, 'failed=0') && str_contains($output, 'fatal:') === false) {
             // Sucesso: serviço foi instalado corretamente
-            DB::table('servicos')->insert([
-                'nome' => 'escalaserver_' . $this->clienteDados->apelido,
+            DB::table('servico_vm')->insert([
+                'nome' => "escalaserver_$apelido",
                 'porta' => $porta,
                 'autostart' => 1,
                 'id_vm' => $this->dados->id_vm,
-                'id_servico' => $this->idServico,
+                'id_servico' => '1',
                 'id_cliente_escala' => $this->clienteDados->id_cliente_escala,
             ]);
         }
-*/
 
         DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)

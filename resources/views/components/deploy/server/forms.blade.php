@@ -2,7 +2,7 @@
     @csrf
     <div class="mb-3">
 
-        <input type="hidden" name="ultimaPorta" value="{{ $ultimaPorta }}">
+        <!--<input type="hidden" name="ultimaPorta" value="{{ $ultimaPorta }}">-->
 
         <label for="cliente" class=form-label>Cliente</label>
         <select id="cliente" name="cliente" class="form-control" required>
@@ -13,6 +13,11 @@
                 <option value="{{ $cliente->id_cliente_escala }}">{{ $cliente->nome }}</option>
             @endforeach
         </select >
+    </div>
+
+    <div class="mb-3">
+    <label for="ultimaPorta" class=form-label>Porta:</label>
+        <input type="text" id="ultimaPorta" name="ultimaPorta" class="form-control" $porta value="{{$ultimaPorta}}" required>
     </div>
 
     <div class="mb-3">
