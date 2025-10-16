@@ -103,6 +103,7 @@ class VmController extends Controller
             'id_vm' => $id,
             'usuario' => $usuario,
             'senha' => $senha,
+            'principal' => 1,
         ];
         DB::table('usuario_vm')->insertGetId($dados2);
 
