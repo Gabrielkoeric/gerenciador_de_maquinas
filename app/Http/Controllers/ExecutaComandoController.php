@@ -216,27 +216,74 @@ class ExecutaComandoController extends Controller
         }
         return redirect('/server')->with('success', 'Comando executado com sucesso!');
     }
-*/
+    */
     public function manipulaServico (Request $request)
     {
         //dd($request);
         $servicos = $request->input('servicos');
         $acao = $request->input('acao');
-        foreach ($servicos as $id_servico_vm) {
-            $dados = DB::table('servico_vm as sv')
+        if ($acao !== 'kill') {
+            foreach ($servicos as $id_servico_vm) {
+                $dados = DB::table('servico_vm as sv')
+                ->join('vm as v', 'sv.id_vm', '=', 'v.id_vm')
+                ->join('ip_lan as ip', 'v.id_ip_lan', '=', 'ip.id_ip_lan')
+                ->leftJoin('dominio as d', 'v.id_dominio', '=', 'd.id_dominio')
+                ->leftJoin('usuario_vm as u', function ($join) {
+                    $join->on('v.id_vm', '=', 'u.id_vm')
+                        ->where('u.principal', '=', 1);
+                })
+                ->where('sv.id_servico_vm', $id_servico_vm)
+                ->select(
+                    'sv.*',
+                    'v.nome as vm_nome',
+                    'v.id_ip_lan',
+                    'v.id_dominio',
+                    'v.so',
+                    'ip.ip as ip_lan',
+                    'd.nome as dominio_nome',
+                    'd.usuario as dominio_usuario',
+                    'd.senha as dominio_senha',
+                    'u.usuario as usuario_local',
+                    'u.senha as senha_local'
+                )
+                ->first();   
+                if ($dados->so === 'rdp') {
+                    $parametros = [
+                        'iplan' => $dados->ip_lan,
+                        'usuario_local' => $dados->usuario_local,
+                        'senha_local' => $dados->senha_local,
+                        'dominio_usuario' => $dados->dominio_usuario ?? null,
+                        'dominio_senha' => $dados->dominio_senha ?? null,
+                        'dominio' => $dados->dominio_nome ?? null,
+                        'servico' => $dados->nome,
+                        'acao' => $acao,
+                    ];
+
+                    $taskId = DB::table('async_tasks')->insertGetId([
+                        'nome_async_tasks' => 'ManipulaServicoWindows',
+                        'horario_disparo' => Carbon::now(),
+                        'parametros' => json_encode($parametros),
+                        'status' => 'Pendente',
+                    ]);
+                    $usuarioLogado = auth()->id(); 
+                    Log::info("usuario logado $usuarioLogado");
+                
+                    ManipulaServicoWindows::dispatch($dados, $acao, $taskId, $usuarioLogado);
+                }
+            }
+        }else {
+            $vms = DB::table('servico_vm as sv')
             ->join('vm as v', 'sv.id_vm', '=', 'v.id_vm')
             ->join('ip_lan as ip', 'v.id_ip_lan', '=', 'ip.id_ip_lan')
             ->leftJoin('dominio as d', 'v.id_dominio', '=', 'd.id_dominio')
             ->leftJoin('usuario_vm as u', function ($join) {
                 $join->on('v.id_vm', '=', 'u.id_vm')
-                     ->where('u.principal', '=', 1);
+                    ->where('u.principal', '=', 1);
             })
-            ->where('sv.id_servico_vm', $id_servico_vm)
+            ->whereIn('sv.id_servico_vm', $servicos)
             ->select(
-                'sv.*',
+                'v.id_vm',
                 'v.nome as vm_nome',
-                'v.id_ip_lan',
-                'v.id_dominio',
                 'v.so',
                 'ip.ip as ip_lan',
                 'd.nome as dominio_nome',
@@ -245,32 +292,35 @@ class ExecutaComandoController extends Controller
                 'u.usuario as usuario_local',
                 'u.senha as senha_local'
             )
-            ->first();   
-            if ($dados->so === 'rdp') {
-                $parametros = [
-                    'iplan' => $dados->ip_lan,
-                    'usuario_local' => $dados->usuario_local,
-                    'senha_local' => $dados->senha_local,
-                    'dominio_usuario' => $dados->dominio_usuario ?? null,
-                    'dominio_senha' => $dados->dominio_senha ?? null,
-                    'dominio' => $dados->dominio_nome ?? null,
-                    'servico' => $dados->nome,
-                    'acao' => $acao,
-                ];
+            ->distinct() // 👈 evita duplicar VMs
+            ->get();
 
-                $taskId = DB::table('async_tasks')->insertGetId([
-                    'nome_async_tasks' => 'ManipulaServicoWindows',
-                    'horario_disparo' => Carbon::now(),
-                    'parametros' => json_encode($parametros),
-                    'status' => 'Pendente',
-                ]);
-                $usuarioLogado = auth()->id(); 
-                Log::info("usuario logado $usuarioLogado");
-                
-                
-                ManipulaServicoWindows::dispatch($dados, $acao, $taskId, $usuarioLogado);
-            }
-        }
+            foreach ($vms as $dados) {
+                if ($dados->so === 'rdp') {
+                    $parametros = [
+                        'iplan' => $dados->ip_lan,
+                        'usuario_local' => $dados->usuario_local,
+                        'senha_local' => $dados->senha_local,
+                        'dominio_usuario' => $dados->dominio_usuario ?? null,
+                        'dominio_senha' => $dados->dominio_senha ?? null,
+                        'dominio' => $dados->dominio_nome ?? null,
+                        'acao' => 'kill',
+                    ];
+
+                         $taskId = DB::table('async_tasks')->insertGetId([
+                            'nome_async_tasks' => 'ManipulaServicoWindows',
+                            'horario_disparo' => Carbon::now(),
+                            'parametros' => json_encode($parametros),
+                            'status' => 'Pendente',
+                        ]);
+                        $usuarioLogado = auth()->id(); 
+                        $acao = 'kill';
+                        ManipulaServicoWindows::dispatch($dados, $acao, $taskId, $usuarioLogado);
+                        
+                    }
+                }
+            }     
+        
         return redirect('/vm_servico');
     }
 }

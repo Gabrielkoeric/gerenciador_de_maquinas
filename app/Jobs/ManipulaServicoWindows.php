@@ -101,19 +101,24 @@ class ManipulaServicoWindows implements ShouldQueue
         }
         $playbook = $dir . '/' . $playbookName;
 
+        $nomeServico = $this->dados->nome ?? $this->dados->vm_nome;
+
         $comando = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
            " " . escapeshellarg($playbook) .
-           " --extra-vars " . escapeshellarg("servico={$this->dados->nome}");
+           " --extra-vars " . escapeshellarg("servico={$nomeServico}");
 
         $output = shell_exec($comando);
 
-        Log::info("id job {$this->taskId}, ação {$this->acao}, serviço nome {$this->dados->nome}");
+        Log::info("id job {$this->taskId}, ação {$this->acao}, serviço nome {$nomeServico}");
 
-        $nome = str_replace('_', '', $this->dados->nome);
+        $nome = str_replace('_', '', $nomeServico);
 
         //Notification::route('telegram', 5779378630)->notify(new AlertaTelegram("✅ Job finalizado: {$this->taskId} Ação: {$this->acao} Serviço: {$nome} "));
-
-        Telegram::dispatch("✅ Job finalizado:{$this->taskId} Ação:{$this->acao} Serviço:{$nome}");
+        if ($this->acao !== 'kill') {
+           Telegram::dispatch("✅ Job finalizado:{$this->taskId} Ação:{$this->acao} Serviço:{$nome}"); 
+        }else {
+        Telegram::dispatch("✅ Job finalizado:{$this->taskId} Ação:{$this->acao} VM:{$nome}");
+        }
        
         $estado = null;
         //captura o status
@@ -152,7 +157,7 @@ class ManipulaServicoWindows implements ShouldQueue
                 $erro = 'Erro desconhecido';
             }
         }
-     
+        if ($this->acao !== 'kill') {
         DB::table('logs_execucoes')->insert([
             'acao'          => $this->acao,
             'playbook'      => $playbookName ?? null,
@@ -166,6 +171,7 @@ class ManipulaServicoWindows implements ShouldQueue
             'id'            => $this->usuarioLogado,
             'id_servico_vm' => $this->dados->id_servico_vm,
      ]);
+    }
      ///////////////////
 
 
