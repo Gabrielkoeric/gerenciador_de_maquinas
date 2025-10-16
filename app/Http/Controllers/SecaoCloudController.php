@@ -157,7 +157,7 @@ public function api(Request $request)
         $validated = $request->validate([
             'usuario' => 'required|string|max:255',
             'senha'   => 'required|string|max:255',
-            'cliente' => 'required|integer|exists:secao_cloud,id_cliente_escala',
+            'cliente' => 'required|integer|exists:cliente_escala,id_cliente_escala',
         ]);
 
         // dados que serão inseridos
