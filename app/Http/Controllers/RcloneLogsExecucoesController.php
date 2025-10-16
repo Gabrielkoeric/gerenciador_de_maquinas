@@ -24,7 +24,10 @@ class RcloneLogsExecucoesController extends Controller
     )
     ->orderByRaw('inicio IS NULL DESC') // NULLs primeiro
     ->orderBy('inicio', 'desc')        // depois ordem decrescente
-    ->get();
+    //->where('cliente_escala.nome', '=', '')
+    //->where('rclone_execucoes.tipo', '=', 'manual')
+    //->get();
+    ->paginate(200);
 
 return view('rclone_execucoes.index')->with('logs', $logs);
 

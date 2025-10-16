@@ -12,6 +12,7 @@
                 <tr>
                     <th scope="col">Repo Nome</th>
                     <th scope="col">Cliente</th>
+                    <th scope="col">Tipo</th>
                     <th scope="col">Disparo</th>
                     <th scope="col">Inicio</th>
                     <th scope="col">Fim</th>
@@ -20,7 +21,7 @@
                     <th scope="col">Checks</th>
                     <th scope="col">Bytes</th>
                     <th scope="col">Arq. de log</th>
-                    <th scope="col">Log Erro</th>
+                    <!--<th scope="col">Log Erro</th>-->
                 </tr>
                 </thead>
                 <tbody>
@@ -28,6 +29,7 @@
                     <tr>
                         <td>{{ $log->repositorioNome }}</td>
                         <td>{{ $log->clienteNome }}</td>
+                        <td>{{ $log->tipo }}</td>
                         <td>{{ $log->disparo }}</td>
                         <td>{{ $log->inicio }}</td>
                         <td>{{ $log->fim }}</td>
@@ -36,12 +38,15 @@
                         <td>{{ $log->qtd_arquivos_check }}</td>
                         <td>{{ $log->bytes_transferidos }}</td>
                         <td>{{ $log->log_path }}</td>
-                        <td>{{ $log->erro }}</td>
+                        <!--<td>{{ $log->erro }}</td>-->
                     </tr>
                 @endforeach
 
                 </tbody>
             </table>
+            <div class="d-flex justify-content-center mt-4">
+                {{ $logs->links('pagination::bootstrap-4') }}
+            </div>
     </ul>
 </x-layout>
 
