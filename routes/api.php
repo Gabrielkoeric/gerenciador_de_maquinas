@@ -6,6 +6,7 @@ use App\Http\Controllers\EventoXmlController;
 use App\Http\Controllers\ApiServicoController;
 use App\Http\Controllers\StatusServicoController;
 use App\Http\Controllers\SecaoCloudController;
+use App\Http\Controllers\RcloneLogsExecucoesController;
 use App\Http\Middleware\Autenticador;
 
 /*
@@ -37,3 +38,5 @@ Route::post('/status_servico', [StatusServicoController::class, 'store']);
 Route::post('/secao', [SecaoCloudController::class, 'api']);
 
 //Route::post('/status_servico', [StatusServicoController::class, 'store'])->withoutMiddleware([Autenticador::class]);
+
+Route::get('/rclone', [RcloneLogsExecucoesController::class, 'api']);

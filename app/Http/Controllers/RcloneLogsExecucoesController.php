@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
+use Carbon\Carbon;
 
 class RcloneLogsExecucoesController extends Controller
 {
@@ -98,4 +100,23 @@ return view('rclone_execucoes.index')->with('logs', $logs);
     {
         //
     }
+
+    public function api(): JsonResponse
+{
+    // Pega a data/hora atual e zera minutos e segundos
+    $horaAtual = Carbon::now()->minute(0)->second(0);
+
+    $totalErros = DB::table('rclone_execucoes')
+        ->where('tipo', 'diario')
+        ->where('disparo', '>', $horaAtual)
+        ->where('status', 'erro')
+        ->count();
+    //$totalErros = 0;
+    return response()->json([
+        [
+            'total_erros' => $totalErros
+        ]
+    ]);
+
+}
 }
