@@ -15,11 +15,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //$schedule->command('servicos:processar')->cron('0 6,12,18,0 * * *');
-
         //$schedule->command('servicos:processar')->cron('37 23 * * *');
         $schedule->command('bkp:diario')->cron('1 * * * *');
-        
+        $schedule->command('reinicia:rdp')->everyThirtyMinutes()->between('18:00', '07:59'); 
     }
 
     /**

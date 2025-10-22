@@ -1,0 +1,31 @@
+---
+- name: Verifica usuários logados na VM
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Obter lista de usuários logados como JSON
+      win_shell: |
+        $lines = quser | Select-Object -Skip 1
+        $usuarios = @()
+        foreach ($line in $lines) {
+          $usuario = $line.Substring(0,20).Trim()
+          $sessao  = $line.Substring(20,18).Trim()
+          $id      = $line.Substring(38,5).Trim()
+          $estado  = $line.Substring(43,9).Trim()
+          $tempo_ocioso = $line.Substring(52,12).Trim()
+          $logon_time = $line.Substring(64).Trim()
+          $usuarios += [PSCustomObject]@{
+            usuario = $usuario
+            sessao  = $sessao
+            id = $id
+            estado = $estado
+            tempo_ocioso = $tempo_ocioso
+            logon_time = $logon_time
+          }
+        }
+        $usuarios | ConvertTo-Json
+      register: resultado_usuarios_json
+
+    - name: Mostrar JSON
+      debug:
+        msg: "{{ resultado_usuarios_json.stdout }}"
