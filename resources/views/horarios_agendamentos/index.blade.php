@@ -1,5 +1,6 @@
 <x-layout title="Horarios Agendamentos">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
+    <a href="{{route('agendamentos.index') }}" class="btn btn-dark my-3">Agendamentos</a>
     <!--<a href="{{route('cliente_escala.create')}}" class="btn btn-dark my-3">Adicionar</a>-->
 
     @isset($mensagemSucesso)
