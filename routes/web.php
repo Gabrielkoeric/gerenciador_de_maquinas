@@ -65,6 +65,9 @@ use App\Http\Controllers\RcloneExecucoesController;
 use App\Http\Controllers\RcloneLogsExecucoesController;
 use App\Http\Controllers\AcessosController;
 use App\Http\Controllers\ResumoController;
+use App\Http\Controllers\AgendamentosController;
+use App\Http\Controllers\HorariosAgendamentosController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -198,6 +201,13 @@ Route::resource('/acessos', AcessosController::class)->middleware(Autenticador::
 
 //acessos
 Route::resource('/resumo', ResumoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//agendamentos
+Route::post('/agendamentos/{id}/executar', [AgendamentosController::class, 'executar'])->name('agendamentos.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::resource('/agendamentos', AgendamentosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//horarios agendamentos
+Route::resource('/horarios_agendamentos', HorariosAgendamentosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
