@@ -13,9 +13,11 @@ class SecaoCloudController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $dados = DB::table('secao_cloud')
+    public function index(Request $request)
+{
+    $filtroClientes = $request->input('clientes', []);
+
+    $query = DB::table('secao_cloud')
         ->join('cliente_escala', 'secao_cloud.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
         ->select(
             'secao_cloud.id_secao_cloud',
@@ -24,11 +26,23 @@ class SecaoCloudController extends Controller
             'cliente_escala.nome as nome_cliente'
         )
         ->orderBy('cliente_escala.nome', 'asc')
-        ->orderBy('secao_cloud.usuario', 'asc')
-        ->get();
-    
-        return view('secao_cloud.index')->with('dados', $dados);
+        ->orderBy('secao_cloud.usuario', 'asc');
+
+    // Aplica o filtro ANTES do get()
+    if (!empty($filtroClientes)) {
+        $query->whereIn('cliente_escala.id_cliente_escala', $filtroClientes);
     }
+
+    $dados = $query->get();
+
+    $todosClientes = DB::table('cliente_escala')->orderBy('nome')->get();
+    
+    return view('secao_cloud.index', [
+        'dados' => $dados,
+        'todosClientes' => $todosClientes,
+        'filtroClientes' => $filtroClientes
+    ]);
+}
 
     /**
      * Show the form for creating a new resource.
