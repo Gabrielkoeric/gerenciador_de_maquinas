@@ -9,13 +9,12 @@
         <input type="text" id="nome" name="nome" class="form-control" @isset($nome) value="{{$nome}}" @endisset required>
 
         <label for="apelido" class=form-label>Apelido</label>
-        <input type="text" id="apelido" name="apelido" class="form-control" @isset($apelido) value="{{$apelido}}" @endisset required>
+        <input type="text" id="apelido" name="apelido" class="form-control" maxlength="12" pattern="^[A-Za-z0-9]+$"
+            title="Use apenas letras e números (sem espaços nem caracteres especiais)" @isset($apelido) value="{{$apelido}}" @endisset required>
+        <small class="text-muted d-block mb-1">Máximo de 12 caracteres</small>
 
         <label for="porta" class=form-label>Porta RDP</label>
         <input type="text" id="porta" name="porta" class="form-control" @isset($porta) value="{{$porta}}" @endisset required>
-
-        <label for="licenca" class=form-label>Licenca</label>
-        <input type="text" id="licenca" name="licenca" class="form-control" @isset($licenca) value="{{$licenca}}" @endisset required>
 
         <label for="coletor" class=form-label>Coletor</label>
         <input type="text" id="coletor" name="coletor" class="form-control" @isset($coletor) value="{{$coletor}}" @endisset required>

@@ -42,10 +42,12 @@ class ClienteEscalaController extends Controller
         $nome = $request->input('nome');
         $apelido = $request->input('apelido');
         $porta = $request->input('porta');
-        $licenca = $request->input('licenca');
+        //$licenca = $request->input('licenca');
         $coletor = $request->input('coletor');
         $desktop = $request->input('desktop');
         $ativo = $request->input('ativo', 0);
+        $licenca = $coletor + $desktop;
+        $remoteapp = $apelido . '.rdp';
 
         $dados = [
             'nome' => $nome,
@@ -55,6 +57,7 @@ class ClienteEscalaController extends Controller
             'coletor' => $coletor,
             'desktop' => $desktop,
             'ativo' => $ativo,
+            'remoteapp' => $remoteapp,
         ];
         $id = DB::table('cliente_escala')->insertGetId($dados);
 
@@ -96,16 +99,24 @@ class ClienteEscalaController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $coletor = $request->input('coletor');
+        $desktop = $request->input('desktop');
+        $licenca = $coletor + $desktop;
+        $apelido = $request->input('apelido');
+        $remoteapp = $apelido . '.rdp';
+
         DB::table('cliente_escala')
         ->where('id_cliente_escala', $id)
         ->update([
             'nome' => $request->nome,
             'apelido' => $request->apelido,
             'porta_rdp' => $request->porta,
-            'licenca' => $request->licenca,
+            'licenca' => $licenca,
             'coletor' => $request->coletor,
             'desktop' => $request->desktop,
             'ativo' => $request->input('ativo', 0),
+            'remoteapp' => $remoteapp,
         ]);
         return redirect('/cliente_escala');
     }
