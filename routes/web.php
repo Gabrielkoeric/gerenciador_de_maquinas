@@ -67,7 +67,7 @@ use App\Http\Controllers\AcessosController;
 use App\Http\Controllers\ResumoController;
 use App\Http\Controllers\AgendamentosController;
 use App\Http\Controllers\HorariosAgendamentosController;
-
+use App\Http\Controllers\ExecucaoGeralController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -143,13 +143,15 @@ Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('conecta.ssh')->mi
 Route::post('/vm/executar', [ExecutaComandoController::class, 'manipulaVm'])->name('vm.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //vm servico
+Route::get('/vm_servico_publico', [VmServicoController::class, 'acessopublico'])->name('vm_servico.publico');
 Route::post('/vm_servico/executar', [ExecutaComandoController::class, 'manipulaServico'])->name('vm_servico.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
-
 Route::resource('/vm_servico', VmServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //Route::post('/vm_servico/executar', [VmServicoController::class, 'executarAcao'])->name('vmservico.executarAcao')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //servico
 Route::resource('/servico', ServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //cliente_escala
+Route::get('/cliente_escala/controle', [ClienteEscalaController::class, 'controle'])->name('cliente_escala.controle')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::post('/cliente_escala/{id}/update-quantidade', [ClienteEscalaController::class, 'updateQuantidade'])->name('cliente_escala.updateQuantidade')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/cliente_escala', ClienteEscalaController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
@@ -208,6 +210,9 @@ Route::resource('/agendamentos', AgendamentosController::class)->middleware(Aute
 
 //horarios agendamentos
 Route::resource('/horarios_agendamentos', HorariosAgendamentosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//horarios agendamentos
+Route::resource('/execucao_geral', ExecucaoGeralController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
