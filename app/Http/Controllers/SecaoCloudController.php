@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Http\JsonResponse;
 
 class SecaoCloudController extends Controller
 {
@@ -165,7 +166,7 @@ public function resetar($id)
         ->with('mensagemSucesso', "Senha resetada com sucesso para o ID $id. Nova senha: $novaSenha");
 }
 
-public function api(Request $request)
+    public function api(Request $request)
     {
         // validação básica
         $validated = $request->validate([
@@ -188,5 +189,24 @@ public function api(Request $request)
         return response()->json([
             'message' => 'Registro inserido com sucesso',
         ], 201);
+    }
+
+    public function usuarios_logados(): JsonResponse
+    {
+    
+     $ultimoRegistro = DB::table('horario_auditoria')
+        ->orderBy('id_horario_auditoria', 'desc')
+        ->first();
+
+    $totalUsuarios = DB::table('auditoria_secao')
+        ->where('id_horario_auditoria', $ultimoRegistro->id_horario_auditoria)
+        ->sum('quantidade');
+
+    return response()->json([
+        [
+            'total' => $totalUsuarios
+        ]
+    ]);
+
     }
 }
