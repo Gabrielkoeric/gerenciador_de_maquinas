@@ -30,25 +30,11 @@ class ReiniciaRdp extends Command
      */
     public function handle()
     {
-        $agora = Carbon::now();
-
-        $inicioNoite = Carbon::today()->setHour(18)->setMinute(0)->setSecond(0);
-        $fimNoite = (clone $inicioNoite)->addDay()->setHour(7)->setMinute(0)->setSecond(0);
-
-        if ($agora->hour < 7) {
-            $inicioNoite->subDay();
-            $fimNoite->subDay();
-        }
-
+    
         $vms = DB::table('vm')
             ->where('tipo', 'rdp')
-            ->where(function ($query) use ($inicioNoite) {
-                $query->whereNull('created_at') // nunca reiniciada
-                      ->orWhere('created_at', '<', $inicioNoite); // última reinicialização foi antes dessa noite
-            })
+            ->orderBy('nome')
             ->pluck('id_vm');
-            //->select('id_vm')
-            //->get();
 
         VerificaUsuarioLogadoVm::dispatch($vms);
     }

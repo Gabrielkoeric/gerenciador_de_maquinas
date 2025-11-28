@@ -2,7 +2,27 @@
 - name: Verifica usuários logados na VM
   hosts: windows
   gather_facts: no
+
+  vars:
+    nomevm: "{{ vm_nome }}"
+
   tasks:
+
+    - name: Matar usuários desconectados (STATE_DISCONNECTED)
+      win_shell: |
+        param(
+            [string]$nomevm
+        )
+        get-RDUserSession |
+          where SessionState -Like 'STATE_DISCONNECTED' |
+          foreach {
+              Invoke-RDUserLogoff -HostServer $nomevm -UnifiedSessionID $_.UnifiedSessionId -Force
+          }
+      args:
+        executable: powershell.exe
+      vars:
+        nomevm: "{{ nomevm }}"
+
     - name: Obter lista de usuários logados como JSON
       win_shell: |
         $lines = quser | Select-Object -Skip 1

@@ -35,6 +35,12 @@ class VerificaUsuarioLogadoVm implements ShouldQueue
      */
     public function handle()
     {
+        $idHorario = DB::table('horario_auditoria')->insertGetId([
+            'data_hora' => now(),
+        ]);
+
+        $contagemClientes = [];
+
         foreach ($this->vms as $vm) {
             $dados = DB::table('vm')
             ->select(
@@ -92,12 +98,14 @@ class VerificaUsuarioLogadoVm implements ShouldQueue
             $playbook = $dir . '/' . $playbookName;
 
             $comando = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i " . escapeshellarg($hostsFile) .
-                   " " . escapeshellarg($playbook);
+                   " " . escapeshellarg($playbook).
+           " --extra-vars " . escapeshellarg("nomevm={$dados->nome}");
+
 
             $output = shell_exec($comando);
 
             // $output contém o JSON retornado do playbook
-            Log::info("Resultado do playbook VerificaUsuarioLogadoVm para VM {$vm}:\n" . $output);
+            //Log::info("Resultado do playbook VerificaUsuarioLogadoVm para VM {$vm}:\n" . $output);
 
             try {
                 // Extrai o conteúdo JSON do output do ansible
@@ -122,38 +130,72 @@ class VerificaUsuarioLogadoVm implements ShouldQueue
                 // Monta o cabeçalho do log
                 $mensagem = "VM: {$dados->nome} (ID {$vm})\n\n";
 
-                $usuariosIgnorados = ['gabriel', 'teste'];
-                $usuariosConectados = [];
+                $usuariosIgnorados = ['escala'];
 
-                foreach ($listaUsuarios as $info) {
-                    $usuario = strtolower(trim($info['usuario'] ?? ''));
 
-                    if (in_array($usuario, $usuariosIgnorados)) {
-                        continue;
-                    }
-                    $usuariosConectados[] = $usuario;
-                    $mensagem .= "Usuário: " . ($info['usuario'] ?? '-') . "\n";
-                    $mensagem .= "Sessão: " . ($info['sessao'] ?? '-') . "\n";
-                    $mensagem .= "Estado: " . ($info['estado'] ?? '-') . "\n";
-                    $mensagem .= "Logon: " . ($info['logon_time'] ?? '-') . "\n";
-                    $mensagem .= "Tempo ocioso: " . ($info['tempo_ocioso'] ?? '-') . "\n";
-                    $mensagem .= "---------------------------\n";
+           /* foreach ($listaUsuarios as $info) {
+
+
+                $usuario = strtolower(trim($info['usuario'] ?? ''));
+            
+                if (in_array($usuario, $usuariosIgnorados) || empty($usuario)) {
+                    continue;
                 }
             
-                Log::info(trim($mensagem));
+                $usuariosValidos[] = $usuario;
+            
+                // Atualiza ou insere em secao_cloud_temp (id_cliente_escala começa como NULL)
+                DB::table('secao_cloud_temp')->updateOrInsert(
+                    ['nome' => $usuario],
+                    [
+                        'id_cliente_escala' => DB::raw('id_cliente_escala'), // mantém o que já existe
+                    ]
+                );
+            }*/
+                foreach ($listaUsuarios as $info) {
 
-                if (empty($usuariosConectados)) {
-                    Log::info("zero usuários conectados");
-                    DB::table('vm')
-                        ->where('id_vm', $vm)
-                        ->update([
-                            'created_at' => now(), // ou Carbon::now()
-                        ]);
+                    $usuario = strtolower(trim($info['usuario'] ?? ''));
+
+                    if (!$usuario || in_array($usuario, $usuariosIgnorados)) {
+                        continue;
+                    }
+
+                    /**
+                     * 5) Atualiza secao_cloud_temp
+                     */
+                    DB::table('secao_cloud_temp')->updateOrInsert(
+                        ['nome' => $usuario],
+                        ['id_cliente_escala' => DB::raw('id_cliente_escala')]
+                    );
+
+                    /**
+                     * 6) Recupera cliente vinculado, se houver
+                     */
+                    $cliente = DB::table('secao_cloud_temp')
+                        ->where('nome', $usuario)
+                        ->value('id_cliente_escala');
+
+                    if ($cliente) {
+                        if (!isset($contagemClientes[$cliente])) {
+                            $contagemClientes[$cliente] = 0;
+                        }
+                        $contagemClientes[$cliente]++;
+                    }
                 }
 
+            
                 } catch (\Throwable $e) {
                 Log::error("Erro ao processar JSON de usuários da VM {$vm}: {$e->getMessage()}");
             }
         }
-    }
+        foreach ($contagemClientes as $idCliente => $qtd) {
+            DB::table('auditoria_secao')->insert([
+                'id_cliente_escala' => $idCliente,
+                'id_horario_auditoria' => $idHorario,
+                'quantidade' => $qtd,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+}
 }
