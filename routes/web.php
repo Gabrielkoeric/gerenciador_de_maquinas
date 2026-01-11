@@ -47,7 +47,6 @@ use App\Http\Controllers\Auth\LocalAuthController;
 use App\Http\Controllers\VmController;
 use App\Http\Controllers\VmServicoController;
 use App\Http\Controllers\ServicoController;
-use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\ComandoController;
 use App\Http\Controllers\RotaLogsController;
 use App\Http\Controllers\LogsExecucoesController;
@@ -68,6 +67,13 @@ use App\Http\Controllers\ResumoController;
 use App\Http\Controllers\AgendamentosController;
 use App\Http\Controllers\HorariosAgendamentosController;
 use App\Http\Controllers\ExecucaoGeralController;
+
+//Refatoração do sistema
+
+use App\Http\Controllers\Cliente\ClienteController;
+use App\Http\Controllers\LogsSql\LogsSqlController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -149,12 +155,7 @@ Route::resource('/vm_servico', VmServicoController::class)->middleware(Autentica
 //Route::post('/vm_servico/executar', [VmServicoController::class, 'executarAcao'])->name('vmservico.executarAcao')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //servico
 Route::resource('/servico', ServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
-//cliente_escala
-Route::get('/cliente_escala/controle', [ClienteEscalaController::class, 'controle'])->name('cliente_escala.controle')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
-Route::post('/cliente_escala/{id}/update-quantidade', [ClienteEscalaController::class, 'updateQuantidade'])->name('cliente_escala.updateQuantidade')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
-Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
-Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
-Route::resource('/cliente', ClienteController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
 //rota logs
 Route::resource('/rota_logs', RotaLogsController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
@@ -233,3 +234,19 @@ Route::post('/api/ip6', [ApiIp6Controller::class, 'store']);
 Route::post('/api/ip7', [ApiIp7Controller::class, 'store']);
 //confere backup
 Route::post('/api/backup', [ConfereBackupController::class, 'store']);
+
+
+//Refatoração
+
+
+
+
+//cliente_escala
+Route::get('/cliente_escala/controle', [ClienteEscalaController::class, 'controle'])->name('cliente_escala.controle')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::post('/cliente_escala/{id}/update-quantidade', [ClienteEscalaController::class, 'updateQuantidade'])->name('cliente_escala.updateQuantidade')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::resource('/cliente', ClienteController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//logs de sql
+Route::resource('/logs_sql', LogsSqlController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
