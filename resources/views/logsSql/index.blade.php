@@ -1,5 +1,13 @@
 <x-layout title="Logs de Sql">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
+    <form action="{{ route('logs_sql.clear') }}" method="POST" class="d-inline">
+        @csrf
+        @method('DELETE')
+        <button class="btn btn-danger my-3 pr"
+                onclick="return confirm('Tem certeza que deseja apagar todos os logs?')">
+            Limpar Logs
+        </button>
+    </form>
 
     <ul class="list-group">
 
@@ -48,6 +56,3 @@
             </table>
     </ul>
 </x-layout>
-
-
-

@@ -8,6 +8,13 @@ use App\Repositories\LogSql\LogSqlRepository;
 
 class LogsSqlController extends Controller
 {
+
+    protected LogSqlRepository $logSqlRepository;
+
+    public function __construct(LogSqlRepository $logSqlRepository)
+    {
+        $this->logSqlRepository = $logSqlRepository;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -81,8 +88,13 @@ class LogsSqlController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+
+    public function clear()
     {
-        //
+        $this->logSqlRepository->clear();
+
+        return redirect()
+            ->route('logs_sql.index')
+            ->with('success', 'Logs SQL apagados com sucesso.');
     }
 }

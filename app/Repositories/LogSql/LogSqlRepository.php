@@ -21,5 +21,10 @@ class LogSqlRepository
     {
         DB::table('logs_sql')->insert($dados);
     }
+
+    public function clear(): void
+    {
+        DB::table('logs_sql')->truncate();
+    }
 }
 

@@ -249,4 +249,5 @@ Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarCli
 Route::resource('/cliente', ClienteController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //logs de sql
+Route::delete('/logs_sql/clear', [LogsSqlController::class, 'clear'])->name('logs_sql.clear')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/logs_sql', LogsSqlController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
