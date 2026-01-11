@@ -28,5 +28,5 @@
 
     </div>
     <button type="submit" class="btn btn-primary">Salvar</button>
-    <a href="{{route('cliente_escala.index')}}" class="btn btn-primary">Cancelar</a>
+    <a href="{{route('cliente.index')}}" class="btn btn-primary">Cancelar</a>
 </form>

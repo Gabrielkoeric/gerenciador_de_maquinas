@@ -10,11 +10,13 @@ use App\Repositories\Cliente\ClienteRepository;
 
 class ClienteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected ClienteRepository $clienteRepo;
+
+    public function __construct(ClienteRepository $clienteRepo)
+    {
+        $this->clienteRepo = $clienteRepo;
+    }
+
     public function index(ClienteRepository $clienteRepository)
     {
         $clientes = $clienteRepository->listarCompleto();
@@ -22,112 +24,65 @@ class ClienteController extends Controller
         return view('cliente.index', compact('clientes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('cliente.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $nome = $request->input('nome');
-        $apelido = $request->input('apelido');
-        $porta = $request->input('porta');
-        //$licenca = $request->input('licenca');
-        $coletor = $request->input('coletor');
-        $desktop = $request->input('desktop');
-        $ativo = $request->input('ativo', 0);
-        $licenca = $coletor + $desktop;
-        $remoteapp = $apelido . '.rdp';
+public function store(Request $request)
+{
+    $coletor = (int) $request->input('coletor', 0);
+    $desktop = (int) $request->input('desktop', 0);
 
-        $dados = [
-            'nome' => $nome,
-            'apelido' => $apelido,
-            'porta_rdp' => $porta,
-            'licenca' => $licenca,
-            'coletor' => $coletor,
-            'desktop' => $desktop,
-            'ativo' => $ativo,
-            'remoteapp' => $remoteapp,
-        ];
-        $id = DB::table('cliente_escala')->insertGetId($dados);
+    $dados = [
+        'nome'       => $request->input('nome'),
+        'apelido'    => $request->input('apelido'),
+        'porta_rdp'  => $request->input('porta'),
+        'coletor'    => $coletor,
+        'desktop'    => $desktop,
+        'licenca'    => $coletor + $desktop,
+        'ativo'      => $request->input('ativo', 0),
+        'remoteapp'  => $request->input('apelido') . '.rdp',
+    ];
 
-        return redirect('/cliente_escala');
-    }
+    $this->clienteRepo->create($dados);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    return redirect('/cliente')->with('success', 'Cliente criado com sucesso!');
+}
+
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function edit(int $id)
     {
-        $dados = DB::table('cliente_escala')
-        ->where('id_cliente_escala', $id)
-        ->first();
+        $dados = $this->clienteRepo->findById($id);
 
-        return view('cliente.edit')->with('dados', $dados);
+        return view('cliente.edit', compact('dados'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
+        $coletor = (int) $request->input('coletor', 0);
+        $desktop = (int) $request->input('desktop', 0);
 
-        $coletor = $request->input('coletor');
-        $desktop = $request->input('desktop');
-        $licenca = $coletor + $desktop;
-        $apelido = $request->input('apelido');
-        $remoteapp = $apelido . '.rdp';
+        $dados = [
+            'nome'       => $request->input('nome'),
+            'apelido'    => $request->input('apelido'),
+            'porta_rdp'  => $request->input('porta'),
+            'coletor'    => $coletor,
+            'desktop'    => $desktop,
+            'licenca'    => $coletor + $desktop,
+            'ativo'      => $request->input('ativo', 0),
+            'remoteapp'  => $request->input('apelido') . '.rdp',
+        ];
 
-        DB::table('cliente_escala')
-        ->where('id_cliente_escala', $id)
-        ->update([
-            'nome' => $request->nome,
-            'apelido' => $request->apelido,
-            'porta_rdp' => $request->porta,
-            'licenca' => $licenca,
-            'coletor' => $request->coletor,
-            'desktop' => $request->desktop,
-            'ativo' => $request->input('ativo', 0),
-            'remoteapp' => $remoteapp,
-        ]);
-        return redirect('/cliente_escala');
+        $this->clienteRepo->update($id, $dados);
+
+        return redirect('/cliente');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

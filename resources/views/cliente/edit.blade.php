@@ -1,5 +1,5 @@
 <x-layout title="Editar Cliente '{{$dados->nome}}'">
-    <x-cliente.forms :action="route('cliente_escala.update', $dados->id_cliente_escala)"
+    <x-cliente.forms :action="route('cliente.update', $dados->id_cliente_escala)"
                         :nome="$dados->nome"
                         :apelido="$dados->apelido"
                         :porta="$dados->porta_rdp"
