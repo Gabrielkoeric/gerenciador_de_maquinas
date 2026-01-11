@@ -47,7 +47,7 @@ use App\Http\Controllers\Auth\LocalAuthController;
 use App\Http\Controllers\VmController;
 use App\Http\Controllers\VmServicoController;
 use App\Http\Controllers\ServicoController;
-use App\Http\Controllers\ClienteEscalaController;
+use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\ComandoController;
 use App\Http\Controllers\RotaLogsController;
 use App\Http\Controllers\LogsExecucoesController;
@@ -154,7 +154,7 @@ Route::get('/cliente_escala/controle', [ClienteEscalaController::class, 'control
 Route::post('/cliente_escala/{id}/update-quantidade', [ClienteEscalaController::class, 'updateQuantidade'])->name('cliente_escala.updateQuantidade')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
-Route::resource('/cliente_escala', ClienteEscalaController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::resource('/cliente', ClienteController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //rota logs
 Route::resource('/rota_logs', RotaLogsController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
