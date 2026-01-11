@@ -15,8 +15,8 @@
                 <thead>
                 <tr>
                     <th scope="col">ID</th>
-                    <th scope="col">ID Rotina</th>
-                    <th scope="col">ID Ação</th>
+                    <th scope="col">Rotina</th>
+                    <th scope="col">Ação</th>
                     <th scope="col">Usuario</th>
                     <th scope="col">SQL</th>
                     <th scope="col">SQL Full</th>
@@ -35,9 +35,9 @@
                 @foreach ($logsSql as $logSql)
                     <tr>
                         <td>{{ $logSql->id_log_sql }}</td>
-                        <td>{{ $logSql->id_rotina }}</td>
-                        <td>{{ $logSql->id_acao }}</td>
-                        <td>{{ $logSql->id }}</td>
+                        <td>{{ $logSql->nome_rotina }}</td>
+                        <td>{{ $logSql->nome_acao }}</td>
+                        <td>{{ $logSql->usuario_nome }}</td>
                         <td>{{ $logSql->sql }}</td>
                         <td>{{ $logSql->sql_full }}</td>
                         <td>{{ $logSql->tempo_ms }}</td>
