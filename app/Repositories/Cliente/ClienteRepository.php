@@ -50,4 +50,13 @@ class ClienteRepository
             ->where('id_cliente_escala', $id)
             ->update($dados);
     }
+
+    public function getClientesComRdp()
+    {
+        return DB::table('cliente_escala')
+            ->select('apelido', 'porta_rdp')
+            ->whereNotNull('apelido')
+            ->whereNotNull('porta_rdp')
+            ->get();
+    }
 }

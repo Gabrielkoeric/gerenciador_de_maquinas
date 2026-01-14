@@ -245,6 +245,8 @@ Route::post('/api/backup', [ConfereBackupController::class, 'store']);
 Route::get('/cliente_escala/controle', [ClienteEscalaController::class, 'controle'])->name('cliente_escala.controle')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::post('/cliente_escala/{id}/update-quantidade', [ClienteEscalaController::class, 'updateQuantidade'])->name('cliente_escala.updateQuantidade')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::get('/cliente/gerardp', [ClienteController::class, 'formGerarRdp'])->name('cliente.gerardp')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+Route::post('/cliente/gerardp', [ClienteController::class, 'gerarRdpPost'])->name('cliente.gerardp.post')->middleware([Autenticador::class, ControleAcesso::class]);
 Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/cliente', ClienteController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
