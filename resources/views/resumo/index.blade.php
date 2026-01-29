@@ -28,6 +28,18 @@
         </div>
 
         <div class="col-auto">
+            <label for="clientes">Filtrar Clientes:</label>
+            <select name="clientes[]" id="clientes" class="form-select" multiple>
+                @foreach($todosClientes as $cliente)
+                    <option value="{{ $cliente->id_cliente_escala }}" 
+                        @if(in_array($cliente->id_cliente_escala, $filtroClientes)) selected @endif>
+                        {{ $cliente->nome }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-auto">
             <button type="submit" class="btn btn-primary mt-4">Filtrar</button>
             <a href="{{ route('resumo.index') }}" class="btn btn-secondary mt-4">Limpar</a>
         </div>
