@@ -16,7 +16,8 @@ class AsyncTasksController extends Controller
     {
         $tasks = DB::table('async_tasks')
         ->orderBy('id_async_tasks', 'desc')
-        ->get();
+        //->get();
+        ->paginate(100);
         return view('asynctasks.index')->with('tasks', $tasks);
     }
 
