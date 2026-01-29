@@ -428,13 +428,15 @@ DB::table('logs_execucoes')->insert([
         ->join('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
         ->join('servico', 'servico_vm.id_servico', '=', 'servico.id_servico')
         ->join('cliente_escala', 'servico_vm.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
-        ->join('versoes', 'cliente_escala.id_versoes', '=', 'versoes.id_versoes')
+        ->leftJoin('versoes', 'cliente_escala.id_versoes', '=', 'versoes.id_versoes')
         ->select(
             'servico_vm.*',
             'vm.nome as nome_vm',
             'servico.nome as nome_servico',
             'cliente_escala.nome as nome_cliente',
             'cliente_escala.apelido as apelido',
+            'cliente_escala.licenciado_ate',
+            'cliente_escala.data_atualizacao',
             'ip_lan.ip as ip',
             'versoes.nome as versao'
         )
