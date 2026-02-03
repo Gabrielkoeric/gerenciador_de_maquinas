@@ -4,21 +4,9 @@ namespace App\Repositories\Cliente;
 
 use Illuminate\Support\Facades\DB;
 use App\Services\SqlMonitorService;
-//use Illuminate\Http\Request;
 
 class ClienteRepository
 {
-    /*
-    public function listarResumo()
-    {
-        //SqlMonitorService::start('CLI', 'SELECT');
-
-        return DB::table('cliente_escala')
-            ->select('id_cliente_escala as id', 'apelido')
-            ->orderBy('apelido')
-            ->get();
-    }
-*/
     public function listarCompleto()
     {
         SqlMonitorService::start(1, 1);
@@ -59,4 +47,12 @@ class ClienteRepository
             ->whereNotNull('porta_rdp')
             ->get();
     }
+
+    public function getClienteByApelido(string $apelido)
+    {
+        return DB::table('cliente_escala')
+            ->where('apelido', $apelido)
+            ->first();
+    }
+
 }
