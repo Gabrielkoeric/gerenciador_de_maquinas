@@ -28,7 +28,7 @@
                 <th scope="col">Srv Fisico</th>
                 <th scope="col">Tipo</th>
                 <th scope="col">AutoStart</th>
-                <th scope="col">Acesso</th>
+                <!--<th scope="col">Acesso</th>-->
             </tr>
             </thead>
             <tbody>
@@ -45,19 +45,28 @@
                     </td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio_nome }}</a></td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio_usuario }}</a></td>
-                    <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio_senha }}</a></td>
+                    <td>
+                        <button
+                            type="button"
+                            class="btn btn-info btn-sm"
+                            onclick="copyToClipboard(this)"
+                            data-senha="{{ $vm->dominio_senha }}">
+                                Senha Dominio
+                            </button>
+                    </td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->ip_lan_vm }}</a></td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->porta }}</a></td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->nome_servidor_fisico }}</a></td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->tipo }}</a></td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->autostart }}</a></td>
+                    <!--
                     <td>
                         @if ($vm->so === 'ssh')
                             <a href="{{ route('conecta.ssh', $vm->id_vm) }}" class="btn btn-primary btn-sm" onclick="event.stopPropagation();">SSH</a>
                         @elseif ($vm->so === 'rdp')
                             <button type="button" class="btn btn-success btn-sm" onclick="event.stopPropagation(); copyRDPCommand('{{ $vm->ip_lan_vm }}', '{{ $vm->porta }}', '{{ $vm->dominio_usuario }}', '{{ $vm->dominio_senha }}')">RDP</button>
                         @endif
-                    </td>
+                    </td>-->
                 </tr>
             @endforeach
             </tbody>
