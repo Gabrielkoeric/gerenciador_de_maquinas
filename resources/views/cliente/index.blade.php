@@ -2,7 +2,7 @@
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('cliente.create')}}" class="btn btn-dark my-3">Adicionar</a>
     <a href="{{route('cliente_escala.buscar') }}" class="btn btn-dark my-3">Buscar</a>
-    <a href="{{route('cliente_escala.gerardm') }}" class="btn btn-dark my-3">Baixar RDM</a>
+    <!--<a href="{{route('cliente_escala.gerardm') }}" class="btn btn-dark my-3">Baixar RDM</a>-->
     <a href="{{route('cliente.gerardp') }}" class="btn btn-dark my-3">Gera RDP</a>
 
     @isset($mensagemSucesso)
@@ -37,7 +37,7 @@
                         <td><a href="{{ route('cliente.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->ativo }}</a></td>
                         <td>
                             @if($cliente->remoteapp)
-                                <a href="{{ asset('storage/remoteapp/' . $cliente->remoteapp) }}" 
+                                <a href="{{ asset('storage/remoteapp/cliente/' . $cliente->remoteapp) }}" 
                                 class="btn btn-sm btn-success" 
                                 target="_blank" 
                                 download>
