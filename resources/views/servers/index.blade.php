@@ -41,10 +41,16 @@
                     </td>
                     <td><a href="{{ route('server.edit', $server->id_servidor_fisico ) }}" class="text-decoration-none text-dark">{{ $server->nome }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->usuario_servidor }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->senha_servidor }}</a></td>
+                        <td>
+                            <button type="button" class="btn btn-warning btn-sm" onclick="copyToClipboard(this)" data-senha="{{ $server->senha_servidor }}">Senha</button>
+                        </td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->dominio_nome }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->dominio_usuario }}</a></td>
-                        <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->dominio_senha }}</a></td>
+                        <td>
+                            @if (!empty($server->dominio_senha))
+                                <button type="button" class="btn btn-info btn-sm" onclick="copyToClipboard(this)" data-senha="{{ $server->dominio_senha }}">Senha Domínio</button>
+                            @endif
+                        </td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->ip_lan }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->ip_wan }}</a></td>
                         <td><a href="{{ route('server.edit', $server->id_servidor_fisico) }}" class="text-decoration-none text-dark">{{ $server->porta }}</a></td>
@@ -106,4 +112,41 @@
         window.onload = toggleButtons;
     </script>
 
+    <script>
+        function copyToClipboard(element) {
+            const value = element.getAttribute('data-senha');
+
+            if (!value) {
+                alert('Senha não disponível.');
+                return;
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(value)
+                    .then(() => {
+                        alert('Senha copiada para a área de transferência!');
+                    })
+                    .catch(() => fallbackCopy(value));
+            } else {
+                fallbackCopy(value);
+            }
+        }
+
+        function fallbackCopy(value) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = value;
+            document.body.appendChild(tempInput);
+            tempInput.focus();
+            tempInput.select();
+
+            try {
+                document.execCommand('copy');
+                alert('Senha copiada para a área de transferência!');
+            } catch (err) {
+                alert('Erro ao copiar a senha.');
+            }
+
+            document.body.removeChild(tempInput);
+        }
+    </script>
 </x-layout>
