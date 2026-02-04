@@ -1,6 +1,7 @@
 <x-layout title="Logs Execuções">
     <a href="{{ route('home.index') }}" class="btn btn-dark my-3">Home</a>
     <a href="{{ route('vm_servico.index') }}" class="btn btn-dark my-3">Serviços da VM</a>
+    <a href="{{ route('asynctasks.index') }}" class="btn btn-dark my-3">AsyncTasks</a>
 
     @isset($mensagemSucesso)
         <div class="alert alert-success">{{ $mensagemSucesso }}</div>
