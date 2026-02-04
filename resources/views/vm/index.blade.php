@@ -45,15 +45,18 @@
                     </td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio_nome }}</a></td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->dominio_usuario }}</a></td>
-                    <td>
-                        <button
-                            type="button"
-                            class="btn btn-info btn-sm"
-                            onclick="copyToClipboard(this)"
-                            data-senha="{{ $vm->dominio_senha }}">
-                                Senha Dominio
-                            </button>
-                    </td>
+<td>
+    @if (!empty($vm->dominio_senha))
+        <button
+            type="button"
+            class="btn btn-info btn-sm"
+            onclick="copyToClipboard(this)"
+            data-senha="{{ $vm->dominio_senha }}">
+            Senha Domínio
+        </button>
+    @endif
+</td>
+
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->ip_lan_vm }}</a></td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->porta }}</a></td>
                     <td><a href="{{ route('vm.edit', $vm->id_vm) }}" class="text-decoration-none text-dark">{{ $vm->nome_servidor_fisico }}</a></td>
