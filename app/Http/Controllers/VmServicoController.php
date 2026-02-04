@@ -16,7 +16,7 @@ class VmServicoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
+    {/*
         $servicos = DB::table('servico_vm')
             ->join('vm', 'servico_vm.id_vm', '=', 'vm.id_vm')
             ->join('servico', 'servico_vm.id_servico', '=', 'servico.id_servico')
@@ -29,6 +29,24 @@ class VmServicoController extends Controller
             )
         ->orderBy('nome_cliente')
         ->get();
+*/
+        $servicos = DB::table('servico_vm')
+            ->join('vm', 'servico_vm.id_vm', '=', 'vm.id_vm')
+            ->join('servico', 'servico_vm.id_servico', '=', 'servico.id_servico')
+            ->join('cliente_escala', 'servico_vm.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
+            ->select(
+                'servico_vm.*',
+                'vm.nome as nome_vm',
+                'servico.nome as nome_servico',
+                'cliente_escala.nome as nome_cliente'
+            )
+            ->whereIn('servico.nome', [
+                'EscalaSwarm',
+                'WebService',
+                'EscalaServer',
+            ])
+            ->orderBy('nome_cliente')
+            ->get();
 
 
         return view('vmservico.index')->with('servicos', $servicos);

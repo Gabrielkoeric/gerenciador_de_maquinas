@@ -11,7 +11,7 @@
         <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('stop')">Parar</button>
         <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('start')">Iniciar</button>
         <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('restart')">Restart</button>
-        <button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('kill')">Kill</button>
+        <!--<button type="button" class="btn btn-dark my-3" onclick="submeterFormulario('kill')">Kill</button>-->
 
         <table class="table table-striped">
             <thead>
