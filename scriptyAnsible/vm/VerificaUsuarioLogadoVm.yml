@@ -3,6 +3,24 @@
   hosts: windows
   gather_facts: no
   tasks:
+    - name: Encerrar sessões desconectadas (mesmo script que funciona no PS1!)
+      win_shell: |
+        $sessoes = quser | Select-Object -Skip 1
+        foreach ($s in $sessoes) {
+            # remove múltiplos espaços e converte em colunas
+            $parts = ($s -replace '\s+', ' ').Trim().Split(' ')
+            
+            $usuario = $parts[0]
+            $sessao  = $parts[1]
+            $id      = $parts[2]
+            $estado  = $parts[3]
+
+            if ($estado -like "Disc*") {
+                logoff $id
+            }
+        }
+      register: mata_logoff
+
     - name: Obter lista de usuários logados como JSON
       win_shell: |
         $lines = quser | Select-Object -Skip 1
