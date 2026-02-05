@@ -106,11 +106,9 @@ class SyncDb extends Command
 
                     $cliente = $this->clienteRepository->getClienteByApelido($apelido);
 
-                    if (!$cliente)
-
                     $vmServicoRepository = $this->vmServicoRepository->getByClienteAndServico($cliente->id_cliente_escala, $tipoServico);
 
-                    if (!$servicoVm) {
+                    if (!$vmServicoRepository) {
                         $this->vmServicoRepository->create([
                             'nome' => 'MSSQLSERVER',
                             'porta' => 1433,
