@@ -19,4 +19,12 @@ class VmRepository
             ->orderBy('vm.nome', 'asc') // ou 'desc'
             ->get();
     }
+
+    public function getVms()
+    {
+        return DB::table('vm')
+            ->select('nome')
+            ->orderBy('nome')
+            ->get();
+    }
 }
