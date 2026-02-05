@@ -39,8 +39,8 @@ class SyncVersao extends Command
 
             $url = 'http://'
                 . $cliente->vm_nome
-                /*. '.cloud.escalasoft.com.br:'*/
-                .':'. $cliente->porta_ws
+                . '.cloud.escalasoft.com.br:'
+                . $cliente->porta_ws
                 . $rotaBase
                 . $cliente->rota_padrao_ws_cloud;
 
