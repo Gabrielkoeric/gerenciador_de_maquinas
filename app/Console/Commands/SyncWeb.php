@@ -50,7 +50,7 @@ class SyncWeb extends Command
         $srcBase = $this->configRepo->getConfigGeral('src_web');
         $dstBase = $this->configRepo->getConfigGeral('dst_web');
 
-        $logFile = "{$dstBase}/rclone.log";
+        $logFile = "{$dstBase}rclone.log";
         file_put_contents($logFile, '');
 
         foreach ($versoes as $versao) {
@@ -64,6 +64,7 @@ class SyncWeb extends Command
                 'sync',
                 "{$srcBase}{$versaoNome}/Web/EscalaWeb/",
                 "{$dstBase}{$versaoNome}/",
+                /*'--dry-run',*/
                 '--log-file=' . $logFile,
                 '--log-level=INFO',
             ]);
