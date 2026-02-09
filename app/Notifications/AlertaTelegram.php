@@ -20,7 +20,7 @@ class AlertaTelegram extends Notification
     public function toTelegram($notifiable)
     {
         return TelegramMessage::create()
-            ->content($this->mensagem);
+            ->content($this->mensagem)
             ->options([
                 'parse_mode' => null,
             ]);
