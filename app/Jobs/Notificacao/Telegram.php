@@ -18,9 +18,6 @@ class Telegram implements ShouldQueue
     public string $mensagem;
     public string $configNome;
 
-    /**
-     * Se não passar config, assume alerta_geral
-     */
     public function __construct(string $mensagem, string $configNome = 'alerta_geral')
     {
         $this->mensagem   = $mensagem;
@@ -29,21 +26,12 @@ class Telegram implements ShouldQueue
 
     public function handle(ConfigGeralRepository $configRepo)
     {
-        // busca config solicitada
         $chatId = $configRepo->getConfigGeral($this->configNome);
 
-/*
-        logger()->info('Telegram debug', [
-    'config' => $this->configNome,
-    'chatId' => $chatId
-]);*/
-
-        // fallback para alerta_geral
         if (!$chatId && $this->configNome !== 'alerta_geral') {
             $chatId = $configRepo->getConfigGeral('alerta_geral');
         }
 
-        // se nem o padrão existir, não explode o job
         if (!$chatId) {
             logger()->warning('Chat Telegram não configurado', [
                 'config' => $this->configNome,
@@ -51,7 +39,7 @@ class Telegram implements ShouldQueue
             ]);
             return;
         }
-
+        sleep(2);
         Notification::route('telegram', $chatId)->notify(new AlertaTelegram($this->mensagem));
     }
 }
