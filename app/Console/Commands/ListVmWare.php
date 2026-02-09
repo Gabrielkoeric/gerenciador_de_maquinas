@@ -7,6 +7,7 @@ use App\Repositories\ConfigGeral\ConfigGeralRepository;
 use App\Repositories\Acessos\AcessosRepository;
 use App\Repositories\Vm\VmRepository;
 use App\Jobs\Notificacao\Telegram;
+use Illuminate\Support\Facades\Http;
 
 use Illuminate\Support\Facades\Log;
 
