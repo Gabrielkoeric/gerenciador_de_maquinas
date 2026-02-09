@@ -59,7 +59,7 @@ class RcloneJobDiario implements ShouldQueue
         $tipoCopia = $repo->tipo_copia;
 
         $cmd = "rclone {$tipoCopia} {$remotePath} {$destino} --log-file=\"{$logFile}\" {$tags}";
-        Log::info("Comando Rclone montado para execução {$this->id_execucao}: {$cmd}");
+        //Log::info("Comando Rclone montado para execução {$this->id_execucao}: {$cmd}");
 
         $senha = $credenciais->senha;
         $senhaSegura = escapeshellarg($senha); 
@@ -79,8 +79,8 @@ if ($process->isSuccessful()) {
     $ultimaLinha = $processLog->isSuccessful() ? trim($processLog->getOutput()) : '';
 
     
-    Log::info("sucesso");
-    Log::info("ultima linha do log: $ultimaLinha");
+    //Log::info("sucesso");
+    //Log::info("ultima linha do log: $ultimaLinha");
     // Inicializa os valores
     $qtdTransferidos = null;
     $qtdCheck = null;
@@ -108,7 +108,7 @@ if (json_last_error() === JSON_ERROR_NONE && is_array($json)) {
         'bytes_transferidos'        => $bytesTransferidos,
     ]);
 } else {
-    Log::info("erro");
+    //Log::info("erro");
     DB::table('rclone_execucoes')->where('id_execucao', $this->id_execucao)->update([
         'status' => 'erro',
         'comando_rclone' => $cmd,
