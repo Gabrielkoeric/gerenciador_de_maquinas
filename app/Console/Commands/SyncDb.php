@@ -110,7 +110,7 @@ class SyncDb extends Command
 
                     if (!$vmServicoRepository) {
                         $this->vmServicoRepository->create([
-                            'nome' => 'MSSQLSERVER',
+                            'nome' => 'mssqlserver',
                             'porta' => 1433,
                             'status' => 'ONLINE',
                             'autostart' => 1,
