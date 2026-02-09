@@ -28,19 +28,29 @@ class IpLanController extends Controller
             'ip_lan.ip',
             'servidor_fisico.nome as nomeServidor'
         );
+    
+    $clusters = \DB::table('ip_lan')
+        ->join('cluster', 'ip_lan.id_ip_lan', '=', 'cluster.id_ip_lan')
+        ->select(
+            'ip_lan.id_ip_lan',
+            'ip_lan.ip',
+            'cluster.nome as nomeServidor'
+        );
 
     $semVinculo = \DB::table('ip_lan')
         ->leftJoin('vm', 'ip_lan.id_ip_lan', '=', 'vm.id_ip_lan')
         ->leftJoin('servidor_fisico', 'ip_lan.id_ip_lan', '=', 'servidor_fisico.id_ip_lan')
+        ->leftJoin('cluster', 'ip_lan.id_ip_lan', '=', 'cluster.id_ip_lan')
         ->whereNull('vm.id_ip_lan')
         ->whereNull('servidor_fisico.id_ip_lan')
+        ->whereNull('cluster.id_ip_lan')
         ->select(
             'ip_lan.id_ip_lan',
             'ip_lan.ip',
-            \DB::raw("NULL as nomeServidor")
+            \DB::raw('NULL as nomeServidor')
         );
 
-    $union = $vms->unionAll($servidores)->unionAll($semVinculo);
+    $union = $vms->unionAll($servidores)->unionAll($clusters)->unionAll($semVinculo);
 
     $ips = \DB::table(\DB::raw("({$union->toSql()}) as sub"))
         ->mergeBindings($union)
