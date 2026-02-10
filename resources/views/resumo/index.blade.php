@@ -1,56 +1,59 @@
 <x-layout title="Resumo">
     <a href="{{ route('home.index') }}" class="btn btn-dark my-3">Home</a>
 
-    <form method="GET" class="mb-3">
-    <div class="row g-2 align-items-center">
-        <div class="col-auto">
-            <label for="servicos">Filtrar Serviços:</label>
-            <select name="servicos[]" id="servicos" class="form-select" multiple>
-                @foreach($todosServicos as $servico)
-                    <option value="{{ $servico->id_servico }}" 
-                        @if(in_array($servico->id_servico, $filtroServicos)) selected @endif>
-                        {{ $servico->nome }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+    <form method="GET" class="mb-4">
+        <div class="row g-2 align-items-center">
 
-        <div class="col-auto">
-            <label for="vms">Filtrar VMs:</label>
-            <select name="vms[]" id="vms" class="form-select" multiple>
-                @foreach($todasVms as $vm)
-                    <option value="{{ $vm->id_vm }}" 
-                        @if(in_array($vm->id_vm, $filtroVms)) selected @endif>
-                        {{ $vm->nome }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+            <x-filtro-multi-select
+                titulo="Serviços"
+                name="servicos[]"
+                :items="$todosServicos"
+                id-field="id_servico"
+                label-field="nome"
+                :selecionados="$filtroServicos"
+                lista-id="servicos-list"
+            />
 
-        <div class="col-auto">
-            <label for="clientes">Filtrar Clientes:</label>
-            <select name="clientes[]" id="clientes" class="form-select" multiple>
-                @foreach($todosClientes as $cliente)
-                    <option value="{{ $cliente->id_cliente_escala }}" 
-                        @if(in_array($cliente->id_cliente_escala, $filtroClientes)) selected @endif>
-                        {{ $cliente->nome }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+            <x-filtro-multi-select
+                titulo="VMs"
+                name="vms[]"
+                :items="$todasVms"
+                id-field="id_vm"
+                label-field="nome"
+                :selecionados="$filtroVms"
+                lista-id="vms-list"
+            />
 
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary mt-4">Filtrar</button>
-            <a href="{{ route('resumo.index') }}" class="btn btn-secondary mt-4">Limpar</a>
+            <x-filtro-multi-select
+                titulo="Clientes"
+                name="clientes[]"
+                :items="$todosClientes"
+                id-field="id_cliente_escala"
+                label-field="nome"
+                :selecionados="$filtroClientes"
+                lista-id="clientes-list"
+            />
+
+            @if(count($filtroServicos) || count($filtroVms) || count($filtroClientes))
+                <div class="col-auto">
+                    <a href="{{ route('resumo.index') }}" class="btn btn-outline-danger">
+                        <i class="fas fa-times"></i> Limpar filtros
+                    </a>
+                </div>
+            @endif
+
         </div>
-    </div>
-</form>
+    </form>
     
     <style>
-        .table-wrap {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+.table-wrap {
+    overflow-x: hidden; /* remove scroll nativo */
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+
 
         .sticky-col {
             position: sticky;
@@ -76,16 +79,25 @@
         }
 
         /* scroll fixo no rodapé */
-        .scroll-footer {
-            overflow-x: auto;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 20px; /* altura da barra de rolagem */
-            background: #f8f9fa;
-            z-index: 10;
-        }
+.scroll-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    height: 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    z-index: 9999;
+}
+
+.scroll-footer-inner {
+    height: 1px;
+}
+
 
         /* remove aparência da tabela duplicada */
         .scroll-footer table {
@@ -135,24 +147,40 @@
         </table>
     </div>
 
-    <!-- scroll proxy fixo no rodapé -->
-    <div class="scroll-footer" id="scroll-footer">
-        <div style="width:{{ $dados->count() * 200 }}px"></div>
-    </div>
+<div class="scroll-footer" id="scroll-footer">
+    <div class="scroll-footer-inner" id="scroll-footer-inner">&nbsp;</div>
+</div>
 
-    <script>
-        const tableWrap = document.getElementById('table-wrap');
-        const scrollFooter = document.getElementById('scroll-footer');
+<script>
+    const tableWrap = document.getElementById('table-wrap');
+    const table = tableWrap.querySelector('table');
+    const scrollFooter = document.getElementById('scroll-footer');
+    const scrollFooterInner = document.getElementById('scroll-footer-inner');
 
-        // sincroniza scroll horizontal
-        scrollFooter.addEventListener('scroll', () => {
-            tableWrap.scrollLeft = scrollFooter.scrollLeft;
-        });
+    function syncScrollWidth() {
+        const tableWidth = table.scrollWidth;
+        const containerWidth = tableWrap.clientWidth;
 
-        tableWrap.addEventListener('scroll', () => {
-            scrollFooter.scrollLeft = tableWrap.scrollLeft;
-        });
+        if (tableWidth > containerWidth) {
+            scrollFooter.style.display = 'block';
+            scrollFooterInner.style.width = tableWidth + 'px';
+        } else {
+            scrollFooter.style.display = 'none';
+        }
+    }
 
-        
-    </script>
+    // sincronização bidirecional
+    scrollFooter.addEventListener('scroll', () => {
+        tableWrap.scrollLeft = scrollFooter.scrollLeft;
+    });
+
+    tableWrap.addEventListener('scroll', () => {
+        scrollFooter.scrollLeft = tableWrap.scrollLeft;
+    });
+
+    window.addEventListener('load', syncScrollWidth);
+    window.addEventListener('resize', syncScrollWidth);
+</script>
+
+
 </x-layout>
