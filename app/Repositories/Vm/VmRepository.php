@@ -13,6 +13,7 @@ class VmRepository
             ->select(
                 'vm.id_vm',
                 'vm.nome',
+                'vm.so',
                 'ip_lan.ip as ip_lan'
             )
             ->where('vm.tipo', 'sgbd')
