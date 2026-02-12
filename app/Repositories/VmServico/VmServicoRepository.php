@@ -31,4 +31,18 @@ class VmServicoRepository
                 'id_vm' => $idVm,
             ]);
     }
+
+    public function lastPort($servico)
+    {
+        $ultimaPorta = DB::table('servico_vm as sv')
+            ->join('servico as s', 'sv.id_servico', '=', 's.id_servico')
+            ->where('s.nome', $servico)
+            ->orderByRaw('CAST(sv.porta AS UNSIGNED) DESC')
+            ->value('sv.porta');
+
+        $ultimaPorta = (int) $ultimaPorta ?: 2000;
+
+        return $ultimaPorta + 1;
+    }
+
 }

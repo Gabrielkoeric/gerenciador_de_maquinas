@@ -58,7 +58,6 @@ use App\Http\Controllers\RedeController;
 use App\Http\Controllers\IpLanController;
 use App\Http\Controllers\DocumentacaoController;
 use App\Http\Controllers\DominioController;
-use App\Http\Controllers\DeployController;
 use App\Http\Controllers\BancodedadosController;
 use App\Http\Controllers\RcloneExecucoesController;
 use App\Http\Controllers\RcloneLogsExecucoesController;
@@ -72,6 +71,7 @@ use App\Http\Controllers\ExecucaoGeralController;
 
 use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\LogsSql\LogsSqlController;
+use App\Http\Controllers\Deploy\DeployController;
 
 
 /*

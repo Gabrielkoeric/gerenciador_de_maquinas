@@ -28,7 +28,7 @@
             <option value="">Selecione a VM</option>
             
             @foreach ($vms as $vm)
-                <option value="{{ $vm->id_vm }}">{{ $vm->nome }}</option>
+                <option value="{{ $vm->id_vm }}">{{ $vm->nome }} ({{ $vm->total_servicos }})</option>
             @endforeach
         </select >
     </div>

@@ -55,4 +55,13 @@ class ClienteRepository
             ->first();
     }
 
+    public function getClientesComApelido()
+    {
+        return DB::table('cliente_escala')
+            ->select('id_cliente_escala', 'apelido', 'nome')
+            ->whereNotNull('apelido')
+            ->where('apelido', '!=', '')
+            ->orderBy('apelido') // ASC padrão
+            ->get();
+    }
 }
