@@ -15,33 +15,23 @@ class Ws implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $ultimaPorta;
     public $clienteDados;
     public $dados;
-    public $vm_aplicacao;
-    public $nome_vm_aplicacao;
+    public $escalaServer;
     public $nome_servico;
     public $taskId;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct($clienteDados, $dados, $vm_aplicacao, $nome_vm_aplicacao, $nome_servico, $taskId)
+    public function __construct($ultimaPorta,$clienteDados, $dados, $escalaServer, $nome_servico, $taskId)
     {
+        $this->ultimaPorta = $ultimaPorta;
         $this->clienteDados = $clienteDados;
         $this->dados = $dados;
-        $this->vm_aplicacao = $vm_aplicacao;
-        $this->nome_vm_aplicacao = $nome_vm_aplicacao;
+        $this->escalaServer = $escalaServer;
         $this->nome_servico = $nome_servico;
         $this->taskId = $taskId;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
         DB::table('async_tasks')
@@ -84,10 +74,9 @@ class Ws implements ShouldQueue
      
         $playbook = $dir . '/' . $playbookName;
 
-        
         $nome_servico = $this->nome_servico;
-        $porta = $this->vm_aplicacao->porta;
-        $nome_vm_aplicacao = $this->nome_vm_aplicacao;
+        $porta = $this->escalaServer->porta;
+        $nome_vm_aplicacao = $this->escalaServer->nome_vm;
         $server = $nome_vm_aplicacao . ':' . $porta;
         $apelido = $this->clienteDados->apelido;
         $sistema = $apelido . "_escalasoft";
@@ -102,7 +91,7 @@ class Ws implements ShouldQueue
             // Sucesso: serviço foi instalado corretamente
             DB::table('servico_vm')->insert([
                 'nome' => $nome_servico,
-                'porta' => '0',
+                'porta' => $this->ultimaPorta,
                 'autostart' => 1,
                 'id_vm' => $this->dados->id_vm,
                 'id_servico' => '8',
@@ -117,6 +106,5 @@ class Ws implements ShouldQueue
                 'status' => 'Concluido',
                 'log' => $output
             ]);
-    
     }
 }

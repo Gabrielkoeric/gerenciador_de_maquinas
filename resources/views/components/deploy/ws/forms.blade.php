@@ -21,9 +21,14 @@
             <option value="">Selecione a VM</option>
             
             @foreach ($vms as $vm)
-                <option value="{{ $vm->id_vm }}">{{ $vm->nome }}</option>
+                <option value="{{ $vm->id_vm }}">{{ $vm->nome }} ({{ $vm->total_servicos }})</option>
             @endforeach
         </select >
+    </div>
+
+    <div class="mb-3">
+        <label for="ultimaPorta" class=form-label>Porta:</label>
+        <input type="text" id="ultimaPorta" name="ultimaPorta" class="form-control" $porta value="{{$ultimaPorta}}" required>
     </div>
 
     <div class="mb-3">
