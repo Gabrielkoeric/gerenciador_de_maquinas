@@ -40,6 +40,7 @@ class VmRepository
             )
             ->where('vm.tipo', $tipo)
             ->groupBy('vm.id_vm', 'vm.nome')
+            ->orderBy('vm.nome', 'asc')
             ->get();
     }
 

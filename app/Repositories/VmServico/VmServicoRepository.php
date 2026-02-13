@@ -45,4 +45,21 @@ class VmServicoRepository
         return $ultimaPorta + 1;
     }
 
+    public function getEscalaserverCliente(int $clienteId)
+    {
+        return DB::table('servico_vm')
+            ->join('servico', 'servico.id_servico', '=', 'servico_vm.id_servico')
+            ->join('vm', 'vm.id_vm', '=', 'servico_vm.id_vm')
+            ->select(
+                'servico_vm.porta',
+                'servico_vm.id_vm',
+                'vm.nome as nome_vm'
+            )
+            ->where('servico_vm.id_cliente_escala', $clienteId)
+            ->where('servico.nome', 'EscalaServer')
+            ->orderByDesc('servico_vm.id_servico_vm')
+            ->limit(1)
+            ->first();
+    }
+
 }

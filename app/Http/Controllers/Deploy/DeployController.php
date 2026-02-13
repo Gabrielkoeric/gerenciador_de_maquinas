@@ -12,6 +12,7 @@ use App\Repositories\AsyncTasks\AsyncTasksRepository;
 use App\Repositories\Servicos\ServicosRepository;
 
 use App\Jobs\Deploy\Server;
+use App\Jobs\Deploy\Swarm;
 
 class DeployController extends Controller
 {
@@ -50,7 +51,9 @@ class DeployController extends Controller
                 $clientes = $this->clienteRepository->getClientesComApelido();
                 return view('deploy.server')->with('ultimaPorta', $ultimaPorta)->with('vms', $vms)->with('clientes', $clientes);
             case 'EscalaSwarm':
-                return view('deploy.swarm');
+                $vms = $this->vmRepository->getByTipo('escalaswarm');
+                $clientes = $this->clienteRepository->getClientesComApelido();
+                return view('deploy.swarm')->with('vms', $vms)->with('clientes', $clientes);
             case 'EscalaWeb':
                 return view('deploy.web');
             case 'EscalaWebService':
@@ -80,6 +83,34 @@ class DeployController extends Controller
         $idServico = $this->servicosRepository->getIdByNome('EscalaServer');
         
         Server::dispatch($ultimaPorta, $clienteDados, $vm, $taskId, $dados, $idServico);
+        return redirect('/deploy');
+    }
+
+    public function swarm(Request $request) {
+        $cliente = $request->input('cliente');
+        $vm = $request->input('vm');
+        $nome_servico = $request->input('nome');
+
+        $escalaServer = $this->vmServicoRepository->getEscalaserverCliente($cliente);
+
+        $clienteDados = $this->clienteRepository->findById($cliente);
+
+        $dados = $this->vmRepository->getById($vm);
+
+        $dado = [
+            'nome_servico' => $nome_servico,
+            'cliente' => $cliente,
+            'vm_swarm' => $vm,
+            'id_vm_aplicacao' => $escalaServer->id_vm,
+            'porta' => $escalaServer->porta,
+            'nome_vm_aplicacao' => $escalaServer->nome_vm,
+            'clienteDados' => $clienteDados->apelido,
+        ];
+
+        $taskId = $this->asyncTasksRepository->create('DeploySwarm', $dado);
+
+        Swarm::dispatch($clienteDados, $dados, $escalaServer, $nome_servico, $taskId);
+
         return redirect('/deploy');
     }
 }

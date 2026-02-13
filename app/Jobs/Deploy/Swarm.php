@@ -16,31 +16,19 @@ class Swarm implements ShouldQueue
 
     public $clienteDados;
     public $dados;
-    public $vm_aplicacao;
-    public $nome_vm_aplicacao;
+    public $escalaServer;
     public $nome_servico;
     public $taskId;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct($clienteDados, $dados, $vm_aplicacao, $nome_vm_aplicacao, $nome_servico, $taskId)
+    public function __construct($clienteDados, $dados, $escalaServer, $nome_servico, $taskId)
     {
         $this->clienteDados = $clienteDados;
         $this->dados = $dados;
-        $this->vm_aplicacao = $vm_aplicacao;
-        $this->nome_vm_aplicacao = $nome_vm_aplicacao;
+        $this->escalaServer = $escalaServer;
         $this->nome_servico = $nome_servico;
         $this->taskId = $taskId;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
         DB::table('async_tasks')
@@ -82,11 +70,10 @@ class Swarm implements ShouldQueue
         $playbookName = 'EscalaSwarm.yml';
      
         $playbook = $dir . '/' . $playbookName;
-
         
         $nome_servico = $this->nome_servico;
-        $porta = $this->vm_aplicacao->porta;
-        $nome_vm_aplicacao = $this->nome_vm_aplicacao;
+        $porta = $this->escalaServer->porta;
+        $nome_vm_aplicacao = $this->escalaServer->nome_vm;
         $server = $nome_vm_aplicacao . ':' . $porta;
         $apelido = $this->clienteDados->apelido;
         $sistema = $apelido . "_escalasoft";
@@ -108,7 +95,6 @@ class Swarm implements ShouldQueue
                 'id_cliente_escala' => $this->clienteDados->id_cliente_escala,
             ]);
         }
-
 
         DB::table('async_tasks')
             ->where('id_async_tasks', $this->taskId)
