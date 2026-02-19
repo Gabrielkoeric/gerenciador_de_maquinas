@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use App\Jobs\ManipulaUsuario\Reset;
 
 use App\Repositories\ConfigGeral\ConfigGeralRepository;
+use App\Repositories\AsyncTasks\AsyncTasksRepository;
 
 use App\Services\AnsibleInventoryService;
 
@@ -17,13 +18,16 @@ class SecaoCloudController extends Controller
 {
     protected ConfigGeralRepository $configRepo;
     protected AnsibleInventoryService $inventoryService;
+    protected AsyncTasksRepository $asyncTasksRepository;
 
     public function __construct(
         ConfigGeralRepository $configRepo,
-        AnsibleInventoryService $inventoryService
+        AnsibleInventoryService $inventoryService,
+        AsyncTasksRepository $asyncTasksRepository
     ) {
         $this->configRepo = $configRepo;
         $this->inventoryService = $inventoryService;
+        $this->asyncTasksRepository = $asyncTasksRepository;
     }
   
     public function index(Request $request)
@@ -142,7 +146,16 @@ class SecaoCloudController extends Controller
             ->where('id_secao_cloud', $id)
             ->value('usuario');
 
-        Reset::dispatch($usuario, $novaSenha, $arquivo);
+        $dado = [
+            'id_vm' => $id_vm,
+            'usuario' => $usuario,
+            'novaSenha' => $novaSenha,
+            'arquivo' => $arquivo
+        ];
+
+        $taskId = $this->asyncTasksRepository->create('Reset Pass', $dado);
+
+        Reset::dispatch($usuario, $novaSenha, $arquivo, $taskId);
 
         return redirect()->route('secao_cloud.index');
     }

@@ -10,6 +10,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
+use App\Repositories\AsyncTasks\AsyncTasksRepository;
+
 use App\Services\AnsibleInventoryService;
 
 class Reset implements ShouldQueue
@@ -19,17 +21,24 @@ class Reset implements ShouldQueue
     protected string $usuario;
     protected string $novaSenha;
     protected string $arquivo;
+    protected string $taskId;
 
-    public function __construct(string $usuario, string $novaSenha, string $arquivo)
+    public function __construct(string $usuario, string $novaSenha, string $arquivo, string $taskId)
     {
         $this->usuario = $usuario;
         $this->novaSenha = $novaSenha;
         $this->arquivo = $arquivo;
+        $this->taskId = $taskId;
     }
 
-    public function handle(AnsibleInventoryService $inventoryService)
+    public function handle(
+        AnsibleInventoryService $inventoryService,
+        AsyncTasksRepository $asyncTasksRepository
+        )
     {
         try {
+            $asyncTasksRepository->marcarComoIniciado($this->taskId);
+
             $dir = base_path('scriptyAnsible/manipulaUsuarios');
             $playbook = $dir . '/resetUsuario.yml';
 
@@ -47,11 +56,10 @@ class Reset implements ShouldQueue
 
             Log::info("Reset usuário executado com sucesso");
 
-    } finally {
-
-        $inventoryService->removerInventory($this->arquivo);
-
-        Log::info("Inventory removido", ['path' => $this->arquivo]);
-    }
+        } finally {
+            $inventoryService->removerInventory($this->arquivo);
+            Log::info("Inventory removido", ['path' => $this->arquivo]);
+        }
+        $asyncTasksRepository->marcarComoConcluido($this->taskId, $output, $comando);
     }
 }
