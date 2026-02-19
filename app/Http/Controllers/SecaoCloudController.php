@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 
 use App\Jobs\ManipulaUsuario\Reset;
+use App\Jobs\ManipulaUsuario\Delete;
 
 use App\Repositories\ConfigGeral\ConfigGeralRepository;
 use App\Repositories\AsyncTasks\AsyncTasksRepository;
@@ -122,25 +123,40 @@ class SecaoCloudController extends Controller
     }
 
     public function destroy($id)
-{
-    DB::table('secao_cloud')->where('id_secao_cloud', $id)->delete();
-    
-    return redirect()->route('secao_cloud.index')
-        ->with('mensagemSucesso', 'Registro excluído com sucesso!');
-}
+    {
+        $id_vm = $this->configRepo->getConfigGeral('id_ad_clientes');
+        $arquivo = $this->inventoryService->gerarInventory($id_vm);
+
+        $usuario = DB::table('secao_cloud')
+            ->where('id_secao_cloud', $id)
+            ->value('usuario');
+
+        DB::table('secao_cloud')->where('id_secao_cloud', $id)->delete();
+
+        $dado = [
+            'id_vm' => $id_vm,
+            'usuario' => $usuario,
+            'arquivo' => $arquivo
+        ];
+
+        $taskId = $this->asyncTasksRepository->create('Delete User', $dado);
+
+        Delete::dispatch($usuario, $arquivo, $taskId);
+
+        return redirect()->route('secao_cloud.index');
+    }
 
     public function resetar($id)
     {
 
         $id_vm = $this->configRepo->getConfigGeral('id_ad_clientes');
+        $arquivo = $this->inventoryService->gerarInventory($id_vm);
 
         $novaSenha = substr(str_shuffle(str_repeat('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*', 8)), 0, 8);
 
         DB::table('secao_cloud')
             ->where('id_secao_cloud', $id)
             ->update(['senha' => $novaSenha]);
-
-        $arquivo = $this->inventoryService->gerarInventory($id_vm);
 
         $usuario = DB::table('secao_cloud')
             ->where('id_secao_cloud', $id)

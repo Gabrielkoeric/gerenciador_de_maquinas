@@ -1,0 +1,10 @@
+- name: Deletar usuário via PowerShell
+  hosts: windows
+  gather_facts: no
+
+  tasks:
+    - name: Executar deleteUser.ps1 para "{{ usuario }}"
+      ansible.windows.win_powershell:
+        script: |
+          & "C:\gerenciador\deleteUser.ps1" `
+            -usuario "{{ usuario }}"
