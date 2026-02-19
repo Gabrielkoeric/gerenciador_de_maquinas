@@ -65,4 +65,27 @@ class VmRepository
             ->where('vm.id_vm', $idVm)
             ->first();
     }
+
+    public function findByIdWithCredentials($idVm)
+    {
+        return DB::table('vm')
+            ->leftJoin('dominio', 'vm.id_dominio', '=', 'dominio.id_dominio')
+            ->join('ip_lan', 'vm.id_ip_lan', '=', 'ip_lan.id_ip_lan')
+            ->leftJoin('usuario_vm', function ($join) {
+                $join->on('vm.id_vm', '=', 'usuario_vm.id_vm')
+                     ->where('usuario_vm.principal', 1);
+            })
+            ->where('vm.id_vm', $idVm)
+            ->select(
+                'vm.id_vm',
+                'vm.id_dominio',
+                'usuario_vm.usuario as usuario_local',
+                'usuario_vm.senha as senha_local',
+                'ip_lan.ip as ip_lan',
+                'dominio.nome as dominio_nome',
+                'dominio.usuario as dominio_usuario',
+                'dominio.senha as dominio_senha'
+            )
+            ->first();
+    }
 }
