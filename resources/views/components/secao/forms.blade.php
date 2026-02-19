@@ -9,12 +9,12 @@
         <input type="text" id="usuario" name="usuario" class="form-control" @isset($usuario) value="{{$usuario}}" @endisset required>
 
         <label for="senha" class="form-label">Senha:</label>
-<div class="input-group mb-3">
-    <input type="text" id="senha" name="senha" class="form-control" @isset($senha) value="{{$senha}}" @endisset required>
-    <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="button" onclick="gerarSenha()">Gerar</button>
-    </div>
-</div>
+        <div class="input-group mb-3">
+            <input type="text" id="senha" name="senha" class="form-control" @isset($senha) value="{{$senha}}" @endisset required>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" onclick="gerarSenha()">Gerar</button>
+            </div>
+        </div>
 
         <label for="cliente" class=form-label>Cliente</label>
         <select id="cliente" name="cliente" class="form-control" required>
@@ -39,6 +39,18 @@
                     @endif
             @endforeach
         </select >
+
+<label for="coletor" class="form-label">Coletor:</label><br>
+
+<input type="hidden" name="coletor" value="0">
+
+<input type="checkbox"
+       class="form-control-input"
+       id="coletor"
+       name="coletor"
+       value="1"
+       {{ isset($coletor) && $coletor == 1 ? 'checked' : '' }}>
+        
     </div>
     <button type="submit" class="btn btn-primary">Salvar</button>
     <a href="{{route('secao_cloud.index')}}" class="btn btn-primary">Cancelar</a>

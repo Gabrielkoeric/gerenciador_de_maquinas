@@ -41,6 +41,7 @@ class SecaoCloudController extends Controller
             'secao_cloud.id_secao_cloud',
             'secao_cloud.usuario',
             'secao_cloud.senha',
+            'secao_cloud.coletor',
             'cliente_escala.nome as nome_cliente'
         )
         ->orderBy('cliente_escala.nome', 'asc')
@@ -75,11 +76,13 @@ class SecaoCloudController extends Controller
         $usuario = $request->input('usuario');
         $senha = $request->input('senha');
         $cliente = $request->input('cliente');
+        $coletor = $request->input('coletor');
 
         $dados = [
             'usuario' => $usuario,
             'senha' => $senha,
             'id_cliente_escala' => $cliente,
+            'coletor' => $coletor
         ];
 
         DB::table('secao_cloud')->insertGetId($dados);
@@ -118,6 +121,7 @@ class SecaoCloudController extends Controller
                 'usuario' => $request->usuario,
                 'senha' => $request->senha,
                 'id_cliente_escala' => $request->cliente,
+                'coletor' => $request->coletor
             ]);
         return redirect('/secao_cloud');
     }

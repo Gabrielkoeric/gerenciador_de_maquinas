@@ -72,6 +72,7 @@
                 <tr>
                     <th scope="col">Usuario</th>
                     <th scope="col">Senha</th>
+                    <th scope="col">Coletor</th>
                     <th scope="col">Cliente</th>
                     <th scope="col">Ações</th>
                 </tr>
@@ -85,6 +86,7 @@
                                 {{ $dado->senha }}
                             </span>
                         </td>
+                        <td>{{ $dado->coletor}}</td>
                         <td><a href="{{ route('secao_cloud.edit', $dado->id_secao_cloud) }}" class="text-decoration-none text-dark">{{ $dado->nome_cliente }}</a></td>
                         <td class="d-flex gap-1">
                             <form action="{{ route('secao_cloud.destroy', $dado->id_secao_cloud) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir?');">

@@ -5,6 +5,7 @@
                         :cliente="$clienteAtual->id_cliente_escala"
                         :clientes="$clientes"
                         :clienteAtual="$clienteAtual"
+                        :coletor="$clienteAtual->coletor"
     >
     </x-secao.forms>
 </x-layout>
