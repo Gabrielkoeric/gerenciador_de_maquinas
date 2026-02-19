@@ -7,13 +7,25 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 
+use App\Jobs\ManipulaUsuario\Reset;
+
+use App\Repositories\ConfigGeral\ConfigGeralRepository;
+
+use App\Services\AnsibleInventoryService;
+
 class SecaoCloudController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected ConfigGeralRepository $configRepo;
+    protected AnsibleInventoryService $inventoryService;
+
+    public function __construct(
+        ConfigGeralRepository $configRepo,
+        AnsibleInventoryService $inventoryService
+    ) {
+        $this->configRepo = $configRepo;
+        $this->inventoryService = $inventoryService;
+    }
+  
     public function index(Request $request)
 {
     $filtroClientes = $request->input('clientes', []);
@@ -45,11 +57,6 @@ class SecaoCloudController extends Controller
     ]);
 }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $clientes = DB::table('cliente_escala')
@@ -58,12 +65,6 @@ class SecaoCloudController extends Controller
         return view('secao_cloud.create')->with('clientes', $clientes);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $usuario = $request->input('usuario');
@@ -81,23 +82,11 @@ class SecaoCloudController extends Controller
         return redirect('/secao_cloud');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         
@@ -116,13 +105,6 @@ class SecaoCloudController extends Controller
         
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         DB::table('secao_cloud')
@@ -135,12 +117,6 @@ class SecaoCloudController extends Controller
         return redirect('/secao_cloud');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
 {
     DB::table('secao_cloud')->where('id_secao_cloud', $id)->delete();
@@ -149,22 +125,27 @@ class SecaoCloudController extends Controller
         ->with('mensagemSucesso', 'Registro excluído com sucesso!');
 }
 
-public function resetar($id)
-{
-    $novaSenha = Str::random(8); // Gera string aleatória
+    public function resetar($id)
+    {
 
-    // Se quiser incluir caracteres especiais, use a versão abaixo
-    $novaSenha = substr(str_shuffle(
-        str_repeat('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*', 8)
-    ), 0, 8);
+        $id_vm = $this->configRepo->getConfigGeral('id_ad_clientes');
 
-    DB::table('secao_cloud')
-        ->where('id_secao_cloud', $id)
-        ->update(['senha' => $novaSenha]);
+        $novaSenha = substr(str_shuffle(str_repeat('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*', 8)), 0, 8);
 
-    return redirect()->route('secao_cloud.index')
-        ->with('mensagemSucesso', "Senha resetada com sucesso para o ID $id. Nova senha: $novaSenha");
-}
+        DB::table('secao_cloud')
+            ->where('id_secao_cloud', $id)
+            ->update(['senha' => $novaSenha]);
+
+        $arquivo = $this->inventoryService->gerarInventory($id_vm);
+
+        $usuario = DB::table('secao_cloud')
+            ->where('id_secao_cloud', $id)
+            ->value('usuario');
+
+        Reset::dispatch($usuario, $novaSenha, $arquivo);
+
+        return redirect()->route('secao_cloud.index');
+    }
 
     public function api(Request $request)
     {

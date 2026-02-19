@@ -1,0 +1,11 @@
+- name: Resetar usuário via PowerShell
+  hosts: windows
+  gather_facts: no
+
+  tasks:
+    - name: Executar reset_pass.ps1 para "{{ usuario }}"
+      ansible.windows.win_powershell:
+        script: |
+          & "C:\gerenciador\resetPass.ps1" `
+            -usuario "{{ usuario }}" `
+            -senha "{{ senha }}"
