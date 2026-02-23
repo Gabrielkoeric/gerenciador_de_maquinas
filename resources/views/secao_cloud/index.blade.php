@@ -70,6 +70,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">Usuario</th>
                     <th scope="col">Senha</th>
                     <th scope="col">Coletor</th>
@@ -80,6 +81,7 @@
             <tbody>
                 @foreach ($dados as $dado)
                     <tr>
+                        <th scope="row">{{ $loop->iteration }}</th>
                         <td><a href="{{ route('secao_cloud.edit', $dado->id_secao_cloud ) }}" class="text-decoration-none text-dark">{{ $dado->usuario }}</a></td>
                         <td>
                             <span class="text-dark" role="button" style="cursor: pointer;" onclick="copiarSenha('{{ $dado->senha }}', this)">
