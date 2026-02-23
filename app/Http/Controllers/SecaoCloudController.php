@@ -9,9 +9,11 @@ use Illuminate\Http\JsonResponse;
 
 use App\Jobs\ManipulaUsuario\Reset;
 use App\Jobs\ManipulaUsuario\Delete;
+use App\Jobs\ManipulaUsuario\Create;
 
 use App\Repositories\ConfigGeral\ConfigGeralRepository;
 use App\Repositories\AsyncTasks\AsyncTasksRepository;
+use App\Repositories\Cliente\ClienteRepository;
 
 use App\Services\AnsibleInventoryService;
 
@@ -20,15 +22,18 @@ class SecaoCloudController extends Controller
     protected ConfigGeralRepository $configRepo;
     protected AnsibleInventoryService $inventoryService;
     protected AsyncTasksRepository $asyncTasksRepository;
+    protected ClienteRepository $cliente;
 
     public function __construct(
         ConfigGeralRepository $configRepo,
         AnsibleInventoryService $inventoryService,
-        AsyncTasksRepository $asyncTasksRepository
+        AsyncTasksRepository $asyncTasksRepository,
+        ClienteRepository $cliente
     ) {
         $this->configRepo = $configRepo;
         $this->inventoryService = $inventoryService;
         $this->asyncTasksRepository = $asyncTasksRepository;
+        $this->cliente = $cliente;
     }
   
     public function index(Request $request)
@@ -78,14 +83,22 @@ class SecaoCloudController extends Controller
         $cliente = $request->input('cliente');
         $coletor = $request->input('coletor');
 
-        $dados = [
+        $id_vm = $this->configRepo->getConfigGeral('id_ad_clientes');
+        $arquivo = $this->inventoryService->gerarInventory($id_vm);
+        $apelido = $this->cliente -> findById($cliente)->apelido;
+
+        $dado = [
             'usuario' => $usuario,
             'senha' => $senha,
             'id_cliente_escala' => $cliente,
             'coletor' => $coletor
         ];
 
-        DB::table('secao_cloud')->insertGetId($dados);
+        $taskId = $this->asyncTasksRepository->create('Create User', $dado);
+
+        Create::dispatch($usuario, $senha, $coletor, $arquivo, $taskId, $apelido);
+
+        DB::table('secao_cloud')->insertGetId($dado);
 
         return redirect('/secao_cloud');
     }
