@@ -81,6 +81,7 @@ class ClienteRepository
             ->whereNotNull('licenca')
             ->whereNotNull('coletor')
             ->whereNotNull('desktop')
+            ->where('licenca', '>', 0)
             ->orderBy('apelido')
             ->get();   
     }
