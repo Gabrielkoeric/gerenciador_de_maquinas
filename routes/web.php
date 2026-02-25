@@ -72,6 +72,7 @@ use App\Http\Controllers\ExecucaoGeralController;
 use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\LogsSql\LogsSqlController;
 use App\Http\Controllers\Deploy\DeployController;
+use App\Http\Controllers\SecaoCloud\SecaoCloudLoteController;
 
 
 /*
@@ -253,3 +254,6 @@ Route::resource('/cliente', ClienteController::class)->middleware(Autenticador::
 //logs de sql
 Route::delete('/logs_sql/clear', [LogsSqlController::class, 'clear'])->name('logs_sql.clear')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/logs_sql', LogsSqlController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//seção cloud lote
+Route::resource('/secao_cloud_lote', SecaoCloudLoteController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);

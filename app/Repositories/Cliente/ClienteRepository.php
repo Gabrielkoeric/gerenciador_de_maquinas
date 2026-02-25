@@ -64,4 +64,39 @@ class ClienteRepository
             ->orderBy('apelido') // ASC padrão
             ->get();
     }
+
+    public function getClientesLicencas()
+    {
+        return DB::table('cliente_escala')
+            ->select([
+                'id_cliente_escala',
+                'nome',
+                'apelido',
+                'licenca',
+                'coletor',
+                'desktop'
+            ])
+            ->whereNotNull('nome')
+            ->whereNotNull('apelido')
+            ->whereNotNull('licenca')
+            ->whereNotNull('coletor')
+            ->whereNotNull('desktop')
+            ->orderBy('apelido')
+            ->get();   
+    }
+
+    public function updateLicencas(int $id, int $coletor, int $desktop, int $licenca = null): bool
+    {
+        $total = $coletor + $desktop;
+    
+        return DB::table('cliente_escala')
+            ->where('id_cliente_escala', $id)
+            ->update([
+                'coletor'   => $coletor,
+                'desktop'   => $desktop,
+                'licenca'   => $total,
+                'updated_at'=> now()
+            ]) > 0;
+    }
+
 }
