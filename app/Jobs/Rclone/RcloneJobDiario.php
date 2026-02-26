@@ -117,7 +117,7 @@ if (json_last_error() === JSON_ERROR_NONE && is_array($json)) {
         'log_path' => $logFile,
     ]);
 }
-
+/*
         $execucoesPendentes = DB::table('rclone_execucoes')
         ->where('status', 'pendente')
         ->where('tipo', 'diario')
@@ -128,5 +128,6 @@ if (json_last_error() === JSON_ERROR_NONE && is_array($json)) {
     foreach ($execucoesPendentes as $execucao) {
     RcloneJobDiario::dispatch($execucao->id_execucao)->onQueue('diario');
     }
+    */
     }
 }
