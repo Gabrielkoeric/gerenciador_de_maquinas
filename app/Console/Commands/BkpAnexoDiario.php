@@ -29,7 +29,7 @@ class BkpAnexoDiario extends Command
 
     public function handle()
     {
-        $repositorios = $this->repositorioRepository->getRepositoriosDiariosArquivo()
+        $repositorios = $this->repositorioRepository->getRepositoriosDiariosArquivo();
 
         foreach ($repositorios as $repositorio) {
 

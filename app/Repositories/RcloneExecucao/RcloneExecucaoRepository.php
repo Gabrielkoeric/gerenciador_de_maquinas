@@ -24,4 +24,63 @@ class RcloneExecucaoRepository
             'erro' => null,
         ]);
     }
+
+    public function findById(int $id)
+    {
+        return DB::table('rclone_execucoes')
+            ->where('id_execucao', $id)
+            ->first();
+    }
+
+    public function marcarExecutando(int $id): void
+    {
+        DB::table('rclone_execucoes')
+            ->where('id_execucao', $id)
+            ->update([
+                'status' => 'executando',
+                'inicio' => now(),
+            ]);
+    }
+
+    public function finalizarSucesso(
+        int $id,
+        string $cmd,
+        $fim,
+        string $logFile,
+        string $resumo,
+        int $qtdTransferidos,
+        int $qtdCheck,
+        int $bytesTransferidos
+    ): void {
+        DB::table('rclone_execucoes')
+            ->where('id_execucao', $id)
+            ->update([
+                'status' => 'concluido',
+                'comando_rclone' => $cmd,
+                'fim' => $fim,
+                'log_path' => $logFile,
+                'erro' => $resumo,
+                'qtd_arquivos_transferidos' => $qtdTransferidos,
+                'qtd_arquivos_check' => $qtdCheck,
+                'bytes_transferidos' => $bytesTransferidos,
+            ]);
+    }
+
+    public function finalizarErro(
+        int $id,
+        string $cmd,
+        $fim,
+        string $logFile,
+        string $erro
+    ): void {
+        DB::table('rclone_execucoes')
+            ->where('id_execucao', $id)
+            ->update([
+                'status' => 'erro',
+                'comando_rclone' => $cmd,
+                'fim' => $fim,
+                'log_path' => $logFile,
+                'erro' => $erro,
+            ]);
+    }
 }
