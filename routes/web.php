@@ -170,6 +170,7 @@ Route::resource('/asynctasks', AsyncTasksController::class)->middleware(Autentic
 Route::resource('/config_geral', ConfigGeralController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 
 //seção cloud
+Route::get('/secao-cloud/pdf', [SecaoCloudController::class, 'gerarPdf'])->name('secao_cloud.pdf')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::post('/secao_cloud/{id}/resetar', [SecaoCloudController::class, 'resetar'])->name('secao_cloud.resetar')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 Route::resource('/secao_cloud', SecaoCloudController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 

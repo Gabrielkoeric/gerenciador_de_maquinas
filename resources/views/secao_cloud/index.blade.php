@@ -2,6 +2,11 @@
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('secao_cloud.create')}}" class="btn btn-dark my-3">Adicionar</a>
     <a href="{{route('secao_cloud_lote.index')}}" class="btn btn-dark my-3 pr">Adicionar Usuarios em Lote</a>
+    <a href="{{ route('secao_cloud.pdf', request()->query()) }}" 
+   target="_blank"
+   class="btn btn-success my-3">
+    <i class="fas fa-file-pdf"></i> Gerar Relatório
+</a>
 
     <!-- Novo Filtro com Dropdown -->
     <form method="GET" class="mb-4">
