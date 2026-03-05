@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Services\RcloneExecucaoDiario\ZabbixSenderService;
 
 class VerificaUsuarioLogadoVm implements ShouldQueue
 {
@@ -18,22 +19,12 @@ class VerificaUsuarioLogadoVm implements ShouldQueue
 
     public $vms;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
     public function __construct($vms)
     {
         $this->vms = $vms;
     }
-   
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+
+    public function handle(ZabbixSenderService $zabbix)
     {
         $idHorario = DB::table('horario_auditoria')->insertGetId([
             'data_hora' => now(),
@@ -132,26 +123,6 @@ class VerificaUsuarioLogadoVm implements ShouldQueue
 
                 $usuariosIgnorados = ['escala'];
 
-
-           /* foreach ($listaUsuarios as $info) {
-
-
-                $usuario = strtolower(trim($info['usuario'] ?? ''));
-            
-                if (in_array($usuario, $usuariosIgnorados) || empty($usuario)) {
-                    continue;
-                }
-            
-                $usuariosValidos[] = $usuario;
-            
-                // Atualiza ou insere em secao_cloud_temp (id_cliente_escala começa como NULL)
-                DB::table('secao_cloud_temp')->updateOrInsert(
-                    ['nome' => $usuario],
-                    [
-                        'id_cliente_escala' => DB::raw('id_cliente_escala'), // mantém o que já existe
-                    ]
-                );
-            }*/
                 foreach ($listaUsuarios as $info) {
 
                     $usuario = strtolower(trim($info['usuario'] ?? ''));
@@ -196,6 +167,14 @@ class VerificaUsuarioLogadoVm implements ShouldQueue
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
+            $cliente = DB::table('cliente_escala')
+                ->where('id_cliente_escala', $idCliente)
+                ->first();
+
+            if ($cliente) {
+                $zabbix->send($cliente->apelido, 'usuario.logado', $qtd);
+            }
         }
 }
 }
