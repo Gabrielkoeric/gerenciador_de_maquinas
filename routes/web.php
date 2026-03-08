@@ -73,7 +73,7 @@ use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\LogsSql\LogsSqlController;
 use App\Http\Controllers\Deploy\DeployController;
 use App\Http\Controllers\SecaoCloud\SecaoCloudLoteController;
-
+use App\Http\Controllers\UsuariosLogados\UsuariosLogadosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -258,3 +258,6 @@ Route::resource('/logs_sql', LogsSqlController::class)->middleware(Autenticador:
 
 //seção cloud lote
 Route::resource('/secao_cloud_lote', SecaoCloudLoteController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
+
+//usuarios logados
+Route::resource('/usuarios_logados', UsuariosLogadosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class);
