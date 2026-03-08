@@ -25,7 +25,7 @@ class UsuariosLogadosRepository
                 'h.data_hora as data',
                 DB::raw('COALESCE(a.quantidade,0) as quantidade')
             )
-            ->orderBy('c.nome')
+            ->orderBy('quantidade', 'DESC')
             ->get();
     }
 }
