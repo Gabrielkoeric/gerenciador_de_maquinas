@@ -13,6 +13,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">ID</th>
                     <th scope="col">Nome</th>
                     <th scope="col">Apelido</th>
@@ -27,6 +28,7 @@
                 <tbody>
                 @foreach ($clientes as $cliente)
                     <tr>
+                        <th scope="row">{{ $loop->iteration }}</th>
                         <td><a href="{{ route('cliente.edit', $cliente->id_cliente_escala ) }}" class="text-decoration-none text-dark">{{ $cliente->id_cliente_escala }}</a></td>
                         <td><a href="{{ route('cliente.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->nome }}</a></td>
                         <td><a href="{{ route('cliente.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->apelido }}</a></td>

@@ -12,7 +12,7 @@ class ClienteRepository
         SqlMonitorService::start(1, 1);
 
         return DB::table('cliente_escala as cliente')
-            ->select('*')
+            ->orderBy('apelido')
             ->get();
     }
 
