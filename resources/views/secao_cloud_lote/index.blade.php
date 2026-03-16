@@ -7,6 +7,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">Nome</th>
                     <th scope="col">Apelido</th>
                     <th scope="col">Licenças</th>
@@ -17,7 +18,7 @@
 <tbody>
 @foreach ($clientes as $cliente)
 <tr data-id="{{ $cliente->id_cliente_escala }}">
-    
+    <th scope="row">{{ $loop->iteration }}</th>
     <td>{{ $cliente->nome }}</td>
     <td>{{ $cliente->apelido }}</td>
 
