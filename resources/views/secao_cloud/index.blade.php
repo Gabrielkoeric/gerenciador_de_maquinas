@@ -7,6 +7,20 @@
    class="btn btn-success my-3">
     <i class="fas fa-file-pdf"></i> Gerar Relatório
 </a>
+    <form method="GET" action="{{ route('secao_cloud.enviaEmail') }}" class="d-inline">
+    
+    <!-- mantém os filtros -->
+    @foreach(request()->input('clientes', []) as $cliente)
+        <input type="hidden" name="clientes[]" value="{{ $cliente }}">
+    @endforeach
+
+    <input type="email" name="email" class="form-control d-inline w-auto" placeholder="Email destino" required>
+
+<button type="submit" class="btn btn-primary"
+    @if(count($filtroClientes) == 0) disabled @endif>
+    <i class="fas fa-envelope"></i> Enviar PDF
+</button>
+</form>
 
     <!-- Novo Filtro com Dropdown -->
     <form method="GET" class="mb-4">

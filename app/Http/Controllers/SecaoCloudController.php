@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -269,5 +271,48 @@ class SecaoCloudController extends Controller
     ])->setPaper('a4'); // paisagem fica melhor pra tabela
 
     return $pdf->stream('relatorio_secao_cloud.pdf');
+}
+
+public function enviaEmail(Request $request)
+{
+    ini_set('memory_limit', '512M');
+    set_time_limit(300);
+
+    $filtroClientes = $request->input('clientes', []);
+    $emailDestino = $request->input('email');
+
+    $query = DB::table('secao_cloud')
+        ->join('cliente_escala', 'secao_cloud.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
+        ->select(
+            'secao_cloud.usuario',
+            'secao_cloud.senha',
+            'secao_cloud.coletor',
+            'cliente_escala.nome as nome_cliente'
+        )
+        ->orderBy('cliente_escala.nome', 'asc')
+        ->orderBy('secao_cloud.usuario', 'asc');
+
+    if (!empty($filtroClientes)) {
+        $query->whereIn('cliente_escala.id_cliente_escala', $filtroClientes);
+    }
+
+    $dados = $query->get();
+
+    $pdf = Pdf::loadView('secao_cloud.pdf', [
+        'dados' => $dados
+    ])->setPaper('a4');
+
+    $nomeArquivo = 'relatorios/relatorio_secao_cloud_' . time() . '.pdf';
+    Storage::put($nomeArquivo, $pdf->output());
+
+    $caminhoCompleto = storage_path('app/' . $nomeArquivo);
+
+    Mail::raw('Segue em anexo o relatório Secao Cloud.', function ($message) use ($emailDestino, $caminhoCompleto) {
+        $message->to($emailDestino)
+            ->subject('Relatório Secao Cloud')
+            ->attach($caminhoCompleto);
+    });
+
+    return redirect()->back()->with('mensagemSucesso', 'E-mail enviado com sucesso!');
 }
 }
