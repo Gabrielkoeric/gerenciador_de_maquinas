@@ -14,6 +14,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Jobs\ManipulaUsuario\Reset;
 use App\Jobs\ManipulaUsuario\Delete;
 use App\Jobs\ManipulaUsuario\Create;
+use App\Jobs\EnviarEmailJob;
 
 use App\Repositories\ConfigGeral\ConfigGeralRepository;
 use App\Repositories\AsyncTasks\AsyncTasksRepository;
@@ -312,12 +313,26 @@ public function enviaEmail(Request $request)
 
     $caminhoCompleto = storage_path('app/' . $nomeArquivo);
 
-    Mail::raw('Segue em anexo o relatório Secao Cloud.', function ($message) use ($emailDestino, $caminhoCompleto) {
-        $message->to($emailDestino)
-            ->subject('Relatório Secao Cloud')
-            ->attach($caminhoCompleto);
-    });
+    $dado = [
+        'email_destino' => $emailDestino,
+        'arquivo' => $nomeArquivo,
+        'filtro_clientes' => $filtroClientes
+    ];
 
-    return redirect()->back()->with('mensagemSucesso', 'E-mail enviado com sucesso!');
+    $taskId = $this->asyncTasksRepository->create('Envia Email', $dado);
+
+    EnviarEmailJob::dispatch(
+        $emailDestino,
+        'Relatório Secao Cloud',
+        'Segue em anexo o relatório Secao Cloud.',
+        $caminhoCompleto,
+        auth()->id(),
+        $taskId
+    );
+
+    return redirect()->back()->with(
+        'mensagemSucesso',
+        'Relatório está sendo processado e será enviado por e-mail!'
+    );
 }
 }
