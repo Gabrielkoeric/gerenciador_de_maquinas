@@ -266,6 +266,11 @@ class SecaoCloudController extends Controller
 
     $dados = $query->get();
 
+    Pdf::setOptions([
+        'defaultFont' => 'DejaVu Sans',
+        'isFontSubsettingEnabled' => false,
+    ]);
+
     $pdf = Pdf::loadView('secao_cloud.pdf', [
         'dados' => $dados
     ])->setPaper('a4'); // paisagem fica melhor pra tabela

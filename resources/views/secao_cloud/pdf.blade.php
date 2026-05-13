@@ -26,8 +26,8 @@
             @foreach ($dados as $dado)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $dado->usuario }}</td>
-                    <td>{{ $dado->senha }}</td>
+                    <td style="color:#000;">{{ $dado->usuario }}</td>
+                    <td style="color:#000;">{{ $dado->senha }}</td>
                 </tr>
             @endforeach
         </tbody>
