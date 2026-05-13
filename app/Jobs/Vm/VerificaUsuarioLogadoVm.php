@@ -159,22 +159,26 @@ class VerificaUsuarioLogadoVm implements ShouldQueue
                 Log::error("Erro ao processar JSON de usuários da VM {$vm}: {$e->getMessage()}");
             }
         }
-        foreach ($contagemClientes as $idCliente => $qtd) {
-            DB::table('auditoria_secao')->insert([
-                'id_cliente_escala' => $idCliente,
-                'id_horario_auditoria' => $idHorario,
-                'quantidade' => $qtd,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        $clientes = DB::table('cliente_escala')
+            ->select('id_cliente_escala', 'apelido')
+            ->get();
 
-            $cliente = DB::table('cliente_escala')
-                ->where('id_cliente_escala', $idCliente)
-                ->first();
+        foreach ($clientes as $cliente) {
 
-            if ($cliente) {
-                $zabbix->send($cliente->apelido, 'usuario.logado', $qtd);
+            $qtd = $contagemClientes[$cliente->id_cliente_escala] ?? 0;
+
+            if ($qtd > 0) {
+                DB::table('auditoria_secao')->insert([
+                    'id_cliente_escala' => $cliente->id_cliente_escala,
+                    'id_horario_auditoria' => $idHorario,
+                    'quantidade' => $qtd,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
+
+            // Zabbix sempre recebe (inclusive 0)
+            $zabbix->send($cliente->apelido, 'usuario.logado', $qtd);
         }
-}
+    }
 }
