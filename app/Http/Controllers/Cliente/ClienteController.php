@@ -206,13 +206,13 @@ public function store(Request $request)
 
         foreach ($clientes as $cliente) {
 
-            $host = strtoupper($cliente->apelido) . $dominio;
+            $host = $cliente->apelido . $dominio;
             $porta = $cliente->porta_rdp;
 
             $conteudo = $this->templateRdp(
                 $host,
                 $porta,
-                strtoupper($cliente->apelido)
+                $cliente->apelido
             );
 
             $nomeArquivo = $cliente->apelido . '.rdp';
@@ -234,44 +234,30 @@ public function store(Request $request)
         return <<<RDP
 redirectclipboard:i:1
 redirectprinters:i:1
-redirectcomports:i:1
+redirectcomports:i:0
 redirectsmartcards:i:1
 devicestoredirect:s:*
 drivestoredirect:s:*
 redirectdrives:i:1
 session bpp:i:32
 prompt for credentials on client:i:1
+promptcredentialonce:i:0
 span monitors:i:1
 use multimon:i:1
 remoteapplicationmode:i:1
 server port:i:{$porta}
 allow font smoothing:i:1
-promptcredentialonce:i:0
-gatewayusagemethod:i:0
-gatewayprofileusagemethod:i:1
-gatewaycredentialssource:i:0
+videoplaybackmode:i:0
+audiocapturemode:i:1
+compression:i:1
+bitmapcachepersistenable:i:0
 full address:s:{$host}:{$porta}
-alternate shell:s:||{$apelido}_ESCALASOFT
-remoteapplicationprogram:s:||{$apelido}_ESCALASOFT
-remoteapplicationname:s:{$apelido}_ESCALASOFT
-workspace id:s:{$host}
+alternate shell:s:||{$apelido}_escalasoft
+remoteapplicationprogram:s:||{$apelido}_escalasoft
+remoteapplicationname:s:{$apelido}_escalasoft
+workspace id:s:{$host}:{$porta}
 use redirection server name:i:1
 loadbalanceinfo:s:tsv://MS Terminal Services Plugin.1.RDSessionCollect
-screen mode id:i:2
-compression:i:1
-keyboardhook:i:2
-audiocapturemode:i:0
-videoplaybackmode:i:1
-connection type:i:7
-networkautodetect:i:1
-bandwidthautodetect:i:1
-displayconnectionbar:i:1
-disable wallpaper:i:0
-disable full window drag:i:1
-bitmapcachepersistenable:i:1
-authentication level:i:2
-negotiate security layer:i:1
-autoreconnection enabled:i:1
 RDP;
     }
 
