@@ -56,6 +56,21 @@ class UsuarioController extends Controller
 
         DB::table('usuario_perfil')->insertGetId($dados2);
 
+        if ($request->filled('smtp_host') || $request->filled('smtp_user')) {
+            DB::table('usuario_email_config')->insert([
+                'id_usuario' => $id,
+                'host' => $request->smtp_host,
+                'port' => $request->smtp_port ?? 587,
+                'username' => $request->smtp_user,
+                'password' => $request->smtp_pass ? encrypt($request->smtp_pass) : null,
+                'criptografia' => $request->smtp_encryption,
+                'from_address' => $request->smtp_from,
+                'from_name' => $request->smtp_from_name,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
         return redirect('/usuario')->with('mensagem.sucesso', 'Usuario inserido com sucesso!');
     }
 
@@ -71,11 +86,17 @@ class UsuarioController extends Controller
             ->leftJoin('perfil as p', 'up.id_perfil', '=', 'p.id_perfil')
             ->where('u.id', '=', $usuario->id)
             ->first();
-        return view('usuarios.edit')->with('usuario', $usuario)->with('perfis', $perfis)->with('perfilAtual', $perfilAtual);
+
+        $emailConfig = DB::table('usuario_email_config')
+            ->where('id', $usuario->id)
+            ->first();
+
+        return view('usuarios.edit')->with('usuario', $usuario)->with('perfis', $perfis)->with('perfilAtual', $perfilAtual)->with('emailConfig', $emailConfig);
     }
 
     public function update($id, Request $request)
     {
+        //dd($request->all());
         $request->validate([
             'nome' => ['required', 'min:3'],
             'email' => ['required', 'email'], // Add the 'email' rule for email validation
@@ -90,12 +111,46 @@ class UsuarioController extends Controller
                 'celular' => $request->celular,
                 'nome_completo' => $request->nome,
             ]);
-        DB::table('usuario_perfil')
-            ->where('id', $id)
-            ->update([
-                'id_perfil' => $request->perfil,
-            ]);
 
+        DB::table('usuario_perfil')->updateOrInsert(
+    ['id' => $id],
+    ['id_perfil' => $request->perfil]
+);
+
+    if ($request->filled('smtp_host') || $request->filled('smtp_user')) {
+        $configExiste = DB::table('usuario_email_config')
+            ->where('id', $id)
+            ->exists();
+
+        $dadosEmail = [
+            'host' => $request->smtp_host,
+            'port' => $request->smtp_port ?? 587,
+            'username' => $request->smtp_user,
+            'criptografia' => $request->smtp_encryption,
+            'from_address' => $request->smtp_from,
+            'from_name' => $request->smtp_from_name,
+            'updated_at' => now(),
+        ];
+
+        if (!empty($request->smtp_pass)) {
+            $dadosEmail['password'] = encrypt($request->smtp_pass);
+        }
+
+        if ($configExiste) {
+            DB::table('usuario_email_config')
+                ->where('id', $id)
+                ->update($dadosEmail);
+        } else {
+            $dadosEmail['id'] = $id;
+            $dadosEmail['created_at'] = now();
+
+            if (!isset($dadosEmail['password'])) {
+                $dadosEmail['password'] = null;
+            }
+
+            DB::table('usuario_email_config')->insert($dadosEmail);
+        }
+    }
         return redirect()->route('usuario.index')->with('mensagem.sucesso', 'Usuário Alterado com Sucesso');
     }
 

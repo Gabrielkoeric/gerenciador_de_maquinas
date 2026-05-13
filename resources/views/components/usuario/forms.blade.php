@@ -34,6 +34,44 @@
                     @endif
             @endforeach
         </select >
+
+        <hr>
+            <h5>Configuração de E-mail (SMTP)</h5>
+
+            <label>Host</label>
+            <input type="text" name="smtp_host" class="form-control"
+                value="{{ $emailConfig->host ?? '' }}">
+
+            <label>Porta</label>
+            <select name="smtp_port" class="form-control">
+                <option value="">Selecione uma opção</option>
+                <option value="25" @if(($emailConfig->port ?? '') == '25') selected @endif>25</option>
+                <option value="465" @if(($emailConfig->port ?? '') == '465') selected @endif>465</option>
+                <option value="587" @if(($emailConfig->port ?? '') == '587') selected @endif>587</option>
+            </select>
+
+            <label>Usuário</label>
+            <input type="text" name="smtp_user" class="form-control"
+                value="{{ $emailConfig->username ?? '' }}">
+
+            <label>Senha</label>
+            <input type="password" name="smtp_pass" class="form-control">
+
+            <label>Criptografia</label>
+            <select name="smtp_encryption" class="form-control">
+                <option value="">Nenhuma</option>
+                <option value="tls" @if(($emailConfig->criptografia ?? '') == 'tls') selected @endif>TLS</option>
+                <option value="ssl" @if(($emailConfig->criptografia ?? '') == 'ssl') selected @endif>SSL</option>
+            </select>
+
+            <label>From (E-mail)</label>
+            <input type="email" name="smtp_from" class="form-control"
+                value="{{ $emailConfig->from_address ?? '' }}">
+
+            <label>From (Nome)</label>
+            <input type="text" name="smtp_from_name" class="form-control"
+                value="{{ $emailConfig->from_name ?? '' }}">
+
     </div>
     <button type="submit" class="btn btn-primary">Salvar</button>
     <a href="{{route('usuario.index')}}" class="btn btn-primary">Cancelar</a>

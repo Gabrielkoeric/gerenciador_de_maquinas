@@ -5,6 +5,7 @@
                         :celular="$usuario->celular"
                         :perfis="$perfis"
                         :perfilAtual="$perfilAtual"
+                        :emailConfig="$emailConfig"
     >
     </x-usuario.forms>
 </x-layout>
