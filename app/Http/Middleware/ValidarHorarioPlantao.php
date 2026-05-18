@@ -16,6 +16,10 @@ class ValidarHorarioPlantao
     {
         $usuario = Auth::user();
 
+        if (!$usuario) {
+            return redirect()->route('login_local');
+        }
+
         if (!$usuario->valida_horario) {
             return $next($request);
         }
