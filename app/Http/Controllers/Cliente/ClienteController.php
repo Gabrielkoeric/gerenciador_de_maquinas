@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Response;
 use App\Repositories\Cliente\ClienteRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class ClienteController extends Controller
 {
@@ -259,6 +260,35 @@ workspace id:s:{$host}:{$porta}
 use redirection server name:i:1
 loadbalanceinfo:s:tsv://MS Terminal Services Plugin.1.RDSessionCollect
 RDP;
+    }
+
+    public function escalaCloudRunner($chave)
+    {
+    $cliente = DB::table('cliente_escala')
+        ->where('chaveCliente', $chave)
+        ->first();
+
+    if (!$cliente) {
+
+        return response()->json([
+            'message' => 'Cliente não encontrado'
+        ], 404);
+    }
+
+    $sistemas = DB::table('sistema')
+        ->where('id_cliente_escala', $cliente->id_cliente_escala)
+        ->get([
+            'nome_sistema as nome',
+            'display',
+            'arquivo',
+            'oficial'
+        ]);
+
+    return response()->json([
+        'chaveCliente' => $chave,
+        'nome' => $cliente->apelido,
+        'sistemas' => $sistemas
+    ]);
     }
 
 }

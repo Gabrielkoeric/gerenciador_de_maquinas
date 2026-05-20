@@ -7,6 +7,7 @@ use App\Http\Controllers\ApiServicoController;
 use App\Http\Controllers\StatusServicoController;
 use App\Http\Controllers\SecaoCloudController;
 use App\Http\Controllers\RcloneLogsExecucoesController;
+use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Middleware\Autenticador;
 
 /*
@@ -41,3 +42,5 @@ Route::post('/secao', [SecaoCloudController::class, 'api']);
 
 Route::get('/rclone', [RcloneLogsExecucoesController::class, 'api']);
 Route::get('/usuarios_logados', [SecaoCloudController::class, 'usuarios_logados']);
+
+Route::get('escalacloudrunner/{chave}', [ClienteController::class, 'escalaCloudRunner']);
