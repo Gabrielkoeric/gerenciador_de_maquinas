@@ -88,41 +88,40 @@ use App\Http\Controllers\UsuariosLogados\UsuariosLogadosController;
 */
 
 //home
-Route::get('/', [HomeController::class, 'index'])->name('home.index')->middleware(Autenticador::class)->middleware([ValidarHorarioPlantao::class]);
+Route::get('/', [HomeController::class, 'index'])->name('home.index')->middleware(ValidarHorarioPlantao::class);
 //Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware(Autenticador::class);
 //Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware(['auth', 'verified', Autenticador::class]);
-Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware([Autenticador::class])->middleware([ValidarHorarioPlantao::class]);
+Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware(ValidarHorarioPlantao::class);
 
 //gera
 //usuarios
-Route::resource('/usuario', UsuarioController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('/usuario', UsuarioController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //logs access
-Route::resource('access_logs', AccessLogsController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('access_logs', AccessLogsController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //perfis de usuarios
-Route::resource('perfis_usuarios', PerfilController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('perfis_usuarios', PerfilController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //busca de ip's
 Route::resource('ip', IpController::class)/*->middleware(Autenticador::class)->middleware(ControleAcesso::class)*/;
 //ip publicos da unidade
 Route::resource('ip_publico', IpPublicoController::class)/*->middleware(Autenticador::class)->middleware(ControleAcesso::class)*/;
 //hd
-Route::resource('hd', HdController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('hd', HdController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //memoria
-Route::resource('memoria', MemoriaController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('memoria', MemoriaController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //CPU
-Route::resource('cpu', CpuController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('cpu', CpuController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //Script
-Route::resource('script', ScriptController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('script', ScriptController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //Executar
-Route::resource('executar', ExecutarController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('executar', ExecutarController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //Executar
-Route::resource('logs_execucoes', LogsExecucoesController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('logs_execucoes', LogsExecucoesController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 
 //Route::get('login/google', "SocialiteController@redirectToProvider");
 //Route::get('login/google/callback', 'SocialiteController@handleProviderCalback');
 Route::get('login/google', [SocialiteController::class, 'redirectToProvider'])->name('login');
 Route::get('login/google/callback', [SocialiteController::class, 'hendProviderCallback']);
 Route::get('login/logout', [SocialiteController::class, 'destroy'])->name('logout_google');
-
 //login local
 Route::get('login_local', [LocalAuthController::class, 'showLoginForm'])->name('login_local');
 Route::post('login_local', [LocalAuthController::class, 'login'])->name('login_local.post');
@@ -131,104 +130,80 @@ Route::post('logout', [LocalAuthController::class, 'logout'])->name('logout');
 Route::get('/register', [LocalAuthController::class, 'showRegisterForm'])->name('register_local');
 Route::post('/register', [LocalAuthController::class, 'register'])->name('register_local.post');
 
-
 Route::get('/forbidden', function () {return view('forbidden.index');});
 Route::get('/fora-horario', function () {return view('fora-horario.index');});
 
 Route::get('/email_novo_usuario', function (){return new \App\Mail\NovoUsuario();});
 Route::get('/email_compra', function (){return new \App\Mail\CompraRealizada();});
-
 //usuarios
 // Defina a rota em web.php
-Route::post('/server/executar', [ExecutaComandoController::class, 'manipulaHostFisico'])->name('server.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::post('/server/executar-comando', [ExecutaComandoController::class, 'executarComando'])->name('server.executarComando')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::resource('/server', ServerFisicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::post('/server/executar', [ExecutaComandoController::class, 'manipulaHostFisico'])->name('server.executar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::post('/server/executar-comando', [ExecutaComandoController::class, 'executarComando'])->name('server.executarComando')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/server', ServerFisicoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //ssh
-
-Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('conecta.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::get('/ssh/{id}', [SSHController::class, 'ssh'])->name('conecta.ssh')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //Route::resource('/server', ServerController::class);
-Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('conecta.ssh')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::post('/ssh/{id}', [SSHController::class, 'ssh'])->name('conecta.ssh')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //vm
-Route::post('/vm/executar', [ExecutaComandoController::class, 'manipulaVm'])->name('vm.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::post('/vm/executar', [ExecutaComandoController::class, 'manipulaVm'])->name('vm.executar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/vm', VmController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //vm servico
 Route::get('/vm_servico_publico', [VmServicoController::class, 'acessopublico'])->name('vm_servico.publico');
-Route::post('/vm_servico/executar', [ExecutaComandoController::class, 'manipulaServico'])->name('vm_servico.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::resource('/vm_servico', VmServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::post('/vm_servico/executar', [ExecutaComandoController::class, 'manipulaServico'])->name('vm_servico.executar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/vm_servico', VmServicoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //Route::post('/vm_servico/executar', [VmServicoController::class, 'executarAcao'])->name('vmservico.executarAcao')->middleware(Autenticador::class)->middleware(ControleAcesso::class);
 //servico
-Route::resource('/servico', ServicoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/servico', ServicoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //rota logs
-Route::resource('/rota_logs', RotaLogsController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/rota_logs', RotaLogsController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //comandos
-Route::resource('/comando', ComandoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/comando', ComandoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //assync task
-Route::resource('/asynctasks', AsyncTasksController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/asynctasks', AsyncTasksController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //config geral
-Route::resource('/config_geral', ConfigGeralController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/config_geral', ConfigGeralController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //seção cloud
-Route::get('/secao_cloud/email', [SecaoCloudController::class, 'enviaEmail'])->name('secao_cloud.enviaEmail')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::get('/secao-cloud/pdf', [SecaoCloudController::class, 'gerarPdf'])->name('secao_cloud.pdf')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::post('/secao_cloud/{id}/resetar', [SecaoCloudController::class, 'resetar'])->name('secao_cloud.resetar')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::resource('/secao_cloud', SecaoCloudController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::get('/secao_cloud/email', [SecaoCloudController::class, 'enviaEmail'])->name('secao_cloud.enviaEmail')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::get('/secao-cloud/pdf', [SecaoCloudController::class, 'gerarPdf'])->name('secao_cloud.pdf')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::post('/secao_cloud/{id}/resetar', [SecaoCloudController::class, 'resetar'])->name('secao_cloud.resetar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/secao_cloud', SecaoCloudController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //rede
-Route::resource('/redes', RedeController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('/redes', RedeController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //iplan
-Route::resource('/ip_lan', IpLanController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/ip_lan', IpLanController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //iplan
-Route::resource('/documentacao', DocumentacaoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/documentacao', DocumentacaoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //iplan
-Route::resource('/dominios', DominioController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/dominios', DominioController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //deploy
-Route::post('/deploy/ws', [DeployController::class, 'ws'])->name('deploy.ws')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::post('/deploy/swarm', [DeployController::class, 'swarm'])->name('deploy.swarm')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::post('/deploy/server', [DeployController::class, 'server'])->name('deploy.server')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::resource('/deploy', DeployController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::post('/deploy/ws', [DeployController::class, 'ws'])->name('deploy.ws')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::post('/deploy/swarm', [DeployController::class, 'swarm'])->name('deploy.swarm')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::post('/deploy/server', [DeployController::class, 'server'])->name('deploy.server')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/deploy', DeployController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //banco de dados
-Route::resource('/bancodedados', BancodedadosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/bancodedados', BancodedadosController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //rclone execucoes
-Route::get('/rclone/executa', [RcloneExecucoesController::class, 'executa'])->name('rclone.executa')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::resource('/rclone', RcloneExecucoesController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::get('/rclone/executa', [RcloneExecucoesController::class, 'executa'])->name('rclone.executa')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/rclone', RcloneExecucoesController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //logs rclone execuções
-Route::resource('/rclonelogs', RcloneLogsExecucoesController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/rclonelogs', RcloneLogsExecucoesController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //acessos
-Route::resource('/acessos', AcessosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/acessos', AcessosController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //acessos
-Route::resource('/resumo', ResumoController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/resumo', ResumoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //agendamentos
-Route::post('/agendamentos/{id}/executar', [AgendamentosController::class, 'executar'])->name('agendamentos.executar')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::resource('/agendamentos', AgendamentosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::post('/agendamentos/{id}/executar', [AgendamentosController::class, 'executar'])->name('agendamentos.executar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/agendamentos', AgendamentosController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //horarios agendamentos
-Route::resource('/horarios_agendamentos', HorariosAgendamentosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/horarios_agendamentos', HorariosAgendamentosController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //horarios agendamentos
-Route::resource('/execucao_geral', ExecucaoGeralController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/execucao_geral', ExecucaoGeralController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
-
 //api2
 Route::post('/api/ip2', [ApiIp2Controller::class, 'store']);
-
 //api3
 Route::post('/api/ip3', [ApiIp3Controller::class, 'store']);
-
 //api4
 Route::post('/api/ip4', [ApiIp4Controller::class, 'store']);
 //api5
@@ -240,27 +215,20 @@ Route::post('/api/ip7', [ApiIp7Controller::class, 'store']);
 //confere backup
 Route::post('/api/backup', [ConfereBackupController::class, 'store']);
 
-
 //Refatoração
 
-
-
-
 //cliente_escala
-Route::get('/cliente_escala/controle', [ClienteEscalaController::class, 'controle'])->name('cliente_escala.controle')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::post('/cliente_escala/{id}/update-quantidade', [ClienteEscalaController::class, 'updateQuantidade'])->name('cliente_escala.updateQuantidade')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::get('/cliente/gerardp', [ClienteController::class, 'formGerarRdp'])->name('cliente.gerardp')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::get('/cliente_escala/controle', [ClienteEscalaController::class, 'controle'])->name('cliente_escala.controle')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::post('/cliente_escala/{id}/update-quantidade', [ClienteEscalaController::class, 'updateQuantidade'])->name('cliente_escala.updateQuantidade')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::get('/cliente/gerardp', [ClienteController::class, 'formGerarRdp'])->name('cliente.gerardp')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 Route::post('/cliente/gerardp', [ClienteController::class, 'gerarRdpPost'])->name('cliente.gerardp.post')->middleware([Autenticador::class, ControleAcesso::class])->middleware([ValidarHorarioPlantao::class]);
-Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::resource('/cliente', ClienteController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/cliente', ClienteController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //logs de sql
-Route::delete('/logs_sql/clear', [LogsSqlController::class, 'clear'])->name('logs_sql.clear')->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-Route::resource('/logs_sql', LogsSqlController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::delete('/logs_sql/clear', [LogsSqlController::class, 'clear'])->name('logs_sql.clear')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/logs_sql', LogsSqlController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //seção cloud lote
-Route::resource('/secao_cloud_lote', SecaoCloudLoteController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
-
+Route::resource('/secao_cloud_lote', SecaoCloudLoteController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //usuarios logados
-Route::resource('/usuarios_logados', UsuariosLogadosController::class)->middleware(Autenticador::class)->middleware(ControleAcesso::class)->middleware([ValidarHorarioPlantao::class]);
+Route::resource('/usuarios_logados', UsuariosLogadosController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
