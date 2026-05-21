@@ -298,6 +298,7 @@ RDP;
             ->where('apelido', '!=', '')
             ->whereNotNull('chaveCliente')
             ->where('chaveCliente', '!=', '')
+            ->orderBy('apelido', 'asc')
             ->get([
                 'apelido as nome',
                 'chaveCliente'
