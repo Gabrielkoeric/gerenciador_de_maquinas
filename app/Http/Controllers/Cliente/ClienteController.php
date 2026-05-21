@@ -291,4 +291,19 @@ RDP;
     ]);
     }
 
+    public function listarClientes()
+    {
+        $clientes = DB::table('cliente_escala')
+            ->whereNotNull('apelido')
+            ->where('apelido', '!=', '')
+            ->whereNotNull('chaveCliente')
+            ->where('chaveCliente', '!=', '')
+            ->get([
+                'apelido as nome',
+                'chaveCliente'
+            ]);
+        return response()->json($clientes);   
+    }
+
+
 }

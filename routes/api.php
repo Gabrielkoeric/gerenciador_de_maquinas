@@ -44,3 +44,4 @@ Route::get('/rclone', [RcloneLogsExecucoesController::class, 'api']);
 Route::get('/usuarios_logados', [SecaoCloudController::class, 'usuarios_logados']);
 
 Route::get('escalacloudrunner/{chave}', [ClienteController::class, 'escalaCloudRunner']);
+Route::get('clientes', [ClienteController::class, 'listarClientes']);
