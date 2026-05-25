@@ -272,7 +272,7 @@ RDP;
 
         return response()->json([
             'message' => 'Cliente não encontrado'
-        ], 404);
+        ], 500);
     }
 
     $sistemas = DB::table('sistema')
