@@ -265,7 +265,7 @@ RDP;
     public function escalaCloudRunner($chave)
     {
     $cliente = DB::table('cliente_escala')
-        ->where('chaveCliente', $chave)
+        ->where('uuid', $chave)
         ->first();
 
     if (!$cliente) {
@@ -281,12 +281,17 @@ RDP;
             'nome_sistema as nome',
             'display',
             'arquivo',
-            'oficial'
-        ]);
+            'oficial',
+            'url'
+        ])
+        ->map(function ($sistema) {
+            $sistema->display = ucwords(strtolower($sistema->display));
+            return $sistema;
+        });
 
     return response()->json([
         'chaveCliente' => $chave,
-        'nome' => $cliente->apelido,
+        'nome' => ucwords(strtolower($cliente->apelido)),
         'sistemas' => $sistemas
     ]);
     }
@@ -296,12 +301,12 @@ RDP;
         $clientes = DB::table('cliente_escala')
             ->whereNotNull('apelido')
             ->where('apelido', '!=', '')
-            ->whereNotNull('chaveCliente')
-            ->where('chaveCliente', '!=', '')
+            ->whereNotNull('uuid')
+            ->where('uuid', '!=', '')
             ->orderBy('apelido', 'asc')
             ->get([
                 'apelido as nome',
-                'chaveCliente'
+                'uuid'
             ]);
         return response()->json($clientes);   
     }
