@@ -26,6 +26,13 @@
                     🛠️ EscalaWebService
                 </a>
             </div>
+
+            <div class="col">
+                <a href="{{ route('deploy.show', 'rdp') }}" class="btn btn-warning btn-lg w-100 shadow-sm">
+                    🖥️ RDP
+                </a>
+            </div>
+            
         </div>
     </div>
 </x-layout>

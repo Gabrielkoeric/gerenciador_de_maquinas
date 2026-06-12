@@ -1,0 +1,46 @@
+---
+- name: Publicar rdp
+  hosts: windows
+  gather_facts: no
+  
+  tasks:
+
+    - name: Garantir que a pasta C:\escalasoft existe
+      win_file:
+        path: C:\escalasoft
+        state: directory
+
+    - name: Garantir que a pasta C:\escalasoft\remoteapp existe
+      win_file:
+        path: C:\escalasoft\remoteapp
+        state: directory
+
+    - name: Garantir que a pasta C:\escalasoft\remoteapp\clientes existe
+      win_file:
+        path: C:\escalasoft\remoteapp\clientes
+        state: directory
+
+    - name: Garantir que a pasta C:\escalasoft\remoteapp\{{ apelido }} existe
+      win_file:
+        path: C:\escalasoft\remoteapp\clientes\{{ apelido }}
+        state: directory
+
+    - name: Copiar arquivo do escala.exe para a pasta do cliente
+      win_copy:
+        src: "executaveis/rdp/escala.exe"
+        dest: "C:\\escalasoft\\remoteapp\\clientes\\{{ apelido }}\\{{ sistema }}.exe"
+        overwrite: yes
+
+    - name: Deploy RDRemoteApp
+      win_shell: |
+        Import-Module RemoteDesktop
+        New-RDRemoteApp `
+          -CollectionName "{{ colectionname }}" `
+          -Alias "{{ alias }}" `
+          -DisplayName "{{ displayname }}" `
+          -FilePath "{{ filepath }}" `
+          -CommandLineSetting Require `
+          -RequiredCommandLine "{{ requiredcommandline }}"
+      become: yes
+      become_method: runas
+      become_user: "{{ ansible_user }}"

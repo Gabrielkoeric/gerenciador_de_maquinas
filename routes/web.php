@@ -75,6 +75,8 @@ use App\Http\Controllers\LogsSql\LogsSqlController;
 use App\Http\Controllers\Deploy\DeployController;
 use App\Http\Controllers\SecaoCloud\SecaoCloudLoteController;
 use App\Http\Controllers\UsuariosLogados\UsuariosLogadosController;
+use App\Http\Controllers\UsuariosRdp\UsuariosRdpController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -176,6 +178,7 @@ Route::resource('/documentacao', DocumentacaoController::class)->middleware(Aute
 //iplan
 Route::resource('/dominios', DominioController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //deploy
+Route::post('/deploy/rdp', [DeployController::class, 'rdp'])->name('deploy.rdp')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 Route::post('/deploy/ws', [DeployController::class, 'ws'])->name('deploy.ws')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 Route::post('/deploy/swarm', [DeployController::class, 'swarm'])->name('deploy.swarm')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 Route::post('/deploy/server', [DeployController::class, 'server'])->name('deploy.server')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
@@ -232,3 +235,5 @@ Route::resource('/logs_sql', LogsSqlController::class)->middleware(Autenticador:
 Route::resource('/secao_cloud_lote', SecaoCloudLoteController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //usuarios logados
 Route::resource('/usuarios_logados', UsuariosLogadosController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+//usuarios por rdp
+Route::resource('/usuarios_rdp', UsuariosRdpController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
