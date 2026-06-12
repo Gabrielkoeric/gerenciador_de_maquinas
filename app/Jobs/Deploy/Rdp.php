@@ -108,7 +108,7 @@ class Rdp implements ShouldQueue
                 'porta' => '0',
                 'autostart' => 1,
                 'id_vm' => $this->dados->id_vm,
-                'id_servico' => '1',
+                'id_servico' => '13',
                 'id_cliente_escala' => $this->clienteDados->id_cliente_escala,
             ]);
         }
