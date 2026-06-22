@@ -275,6 +275,11 @@ RDP;
         ], 500);
     }
 
+    $codigoRunner = '123456789';
+    $urlRunner = [
+        'https://teste.com.br'
+    ];
+
     $sistemas = DB::table('sistema')
         ->where('id_cliente_escala', $cliente->id_cliente_escala)
         ->get([
@@ -286,11 +291,14 @@ RDP;
         ])
         ->map(function ($sistema) {
             $sistema->display = ucwords(strtolower($sistema->display));
+            $sistema->url = [$sistema->url];
             return $sistema;
         });
 
     return response()->json([
         'chaveCliente' => $chave,
+        'codigoRunner' => $codigoRunner,
+        'urlRunner' => $urlRunner,
         'nome' => ucwords(strtolower($cliente->apelido)),
         'sistemas' => $sistemas
     ]);
