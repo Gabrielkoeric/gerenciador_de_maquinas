@@ -16,3 +16,4 @@ use App\Http\Controllers\Cliente\ClienteController;
 */
 
 Route::get('escalacloudrunner/{chave}', [ClienteController::class, 'escalaCloudRunner']);
+Route::get('escalacloudlauncher/{chave}', [ClienteController::class, 'escalaCloudRunner']);
