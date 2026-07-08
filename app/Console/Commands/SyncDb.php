@@ -60,6 +60,13 @@ class SyncDb extends Command
                 'database' => $database,
             ];
 
+            /*Log::info('Tentando conectar no SQL Server', [
+                'vm' => $vm->nome,
+                'host' => $vm->ip_lan,
+                'user' => $user,
+                'database' => $database,
+                'port' => $porta,
+            ]);*/
             // SQL que será executado
             $sql = "
                     SELECT 
@@ -72,9 +79,20 @@ class SyncDb extends Command
 
             ";
 
-            $resultado = Bus::dispatchSync(
-                new ExecutaSqlServer($dados, $sql)
-            );
+            try {
+                $resultado = Bus::dispatchSync(
+                    new ExecutaSqlServer($dados, $sql)
+                );
+            } catch (\Throwable $e) {
+                Log::error('Falha ao conectar no SQL Server', [
+                    'vm' => $vm->nome,
+                    'host' => $vm->ip_lan,
+                    'user' => $user,
+                    'erro' => $e->getMessage(),
+                ]);
+
+                continue;
+            }
 
             Log::info('Resultado SQL', [
                 'vm' => $vm->nome,
