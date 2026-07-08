@@ -38,6 +38,6 @@ Route::post('/secao', [SecaoCloudController::class, 'api']);
 Route::get('/rclone', [RcloneLogsExecucoesController::class, 'api']);
 Route::get('/usuarios_logados', [SecaoCloudController::class, 'usuarios_logados']);
 
-Route::get('escalacloudrunner/{chave}', [ClienteController::class, 'escalaCloudRunner']);
-Route::get('escalacloudlauncher/{chave}', [ClienteController::class, 'escalaCloudRunner']);
+Route::get('escalacloudrunner/{chave}', [ClienteController::class, 'escalaCloudLauncher']);
+Route::get('escalacloudlauncher/{chave}', [ClienteController::class, 'escalaCloudLauncher']);
 Route::get('clientes', [ClienteController::class, 'listarClientes']);

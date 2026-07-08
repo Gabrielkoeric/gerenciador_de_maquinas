@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Response;
+
 use App\Repositories\Cliente\ClienteRepository;
+use App\Repositories\ConfigGeral\ConfigGeralRepository;
+use App\Repositories\UrlLauncher\UrlLauncherRepository;
+
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -14,10 +18,17 @@ use Illuminate\Support\Facades\DB;
 class ClienteController extends Controller
 {
     protected ClienteRepository $clienteRepo;
+    protected ConfigGeralRepository $configRepo;
+    protected UrlLauncherRepository $urlLauncherRepo;
 
-    public function __construct(ClienteRepository $clienteRepo)
-    {
+    public function __construct(
+        ClienteRepository $clienteRepo,
+        ConfigGeralRepository $configRepo,
+        UrlLauncherRepository $urlLauncherRepo
+    ){
         $this->clienteRepo = $clienteRepo;
+        $this->configRepo = $configRepo;
+        $this->urlLauncherRepo = $urlLauncherRepo;
     }
 
     public function index(ClienteRepository $clienteRepository)
@@ -262,23 +273,22 @@ loadbalanceinfo:s:tsv://MS Terminal Services Plugin.1.RDSessionCollect
 RDP;
     }
 
-    public function escalaCloudRunner($chave)
+    public function escalaCloudLauncher($chave)
     {
+
+    $codigoLauncher = $this->configRepo->getConfigGeral('codigoLauncher');
+    $urlLauncherCliente = $this->urlLauncherRepo->getUrlsLauncher('cliente');
+    $urlLauncher = $this->urlLauncherRepo->getUrlsLauncher('executavelLauncher');
+
     $cliente = DB::table('cliente_escala')
         ->where('uuid', $chave)
         ->first();
 
     if (!$cliente) {
-
         return response()->json([
             'message' => 'Cliente não encontrado'
         ], 500);
     }
-
-    $codigoRunner = '123456789';
-    $urlRunner = [
-        'https://teste.com.br'
-    ];
 
     $sistemas = DB::table('sistema')
         ->where('id_cliente_escala', $cliente->id_cliente_escala)
@@ -289,16 +299,20 @@ RDP;
             'oficial',
             'url'
         ])
-        ->map(function ($sistema) {
+        ->map(function ($sistema) use ($urlLauncherCliente) {
             $sistema->display = ucwords(strtolower($sistema->display));
-            $sistema->url = [$sistema->url];
+            $urlSistema = ltrim($sistema->url, '/');
+            $sistema->url = array_map(
+                fn ($base) => rtrim($base, '/') . '/' . $urlSistema,
+                $urlLauncherCliente
+            );
             return $sistema;
         });
 
     return response()->json([
         'chaveCliente' => $chave,
-        'codigoRunner' => $codigoRunner,
-        'urlRunner' => $urlRunner,
+        'codigoLauncher' => $codigoLauncher,
+        'urlLauncher' => $urlLauncher,
         'nome' => ucwords(strtolower($cliente->apelido)),
         'sistemas' => $sistemas
     ]);
@@ -318,6 +332,4 @@ RDP;
             ]);
         return response()->json($clientes);   
     }
-
-
 }
