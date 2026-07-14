@@ -296,7 +296,7 @@ RDP;
                 $cliente->apelido
             );
 
-            $nomeArquivo = $cliente->apelido . 'interno.rdp';
+            $nomeArquivo = $cliente->apelido . '-interno.rdp';
 
             Storage::disk('public')->put(
                 "{$pasta}/{$nomeArquivo}",
