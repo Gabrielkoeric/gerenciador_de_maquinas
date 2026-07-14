@@ -108,9 +108,7 @@ public function store(Request $request)
             ->where('nomeConfig', 'url_api_cliente')
             ->value('valorConfig');
 
-
         $url = "$config";
-
         // Fazendo a requisição GET na API
         $response = file_get_contents($url);
         $clientes = json_decode($response, true); // Decodifica a resposta JSON
@@ -271,6 +269,46 @@ workspace id:s:{$host}:{$porta}
 use redirection server name:i:1
 loadbalanceinfo:s:tsv://MS Terminal Services Plugin.1.RDSessionCollect
 RDP;
+    }
+
+    public function gerarRdpInterno(Request $request)
+    {
+
+        $clientes = $this->clienteRepo->getClientesComRdp();
+
+        if ($clientes->isEmpty()) {
+            return back()->with('erro', 'Nenhum cliente encontrado.');
+        }
+
+        $timestamp = Carbon::now()->format('Ymd_His');
+        $pasta = "remoteapp/{$timestamp}";
+
+        Storage::disk('public')->makeDirectory($pasta);
+
+        foreach ($clientes as $cliente) {
+
+            $host = $cliente->ip_rdp;
+            $porta = 3389;
+
+            $conteudo = $this->templateRdp(
+                $host,
+                $porta,
+                $cliente->apelido
+            );
+
+            $nomeArquivo = $cliente->apelido . 'interno.rdp';
+
+            Storage::disk('public')->put(
+                "{$pasta}/{$nomeArquivo}",
+                $conteudo
+            );
+        }
+
+        return back()->with(
+            'sucesso',
+            "Arquivos RDP gerados em storage/app/public/{$pasta}"
+        );
+
     }
 
     public function escalaCloudLauncher($chave)

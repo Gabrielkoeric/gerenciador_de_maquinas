@@ -38,7 +38,7 @@ class ClienteRepository
             ->where('id_cliente_escala', $id)
             ->update($dados);
     }
-
+/*
     public function getClientesComRdp()
     {
         return DB::table('cliente_escala')
@@ -47,7 +47,35 @@ class ClienteRepository
             ->whereNotNull('porta_rdp')
             ->get();
     }
+*/
 
+public function getClientesComRdp()
+{
+    return DB::table('cliente_escala as c')
+        ->select(
+            'c.apelido',
+            'c.porta_rdp',
+            'ip.ip as ip_rdp'
+        )
+        ->joinSub(
+            DB::table('servico_vm')
+                ->select(
+                    'id_cliente_escala',
+                    DB::raw('MIN(id_vm) as id_vm')
+                )
+                ->where('id_servico', 13)
+                ->groupBy('id_cliente_escala'),
+            'sv',
+            function ($join) {
+                $join->on('sv.id_cliente_escala', '=', 'c.id_cliente_escala');
+            }
+        )
+        ->join('vm as v', 'v.id_vm', '=', 'sv.id_vm')
+        ->join('ip_lan as ip', 'ip.id_ip_lan', '=', 'v.id_ip_lan')
+        ->whereNotNull('c.apelido')
+        ->whereNotNull('c.porta_rdp')
+        ->get();
+}
     public function getClienteByApelido(string $apelido)
     {
         return DB::table('cliente_escala')
