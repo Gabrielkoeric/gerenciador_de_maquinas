@@ -24,6 +24,7 @@ public function index()
             $join->on('auditoria_secao.id_cliente_escala', '=', 'servico_vm.id_cliente_escala')
                 ->where('auditoria_secao.id_horario_auditoria', '=', $ultimaAuditoria);
         })
+        //->where('vm.tipo', 'escalaserver')
         ->select(
             'vm.id_vm',
             'vm.nome',
