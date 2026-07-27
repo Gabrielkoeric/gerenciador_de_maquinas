@@ -76,6 +76,7 @@ use App\Http\Controllers\Deploy\DeployController;
 use App\Http\Controllers\SecaoCloud\SecaoCloudLoteController;
 use App\Http\Controllers\UsuariosLogados\UsuariosLogadosController;
 use App\Http\Controllers\UsuariosRdp\UsuariosRdpController;
+use App\Http\Controllers\VmUso\VmUsoController;
 
 
 /*
@@ -240,3 +241,5 @@ Route::resource('/secao_cloud_lote', SecaoCloudLoteController::class)->middlewar
 Route::resource('/usuarios_logados', UsuariosLogadosController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //usuarios por rdp
 Route::resource('/usuarios_rdp', UsuariosRdpController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+//vms em uso
+Route::resource('/vm_uso', VmUsoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
