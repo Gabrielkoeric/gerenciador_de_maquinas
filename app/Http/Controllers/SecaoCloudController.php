@@ -289,14 +289,22 @@ public function enviaEmail(Request $request)
 
     $query = DB::table('secao_cloud')
         ->join('cliente_escala', 'secao_cloud.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
+        ->leftJoin('servico_vm', function ($join) {
+            $join->on('servico_vm.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
+                 ->where('servico_vm.id_servico', 8);
+        })
         ->select(
+            'cliente_escala.nome as nome_cliente',
+            'cliente_escala.uuid',
+            'cliente_escala.apelido',
+            'cliente_escala.config_ws',
+            'servico_vm.porta',
             'secao_cloud.usuario',
             'secao_cloud.senha',
-            'secao_cloud.coletor',
-            'cliente_escala.nome as nome_cliente'
+            'secao_cloud.coletor'
         )
-        ->orderBy('cliente_escala.nome', 'asc')
-        ->orderBy('secao_cloud.usuario', 'asc');
+        ->orderBy('cliente_escala.nome')
+        ->orderBy('secao_cloud.usuario');
 
     if (!empty($filtroClientes)) {
         $query->whereIn('cliente_escala.id_cliente_escala', $filtroClientes);
@@ -324,7 +332,7 @@ public function enviaEmail(Request $request)
     EnviarEmailJob::dispatch(
         $emailDestino,
         'Relatório Secao Cloud',
-        'Segue em anexo o relatório Secao Cloud.',
+        'Segue em anexo o Guia de Acesso Sistemas Escalasoft.',
         $caminhoCompleto,
         auth()->id(),
         $taskId
