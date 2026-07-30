@@ -1,0 +1,182 @@
+<x-layout title="Usuarios RDP">
+
+    <a href="{{ route('home.index') }}" class="btn btn-dark my-3">
+        Home
+    </a>
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <h5 class="mb-0">Distribuição de Usuários RDP</h5>
+        </div>
+
+        <div class="card-body">
+
+            @php
+                $maior = max($rdps->pluck('total_secoes')->toArray() ?: [1]);
+            @endphp
+
+            <table class="table table-hover">
+
+                <thead>
+                    <tr>
+                        <th>RDP</th>
+                        <th class="text-center">Clientes</th>
+                        <th class="text-center">Sessões</th>
+                        <th width="35%">Ocupação</th>
+                        <th width="120">Detalhes</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach($rdps as $rdp)
+
+                        @php
+                            $percentual = ($rdp->total_secoes / $maior) * 100;
+                        @endphp
+
+                        <tr>
+
+                            <td>
+                                <strong>{{ $rdp->nome }}</strong>
+                            </td>
+
+                            <td class="text-center">
+                                {{ $rdp->total_clientes }}
+                            </td>
+
+                            <td class="text-center">
+                                <span class="badge bg-success">
+    {{ $rdp->total_secoes }}
+</span>
+                            </td>
+
+                            <td>
+
+                                <div class="progress">
+                                    <div class="progress-bar bg-success"
+                                         role="progressbar"
+                                         style="width: {{ $percentual }}%">
+                                        {{ $rdp->total_secoes }}
+                                    </div>
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="btn btn-sm btn-primary"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#rdp{{ $rdp->id_vm }}"
+                                    aria-expanded="false">
+
+                                    Detalhes
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td colspan="5" class="p-0 border-0">
+
+                                <div class="collapse"
+                                     id="rdp{{ $rdp->id_vm }}">
+
+                                    <div class="card m-2">
+
+                                        <div class="card-header bg-light">
+
+                                            <strong>
+                                                Clientes publicados em {{ $rdp->nome }}
+                                            </strong>
+
+                                        </div>
+
+                                        <div class="card-body p-0">
+
+                                            <table class="table table-sm table-striped mb-0">
+
+                                                <thead>
+
+                                                    <tr>
+                                                        <th>Cliente</th>
+                                                        <th class="text-right">
+                                                            Sessões
+                                                        </th>
+                                                    </tr>
+
+                                                </thead>
+
+                                                <tbody>
+
+                                                    @foreach($rdp->clientes as $cliente)
+
+                                                        <tr>
+
+                                                            <td>
+                                                                {{ $cliente->nome }}
+                                                            </td>
+
+                                                            <td class="text-right">
+
+                                                                <span class="badge bg-success">
+                                                                    {{ $cliente->total_secoes }}
+                                                                </span>
+
+                                                            </td>
+
+                                                        </tr>
+
+                                                    @endforeach
+
+                                                </tbody>
+
+                                                <tfoot>
+
+                                                    <tr class="table-secondary">
+
+                                                        <th>
+                                                            Total Clientes:
+                                                            {{ $rdp->total_clientes }}
+                                                        </th>
+
+                                                        <th class="text-right">
+
+                                                            Total Sessões:
+                                                            {{ $rdp->total_secoes }}
+
+                                                        </th>
+
+                                                    </tr>
+
+                                                </tfoot>
+
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</x-layout>
