@@ -77,6 +77,7 @@ use App\Http\Controllers\SecaoCloud\SecaoCloudLoteController;
 use App\Http\Controllers\UsuariosLogados\UsuariosLogadosController;
 use App\Http\Controllers\UsuariosRdp\UsuariosRdpController;
 use App\Http\Controllers\VmUso\VmUsoController;
+use App\Http\Controllers\Replicacao\replicacaoController;
 
 
 /*
@@ -243,3 +244,5 @@ Route::resource('/usuarios_logados', UsuariosLogadosController::class)->middlewa
 Route::resource('/usuarios_rdp', UsuariosRdpController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //vms em uso
 Route::resource('/vm_uso', VmUsoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+//repositorio replicação
+Route::resource('/repositorioreplicacao', replicacaoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
