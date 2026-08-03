@@ -78,6 +78,7 @@ use App\Http\Controllers\UsuariosLogados\UsuariosLogadosController;
 use App\Http\Controllers\UsuariosRdp\UsuariosRdpController;
 use App\Http\Controllers\VmUso\VmUsoController;
 use App\Http\Controllers\Replicacao\replicacaoController;
+use App\Http\Controllers\logsApi\logsApiController;
 
 
 /*
@@ -246,3 +247,5 @@ Route::resource('/usuarios_rdp', UsuariosRdpController::class)->middleware(Auten
 Route::resource('/vm_uso', VmUsoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //repositorio replicação
 Route::resource('/repositorioreplicacao', replicacaoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+//logs api
+Route::resource('/logs_api', logsApiController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
