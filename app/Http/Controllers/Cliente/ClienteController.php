@@ -322,8 +322,8 @@ RDP;
  $sistemas = DB::table('sistema')
     ->join('cliente_escala', 'cliente_escala.id_cliente_escala', '=', 'sistema.id_cliente_escala')
     ->get([
-        'sistema.nome_sistema as nome',
-        'sistema.display',
+        'sistema.nome_sistema as display',
+        'sistema.display as nome',
         'sistema.arquivo',
         'sistema.oficial',
         'sistema.url',
