@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Cliente\ClienteController;
+use App\Http\Middleware\ApiLogger;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +16,5 @@ use App\Http\Controllers\Cliente\ClienteController;
 |
 */
 
-Route::get('escalacloudrunner/{chave}', [ClienteController::class, 'escalaCloudLauncher']);
-Route::get('escalacloudlauncher/{chave}', [ClienteController::class, 'escalaCloudLauncher']);
+Route::get('escalacloudrunner/{chave}', [ClienteController::class, 'escalaCloudLauncher'])->middleware(ApiLogger::class);
+Route::get('escalacloudlauncher/{chave}', [ClienteController::class, 'escalaCloudLauncher'])->middleware(ApiLogger::class);
