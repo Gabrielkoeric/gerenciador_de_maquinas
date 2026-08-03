@@ -318,38 +318,6 @@ RDP;
     $urlLauncherCliente = $this->urlLauncherRepo->getUrlsLauncher('cliente');
     $urlLauncher = $this->urlLauncherRepo->getUrlsLauncher('executavelLauncher');
 
-    if ($chave === 'dc4657') {
- $sistemas = DB::table('sistema')
-    ->join('cliente_escala', 'cliente_escala.id_cliente_escala', '=', 'sistema.id_cliente_escala')
-    ->get([
-        'sistema.nome_sistema as display',
-        'sistema.display as nome',
-        'sistema.arquivo',
-        'sistema.oficial',
-        'sistema.url',
-        'cliente_escala.apelido'
-    ])
-    ->map(function ($sistema) use ($urlLauncherCliente) {
-        $sistema->display = ucwords(strtolower($sistema->display));
-
-        $urlSistema = ltrim($sistema->url, '/');
-
-        $sistema->url = array_map(
-            fn($base) => rtrim($base, '/') . '/' . $urlSistema,
-            $urlLauncherCliente
-        );
-
-        return $sistema;
-    });
-    return response()->json([
-        'chaveCliente' => $chave,
-        'codigoLauncher' => $codigoLauncher,
-        'urlLauncher' => $urlLauncher,
-        'nome' => 'Todos os Clientes',
-        'sistemas' => $sistemas
-    ]);
-    }
-
     $cliente = DB::table('cliente_escala')
         ->where('uuid', $chave)
         ->first();
