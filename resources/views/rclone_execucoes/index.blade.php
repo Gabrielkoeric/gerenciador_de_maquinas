@@ -17,6 +17,7 @@
                     <th scope="col">Disparo</th>
                     <th scope="col">Inicio</th>
                     <th scope="col">Fim</th>
+                    <th scope="col">Tempo</th>
                     <th scope="col">Status</th>
                     <th scope="col">Tranfered</th>
                     <th scope="col">Checks</th>
@@ -37,6 +38,13 @@
                         <td>{{ $log->disparo }}</td>
                         <td>{{ $log->inicio }}</td>
                         <td>{{ $log->fim }}</td>
+                        <td>
+                            @if($log->inicio && $log->fim)
+                            {{ \Carbon\Carbon::parse($log->inicio)->diff(\Carbon\Carbon::parse($log->fim))->format('%H:%I:%S') }}
+                            @else
+                                -
+                            @endif
+                        </td>
                         <td>{{ $log->status }}</td>
                         <td>{{ $log->qtd_arquivos_transferidos }}</td>
                         <td>{{ $log->qtd_arquivos_check }}</td>
