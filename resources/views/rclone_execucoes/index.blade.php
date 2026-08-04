@@ -22,6 +22,7 @@
                     <th scope="col">Tranfered</th>
                     <th scope="col">Checks</th>
                     <th scope="col">Bytes</th>
+                    <th scope="col">GB</th>
                     <th scope="col">Arq. de log</th>
                     <!--<th scope="col">Log Erro</th>-->
                 </tr>
@@ -49,6 +50,7 @@
                         <td>{{ $log->qtd_arquivos_transferidos }}</td>
                         <td>{{ $log->qtd_arquivos_check }}</td>
                         <td>{{ $log->bytes_transferidos }}</td>
+                        <td>{{ number_format($log->bytes_transferidos / 1024 / 1024 / 1024, 2, ',', '.') }} GB</td>
                         <td>{{ $log->log_path }}</td>
                         <!--<td>{{ $log->erro }}</td>-->
                     </tr>
