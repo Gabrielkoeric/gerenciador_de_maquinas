@@ -119,4 +119,18 @@ return view('rclone_execucoes.index')->with('logs', $logs);
     ]);
 
 }
+
+    public function replicacao(): JsonResponse
+{
+    $totalErros = DB::table('rclone_execucoes')
+        ->where('tipo', 'replicacao')
+        ->where('status', 'erro')
+        ->count();
+    //$totalErros = 0;
+    return response()->json([
+        [
+            'total_erros' => $totalErros
+        ]
+    ]);
+}
 }
