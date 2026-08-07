@@ -37,6 +37,7 @@ Route::post('/secao', [SecaoCloudController::class, 'api']);
 //Route::post('/status_servico', [StatusServicoController::class, 'store'])->withoutMiddleware([Autenticador::class]);
 
 Route::get('/rclone', [RcloneLogsExecucoesController::class, 'api']);
+Route::get('/rclone-replicacao', [RcloneLogsExecucoesController::class, 'replicacao']);
 Route::get('/usuarios_logados', [SecaoCloudController::class, 'usuarios_logados']);
 
 Route::get('clientes', [ClienteController::class, 'listarClientes']);
