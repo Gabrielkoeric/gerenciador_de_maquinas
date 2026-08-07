@@ -123,6 +123,7 @@ return view('rclone_execucoes.index')->with('logs', $logs);
     public function replicacao(): JsonResponse
 {
     $totalErros = DB::table('rclone_execucoes')
+        ->whereDate('disparo', Carbon::today())
         ->where('tipo', 'replicacao')
         ->where('status', 'erro')
         ->count();
