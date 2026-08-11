@@ -250,11 +250,27 @@ class SecaoCloudController extends Controller
     
     $filtroClientes = $request->input('clientes', []);
 
+    $servicoVm = DB::table('servico_vm')
+        ->select(
+            'id_cliente_escala',
+            DB::raw('MIN(porta) as porta')
+        )
+        ->where('id_servico', 8)
+        ->groupBy('id_cliente_escala');
+
     $query = DB::table('secao_cloud')
-        ->join('cliente_escala', 'secao_cloud.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
-        ->leftJoin('servico_vm', function ($join) {
-            $join->on('servico_vm.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
-                 ->where('servico_vm.id_servico', 8);
+        ->join(
+            'cliente_escala',
+            'secao_cloud.id_cliente_escala',
+            '=',
+            'cliente_escala.id_cliente_escala'
+        )
+        ->leftJoinSub($servicoVm, 'servico_vm', function ($join) {
+            $join->on(
+                'servico_vm.id_cliente_escala',
+                '=',
+                'cliente_escala.id_cliente_escala'
+            );
         })
         ->select(
             'cliente_escala.nome as nome_cliente',
@@ -295,11 +311,27 @@ public function enviaEmail(Request $request)
     $filtroClientes = $request->input('clientes', []);
     $emailDestino = $request->input('email');
 
+        $servicoVm = DB::table('servico_vm')
+        ->select(
+            'id_cliente_escala',
+            DB::raw('MIN(porta) as porta')
+        )
+        ->where('id_servico', 8)
+        ->groupBy('id_cliente_escala');
+
     $query = DB::table('secao_cloud')
-        ->join('cliente_escala', 'secao_cloud.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
-        ->leftJoin('servico_vm', function ($join) {
-            $join->on('servico_vm.id_cliente_escala', '=', 'cliente_escala.id_cliente_escala')
-                 ->where('servico_vm.id_servico', 8);
+        ->join(
+            'cliente_escala',
+            'secao_cloud.id_cliente_escala',
+            '=',
+            'cliente_escala.id_cliente_escala'
+        )
+        ->leftJoinSub($servicoVm, 'servico_vm', function ($join) {
+            $join->on(
+                'servico_vm.id_cliente_escala',
+                '=',
+                'cliente_escala.id_cliente_escala'
+            );
         })
         ->select(
             'cliente_escala.nome as nome_cliente',
