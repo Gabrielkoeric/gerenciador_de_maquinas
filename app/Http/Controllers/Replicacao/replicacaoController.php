@@ -16,6 +16,7 @@ class replicacaoController extends Controller
                      ->where('r.tipo', '=', 'replicacao');
             })
             ->select(
+                'r.sincronizado',
                 'c.apelido',
                 'r.origem',
                 'r.destino',

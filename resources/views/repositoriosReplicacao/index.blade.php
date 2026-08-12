@@ -7,6 +7,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
+                    <th scope="col">Sincronizado</th>
                     <th scope="col">Apelido</th>
                     <th scope="col">Origem</th>
                     <th scope="col">Destino</th>
@@ -17,6 +18,19 @@
                 <tbody>
                 @foreach ($repositorios as $repositorio)
                     <tr>
+                        <td class="text-center">
+                            @if ($repositorio->sincronizado)
+                                <span
+                                    title="Sincronizado"
+                                    style="display: inline-block; width: 14px; height: 14px; background-color: #28a745; border-radius: 50%;">
+                                </span>
+                            @else
+                                <span
+                                    title="Não sincronizado"
+                                    style="display: inline-block; width: 14px; height: 14px; background-color: #dc3545; border-radius: 50%;">
+                                </span>
+                            @endif
+                        </td>
                         <td>{{$repositorio->apelido}}</td>
                         <td>{{ $repositorio->origem }}</td>
                         <td>{{ $repositorio->destino }}</td>
@@ -29,6 +43,3 @@
             </table>
     </ul>
 </x-layout>
-
-
-
