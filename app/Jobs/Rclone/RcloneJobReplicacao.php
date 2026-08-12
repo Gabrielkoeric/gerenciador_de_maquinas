@@ -116,6 +116,12 @@ class RcloneJobReplicacao implements ShouldQueue
                 'erro' => $process->getErrorOutput(),
                 'log_path' => $logFile,
             ]);
+
+            DB::table('repositorios')
+            ->where('id_repositorios', $repo->id_repositorios)
+            ->update([
+                'sincronizado' => 0,
+            ]);
         }
     }
 }
