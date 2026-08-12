@@ -47,7 +47,7 @@ class RcloneJobReplicacao implements ShouldQueue
 
         $credenciais = DB::table('usuario_vm')->where('id_vm', $repo->id_server_bkp)->first();
 
-        $data = Carbon::now()->subHour();
+        $data = Carbon::now()->subDay();
         $dataPath = $data->format('Y/m/d');
 
         // Monta origem e destino com a data
