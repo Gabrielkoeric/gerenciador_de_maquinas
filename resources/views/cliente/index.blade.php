@@ -17,6 +17,7 @@
                     <th scope="col">#</th>
                     <th scope="col">ID</th>
                     <th scope="col">Nome</th>
+                    <th scope="col">UUID</th>
                     <th scope="col">Apelido</th>
                     <th scope="col">Porta RDP</th>
                     <th scope="col">Licença</th>
@@ -32,6 +33,8 @@
                         <th scope="row">{{ $loop->iteration }}</th>
                         <td><a href="{{ route('cliente.edit', $cliente->id_cliente_escala ) }}" class="text-decoration-none text-dark">{{ $cliente->id_cliente_escala }}</a></td>
                         <td><a href="{{ route('cliente.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->nome }}</a></td>
+                        <td onclick="copiarTexto('{{ $cliente->uuid }}', this)" class="cursor-copy">{{ $cliente->uuid }}</td>
+                        
                         <td><a href="{{ route('cliente.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->apelido }}</a></td>
                         <td><a href="{{ route('cliente.edit', $cliente->id_cliente_escala) }}" class="text-decoration-none text-dark">{{ $cliente->porta_rdp }}</a></td>
                         <td><a href="{{ route('cliente.edit', $cliente->id_cliente_escala ) }}" class="text-decoration-none text-dark">{{ $cliente->licenca }}</a></td>
@@ -56,6 +59,32 @@
                 </tbody>
             </table>
     </ul>
+
+        <script>
+        function copiarTexto(texto, elemento) {
+            navigator.clipboard.writeText(texto).then(() => {
+                const original = elemento.innerText;
+                elemento.innerText = 'Copiado!';
+                elemento.classList.add('text-success');
+
+                setTimeout(() => {
+                    elemento.innerText = original;
+                    elemento.classList.remove('text-success');
+                }, 1000);
+            }).catch(err => {
+                alert('Erro ao copiar: ' + err);
+            });
+        }
+    </script>
+
+    <style>
+        .cursor-copy {
+            cursor: pointer;
+        }
+        .cursor-copy:hover {
+            background-color: #91d5f5;
+        }
+    </style>
 </x-layout>
 
 
