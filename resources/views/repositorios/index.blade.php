@@ -3,6 +3,7 @@
     <a href="{{route('rclone.executa') }}" class="btn btn-dark my-3">Executar Rclone</a>
     <a href="{{route('rclonelogs.index') }}" class="btn btn-dark my-3">Logs Execuções</a>
     <a href="{{route('repositorioreplicacao.index') }}" class="btn btn-dark my-3">Repositorios Replicação</a>
+    <a href="{{route('repositorioreplicacao.diario') }}" class="btn btn-dark my-3">Repositorios Diario</a>
     
     <ul class="list-group">
 
