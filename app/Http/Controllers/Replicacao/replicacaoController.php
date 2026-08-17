@@ -29,6 +29,27 @@ class replicacaoController extends Controller
         return view('repositoriosReplicacao.index')->with('repositorios', $repositorios);
     }
 
+    public function diario()
+    {
+        $repositorios = DB::table('cliente_escala as c')
+            ->leftJoin('repositorios as r', function ($join) {
+                $join->on('r.id_cliente_escala', '=', 'c.id_cliente_escala')
+                     ->where('r.tipo', '=', 'arquivo');
+            })
+            ->select(
+                'r.sincronizado',
+                'c.apelido',
+                'r.origem',
+                'r.destino',
+                'r.log_dir',
+                'r.diario'
+            )
+            ->orderBy('c.apelido')
+            ->get();
+
+        return view('repositoriosReplicacao.index')->with('repositorios', $repositorios);
+    }    
+
     public function create()
     {
         $clientes = DB::table('cliente_escala as c')

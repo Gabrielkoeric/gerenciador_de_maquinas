@@ -246,6 +246,7 @@ Route::resource('/usuarios_rdp', UsuariosRdpController::class)->middleware(Auten
 //vms em uso
 Route::resource('/vm_uso', VmUsoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //repositorio replicação
+Route::get('/repositorioreplicacao/diario', [replicacaoController::class, 'diario'])->name('repositorioreplicacao.diario')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 Route::resource('/repositorioreplicacao', replicacaoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //logs api
 Route::resource('/logs_api', logsApiController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
