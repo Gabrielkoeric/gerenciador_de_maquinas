@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Log;
 use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
 
+use App\Repositories\WebService\WebServiceRepository;
+use Illuminate\Support\Facades\Http;
+
 class VmServicoController extends Controller
 {
     /**
@@ -464,4 +467,33 @@ DB::table('logs_execucoes')->insert([
 
     return view('vmservico.acessopublico')->with('servicos', $servicos);
     }
+
+    public function listarWebService()
+{
+    $clientes = app(WebServiceRepository::class)->listarDadosWs();
+
+    $dados = $clientes->map(function ($cliente) {
+
+        $rotaBase = $cliente->config_ws ?: $cliente->rota_padrao_ws;
+
+        $url = 'http://'
+            . $cliente->vm_nome
+            . ':'
+            . $cliente->porta_ws
+            . $rotaBase;
+
+        return [
+            'handle' => $cliente->handle,
+            'cliente' => $cliente->cliente_nome,
+            'apelido' => $cliente->apelido,
+            'url' => $url,
+        ];
+    });
+
+    return response()->json([
+        'success' => true,
+        'total' => $dados->count(),
+        'clientes' => $dados,
+    ]);
+}
 }

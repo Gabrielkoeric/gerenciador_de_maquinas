@@ -8,6 +8,7 @@ use App\Http\Controllers\StatusServicoController;
 use App\Http\Controllers\SecaoCloudController;
 use App\Http\Controllers\RcloneLogsExecucoesController;
 use App\Http\Controllers\Cliente\ClienteController;
+use App\Http\Controllers\VmServicoController;
 use App\Http\Middleware\Autenticador;
 use App\Http\Middleware\ApiLogger;
 
@@ -44,3 +45,5 @@ Route::get('clientes', [ClienteController::class, 'listarClientes']);
 
 Route::get('escalacloudrunner/{chave}', [ClienteController::class, 'escalaCloudLauncher'])->middleware(ApiLogger::class);
 Route::get('escalacloudlauncher/{chave}', [ClienteController::class, 'escalaCloudLauncher'])->middleware(ApiLogger::class);
+
+Route::get('webservices', [VmServicoController::class, 'listarWebService']);

@@ -15,6 +15,7 @@ class WebServiceRepository
                 'c.nome as cliente_nome',
                 'c.apelido',
                 'c.config_ws',
+                'c.handle',
                 'vm.nome as vm_nome',
                 'sv.porta as porta_ws',
                 'cfg_ws.valorConfig as rota_padrao_ws',
