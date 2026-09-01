@@ -5,6 +5,16 @@
         <div class="row g-2 align-items-center">
 
             <x-filtro-multi-select
+                titulo="Handles"
+                name="handles[]"
+                :items="$todosClientes"
+                id-field="handle"
+                label-field="handle"
+                :selecionados="$filtroHandles"
+                lista-id="handles-list"
+            />
+
+            <x-filtro-multi-select
                 titulo="Serviços"
                 name="servicos[]"
                 :items="$todosServicos"
@@ -131,7 +141,9 @@
             <tbody>
                 @foreach ($dados->groupBy('cliente') as $clienteNome => $itens)
                     <tr class="{{ $loop->index % 2 == 0 ? 'table-light' : 'table-secondary' }}">
-                        <td class="sticky-col">{{ $clienteNome }}</td>
+                        <td class="sticky-col">
+    {{ $clienteNome }} - {{ $itens->first()->handle ?? '' }}
+</td>
                         @foreach ($servicos as $servico)
                             @php
                                 $registro = $itens->firstWhere('servico', $servico);

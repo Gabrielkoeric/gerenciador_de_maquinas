@@ -17,6 +17,7 @@ class ResumoController extends Controller
     $filtroServicos = $request->input('servicos', []); // ids dos serviços
     $filtroVms = $request->input('vms', []); // ids das VMs
     $filtroClientes = $request->input('clientes', []); // ids dos clientes
+    $filtroHandles = $request->input('handles', []); // handles dos clientes
 
     $query = DB::table('cliente_escala as c')
         ->leftJoin('servico_vm as sv', 'c.id_cliente_escala', '=', 'sv.id_cliente_escala')
@@ -26,6 +27,7 @@ class ResumoController extends Controller
         ->select(
             'c.id_cliente_escala',
             'c.apelido as cliente',
+            'c.handle',
             's.id_servico',
             's.nome as servico',
             'sv.nome as nome_servico_vm',
@@ -47,13 +49,27 @@ class ResumoController extends Controller
         $query->whereIn('c.id_cliente_escala', $filtroClientes);
     }
 
+    if (!empty($filtroHandles)) {
+        $query->whereIn('c.handle', $filtroHandles);
+    }
+
     $dados = $query->orderBy('c.nome')->orderBy('s.nome')->get();
 
     $todosServicos = DB::table('servico')->orderBy('nome')->get();
     $todasVms = DB::table('vm')->orderBy('nome')->get();
     $todosClientes = DB::table('cliente_escala')->orderBy('nome')->get();
 
-    return view('resumo.index', compact('dados', 'todosServicos', 'filtroServicos', 'todasVms', 'filtroVms', 'todosClientes', 'filtroClientes'));
+    return view('resumo.index', 
+        compact(
+            'dados', 
+            'todosServicos', 
+            'filtroServicos', 
+            'todasVms', 
+            'filtroVms', 
+            'todosClientes', 
+            'filtroClientes', 
+            'filtroHandles')
+    );
 }
 
 
