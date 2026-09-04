@@ -114,6 +114,26 @@ public function getClientesComRdp()
             ->get();   
     }
 
+    public function getClientesLicencasLote()
+    {
+        return DB::table('cliente_escala')
+            ->select([
+                'id_cliente_escala',
+                'nome',
+                'apelido',
+                'licenca',
+                'coletor',
+                'desktop'
+            ])
+            ->whereNotNull('nome')
+            ->whereNotNull('apelido')
+            ->whereNotNull('licenca')
+            ->whereNotNull('coletor')
+            ->whereNotNull('desktop')
+            ->where('licenca', '>', 0)
+            ->orderBy('apelido');   
+    }
+
     public function updateLicencas(int $id, int $coletor, int $desktop, int $licenca = null): bool
     {
         $total = $coletor + $desktop;

@@ -24,9 +24,25 @@ class SecaoCloudLoteController extends Controller
 
     public function index(Request $request)
     {
-        $clientes = $this->cliente->getClientesLicencas();
+        $filtroClientes = $request->input('clientes', []);
 
-        return view('secao_cloud_lote.index')->with('clientes', $clientes);
+        $query = $this->cliente->getClientesLicencasLote();
+
+        if (!empty($filtroClientes)) {
+            $query->whereIn('cliente_escala.id_cliente_escala', $filtroClientes);
+        }
+
+        
+
+        $dados = $query->get();
+
+        $todosClientes = $this->cliente->listarCompleto();
+    
+        return view('secao_cloud_lote.index', [
+            'dados' => $dados,
+            'todosClientes' => $todosClientes,
+            'filtroClientes' => $filtroClientes
+        ]);
     }
 
     public function update(Request $request, $id)
