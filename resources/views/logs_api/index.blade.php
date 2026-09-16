@@ -20,10 +20,8 @@
         <tbody>
             @foreach ($logsApi as $logApi)
                 <tr>
-                    <td>{{ $loop->index }}</td>
-
+                    <td>{{ $logApi->id_api_logs }}</td>
                     <td>{{ \Carbon\Carbon::parse($logApi->data_hora)->format('d/m/Y H:i:s') }}</td>
-
                     <td>
                         @if($logApi->apelido)
                             {{ $logApi->apelido }}
@@ -31,17 +29,12 @@
                             <span class="text-muted">Cliente não encontrado</span>
                         @endif
                     </td>
-
                     <td>{{ $logApi->uuid }}</td>
-
                     <td>{{ $logApi->ip }}</td>
-
                     <td>{{ $logApi->metodo }}</td>
-
                     <td>
                         <small>{{ $logApi->rota }}</small>
                     </td>
-
                     <td>
                         @if($logApi->status == 200)
                             <span class="badge bg-success">{{ $logApi->status }}</span>
@@ -51,12 +44,13 @@
                             <span class="badge bg-warning text-dark">{{ $logApi->status }}</span>
                         @endif
                     </td>
-
                     <td>{{ $logApi->tempo_ms }}</td>
-
                     <td>{{ number_format($logApi->tamanho_resposta, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+            <div class="d-flex justify-content-center mt-4">
+            {{ $logsApi->links('pagination::bootstrap-4') }}
+        </div>
 </x-layout>

@@ -22,7 +22,7 @@ class logsApiController extends Controller
             'c.apelido'
         )
         ->orderByDesc('l.data_hora')
-        ->get();
+        ->paginate(200);
 
         return view('logs_api.index', compact('logsApi'));
     }
