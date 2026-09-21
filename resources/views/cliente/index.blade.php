@@ -1,8 +1,6 @@
 <x-layout title="Clientes">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('cliente.create')}}" class="btn btn-dark my-3">Adicionar</a>
-    <a href="{{route('cliente_escala.buscar') }}" class="btn btn-dark my-3">Buscar</a>
-    <!--<a href="{{route('cliente_escala.gerardm') }}" class="btn btn-dark my-3">Baixar RDM</a>-->
     <a href="{{route('cliente.gerardp') }}" class="btn btn-dark my-3">Gera RDP Externo</a>
     <a href="{{route('cliente.gerardp.interno') }}" class="btn btn-dark my-3">Gera RDP Interno</a>
 
