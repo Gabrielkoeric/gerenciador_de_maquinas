@@ -31,6 +31,10 @@ class ClienteController extends Controller
         $this->urlLauncherRepo = $urlLauncherRepo;
     }
 
+/**
+* Listagem de clientes
+*/
+
     public function index(ClienteRepository $clienteRepository)
     {
         $clientes = $clienteRepository->listarCompleto();
@@ -38,37 +42,42 @@ class ClienteController extends Controller
         return view('cliente.index', compact('clientes'));
     }
 
+    /**
+    * Formulario para adição de um novo cliente.
+    */
+
     public function create()
     {
         return view('cliente.create');
     }
 
-public function store(Request $request)
-{
-    $coletor = (int) $request->input('coletor', 0);
-    $desktop = (int) $request->input('desktop', 0);
-
-    $dados = [
-        'nome'       => $request->input('nome'),
-        'apelido'    => $request->input('apelido'),
-        'porta_rdp'  => $request->input('porta'),
-        'coletor'    => $coletor,
-        'desktop'    => $desktop,
-        'licenca'    => $coletor + $desktop,
-        'ativo'      => $request->input('ativo', 0),
-        'remoteapp'  => $request->input('apelido') . '.rdp',
-    ];
-
-    $this->clienteRepo->create($dados);
-
-    return redirect('/cliente')->with('success', 'Cliente criado com sucesso!');
-}
-
-    public function show($id)
+    /**
+    * Validação e salvamento de informações de novo cliente inserido no formulario
+    */
+    public function store(Request $request)
     {
-        //
+        $coletor = (int) $request->input('coletor', 0);
+        $desktop = (int) $request->input('desktop', 0);
+
+        $dados = [
+            'nome'       => $request->input('nome'),
+            'apelido'    => $request->input('apelido'),
+            'porta_rdp'  => $request->input('porta'),
+            'coletor'    => $coletor,
+            'desktop'    => $desktop,
+            'licenca'    => $coletor + $desktop,
+            'ativo'      => $request->input('ativo', 0),
+            'remoteapp'  => $request->input('apelido') . '.rdp',
+        ];
+
+        $this->clienteRepo->create($dados);
+
+        return redirect('/cliente')->with('success', 'Cliente criado com sucesso!');
     }
 
+    /**
+    * Exibe formulario para edição de cliente.
+    */
     public function edit(int $id)
     {
         $dados = $this->clienteRepo->findById($id);
@@ -76,6 +85,9 @@ public function store(Request $request)
         return view('cliente.edit', compact('dados'));
     }
 
+    /**
+    * Atualiza as informações do cliente com os dados alterado no formulario de atualização
+    */
     public function update(Request $request, int $id)
     {
         $coletor = (int) $request->input('coletor', 0);
@@ -189,11 +201,17 @@ public function store(Request $request)
     ]);
     }
 
+    /**
+    * Formulario para a inserção do dominio e geração dos rdp externos de todos os clientes
+    */
     public function formGerarRdp()
     {
         return view('cliente.gerar_rdp');
     }
 
+    /**
+    * Rotina de geração de RDP externo
+    */
         public function gerarRdpPost(Request $request)
     {
         $request->validate([
@@ -271,6 +289,9 @@ loadbalanceinfo:s:tsv://MS Terminal Services Plugin.1.RDSessionCollect
 RDP;
     }
 
+    /**
+    * Rotina de geração dos rdp de todos os clientes de forma a estar acessivel na rede interna.
+    */
     public function gerarRdpInterno(Request $request)
     {
 
@@ -311,6 +332,9 @@ RDP;
 
     }
 
+    /**
+    * API disponibilizada para a utilização do launcher desenvolvido pelo Léo
+    */
     public function escalaCloudLauncher($chave)
     {
 
