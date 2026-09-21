@@ -371,6 +371,17 @@ RDP;
             return $sistema;
         });
 
+        $sistemas->push((object) [
+            'nome' => 'consultoria',
+            'display' => 'Consultoria',
+            'arquivo' => 'consultoria_clientes.exe',
+            'oficial' => 0,
+            'url' => array_map(
+                fn ($base) => rtrim($base, '/') . '/interno/consultoria_clientes.rdp',
+                $urlLauncherCliente
+            ),
+        ]);
+        
     return response()->json([
         'chaveCliente' => $chave,
         'codigoLauncher' => $codigoLauncher,
