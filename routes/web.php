@@ -66,7 +66,7 @@ use App\Http\Controllers\AcessosController;
 use App\Http\Controllers\ResumoController;
 use App\Http\Controllers\AgendamentosController;
 use App\Http\Controllers\HorariosAgendamentosController;
-use App\Http\Controllers\ExecucaoGeralController;
+#use App\Http\Controllers\ExecucaoGeralController;
 
 //Refatoração do sistema
 
@@ -79,6 +79,9 @@ use App\Http\Controllers\UsuariosRdp\UsuariosRdpController;
 use App\Http\Controllers\VmUso\VmUsoController;
 use App\Http\Controllers\Replicacao\replicacaoController;
 use App\Http\Controllers\logsApi\logsApiController;
+use App\Http\Controllers\Restore\restoreController;
+use App\Http\Controllers\ContatosClientes\contatosClientesController;
+use App\Http\Controllers\DocumentacaoGerenciador\documentacaoGerenciadorController;
 
 
 /*
@@ -203,7 +206,7 @@ Route::resource('/agendamentos', AgendamentosController::class)->middleware(Aute
 //horarios agendamentos
 Route::resource('/horarios_agendamentos', HorariosAgendamentosController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //horarios agendamentos
-Route::resource('/execucao_geral', ExecucaoGeralController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+#Route::resource('/execucao_geral', ExecucaoGeralController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //api
 Route::post('/api/ip', [ApiIpController::class, 'store']);
 //api2
@@ -224,15 +227,15 @@ Route::post('/api/backup', [ConfereBackupController::class, 'store']);
 //Refatoração
 
 //cliente_escala
-Route::get('/cliente_escala/controle', [ClienteEscalaController::class, 'controle'])->name('cliente_escala.controle')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
-Route::post('/cliente_escala/{id}/update-quantidade', [ClienteEscalaController::class, 'updateQuantidade'])->name('cliente_escala.updateQuantidade')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
-Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+#Route::get('/cliente_escala/controle', [ClienteEscalaController::class, 'controle'])->name('cliente_escala.controle')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+#Route::post('/cliente_escala/{id}/update-quantidade', [ClienteEscalaController::class, 'updateQuantidade'])->name('cliente_escala.updateQuantidade')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+#Route::get('/cliente_escala/gerardm', [ClienteEscalaController::class, 'gerardm'])->name('cliente_escala.gerardm')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 
 
 Route::get('/cliente/gerardp', [ClienteController::class, 'formGerarRdp'])->name('cliente.gerardp')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 Route::post('/cliente/gerardp', [ClienteController::class, 'gerarRdpPost'])->name('cliente.gerardp.post')->middleware([Autenticador::class, ControleAcesso::class])->middleware([ValidarHorarioPlantao::class]);
 Route::get('/cliente/gerardpinterno', [ClienteController::class, 'gerarRdpInterno'])->name('cliente.gerardp.interno')->middleware([Autenticador::class, ControleAcesso::class])->middleware([ValidarHorarioPlantao::class]);
-Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+#Route::get('/cliente_escala/buscar', [ClienteEscalaController::class, 'buscarClientes'])->name('cliente_escala.buscar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 Route::resource('/cliente', ClienteController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //logs de sql
 Route::delete('/logs_sql/clear', [LogsSqlController::class, 'clear'])->name('logs_sql.clear')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
@@ -250,3 +253,11 @@ Route::get('/repositorioreplicacao/diario', [replicacaoController::class, 'diari
 Route::resource('/repositorioreplicacao', replicacaoController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //logs api
 Route::resource('/logs_api', logsApiController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+//restore
+Route::get('/restore/backups/{cliente}', [restoreController::class, 'backups'])->name('restore.backups')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/restore', restoreController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+//contatos clientes
+Route::resource('/contatos_clientes', contatosClientesController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+//documentacao gerenciador
+Route::get('documentacao_gerenciador/atualizar', [documentacaoGerenciadorController::class, 'atualizar'])->name('documentacao_gerenciador.atualizar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::resource('/documentacao_gerenciador', documentacaoGerenciadorController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
