@@ -1,49 +1,23 @@
 <?php
 
 use App\Http\Controllers\AccessLogsController;
-use App\Http\Controllers\CheckLogsController;
-use App\Http\Controllers\CompraController;
-use App\Http\Controllers\CompraIngressoController;
-use App\Http\Controllers\CheckController;
 use App\Http\Controllers\CpuController;
 use App\Http\Controllers\ScriptController;
 use App\Http\Controllers\ExecutarController;
-use App\Http\Controllers\EstoqueController;
-use App\Http\Controllers\GeraController;
 use App\Http\Controllers\HdController;
-use App\Http\Controllers\IngressosController;
 use App\Http\Controllers\IpPublicoController;
-use App\Http\Controllers\LogsCheckController;
-use App\Http\Controllers\LogsCheckoutController;
-use App\Http\Controllers\LoteController;
 use App\Http\Controllers\MemoriaController;
-use App\Http\Controllers\MercadoPagoController;
-use App\Http\Controllers\NomeacaoController;
-use App\Http\Controllers\PagamentoController;
-use App\Http\Controllers\PedidosController;
 use App\Http\Controllers\PerfilController;
-use App\Http\Controllers\ProdutoController;
-use App\Http\Controllers\QRCodeController;
-use App\Http\Controllers\ResultadosController;
 use App\Http\Controllers\ServerFisicoController;
 use App\Http\Controllers\SSHController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\IpController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\VendasController;
 use App\Http\Middleware\Autenticador;
 use App\Http\Middleware\ControleAcesso;
 use App\Http\Middleware\ValidarHorarioPlantao;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialiteController;
-use App\Http\Controllers\Api\ApiIpController;
-use App\Http\Controllers\Api\ApiIp2Controller;
-use App\Http\Controllers\Api\ApiIp3Controller;
-use App\Http\Controllers\Api\ApiIp4Controller;
-use App\Http\Controllers\Api\ApiIp5Controller;
-use App\Http\Controllers\Api\ApiIp6Controller;
-use App\Http\Controllers\Api\ApiIp7Controller;
-use App\Http\Controllers\Api\ConfereBackupController;
 use App\Http\Controllers\Auth\LocalAuthController;
 use App\Http\Controllers\VmController;
 use App\Http\Controllers\VmServicoController;
@@ -207,22 +181,6 @@ Route::resource('/agendamentos', AgendamentosController::class)->middleware(Aute
 Route::resource('/horarios_agendamentos', HorariosAgendamentosController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //horarios agendamentos
 #Route::resource('/execucao_geral', ExecucaoGeralController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
-//api
-Route::post('/api/ip', [ApiIpController::class, 'store']);
-//api2
-Route::post('/api/ip2', [ApiIp2Controller::class, 'store']);
-//api3
-Route::post('/api/ip3', [ApiIp3Controller::class, 'store']);
-//api4
-Route::post('/api/ip4', [ApiIp4Controller::class, 'store']);
-//api5
-Route::post('/api/ip5', [ApiIp5Controller::class, 'store']);
-//api6 salva os ip na tabela temp e processa depois
-Route::post('/api/ip6', [ApiIp6Controller::class, 'store']);
-//api7 salva os ip na tabela temp e processa depois mas disparando as async primeiro
-Route::post('/api/ip7', [ApiIp7Controller::class, 'store']);
-//confere backup
-Route::post('/api/backup', [ConfereBackupController::class, 'store']);
 
 //Refatoração
 
