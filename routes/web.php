@@ -56,6 +56,7 @@ use App\Http\Controllers\logsApi\logsApiController;
 use App\Http\Controllers\Restore\restoreController;
 use App\Http\Controllers\ContatosClientes\contatosClientesController;
 use App\Http\Controllers\DocumentacaoGerenciador\documentacaoGerenciadorController;
+use App\Http\Controllers\Proxmox\proxmoxController;
 
 
 /*
@@ -219,3 +220,6 @@ Route::resource('/contatos_clientes', contatosClientesController::class)->middle
 //documentacao gerenciador
 Route::get('documentacao_gerenciador/atualizar', [documentacaoGerenciadorController::class, 'atualizar'])->name('documentacao_gerenciador.atualizar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 Route::resource('/documentacao_gerenciador', documentacaoGerenciadorController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+//proxmox
+Route::resource('/proxmox', proxmoxController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+Route::post('/proxmox/executar', [proxmoxController::class, 'executar'])->name('proxmox.executar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
