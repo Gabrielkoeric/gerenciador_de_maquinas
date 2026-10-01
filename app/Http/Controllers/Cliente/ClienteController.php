@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Response;
 use App\Repositories\Cliente\ClienteRepository;
 use App\Repositories\ConfigGeral\ConfigGeralRepository;
 use App\Repositories\UrlLauncher\UrlLauncherRepository;
+use ZipArchive;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -251,10 +252,25 @@ class ClienteController extends Controller
             );
         }
 
-        return back()->with(
-            'sucesso',
-            "Arquivos RDP gerados em storage/app/public/{$pasta}"
-        );
+    // Cria o arquivo ZIP
+    $caminhoPasta = Storage::disk('public')->path($pasta);
+    $nomeZip = "rdp-{$timestamp}.zip";
+    $caminhoZip = Storage::disk('public')->path("remoteapp/{$nomeZip}");
+
+    $zip = new ZipArchive();
+
+    if ($zip->open($caminhoZip, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+        return back()->with('erro', 'Não foi possível criar o arquivo ZIP.');
+    }
+
+    foreach (glob($caminhoPasta . '/*.rdp') as $arquivo) {
+        $zip->addFile($arquivo, basename($arquivo));
+    }
+
+    $zip->close();
+
+    // Baixa o ZIP no navegador e remove somente o ZIP após o envio
+    return response()->download($caminhoZip, $nomeZip)->deleteFileAfterSend(true);
     }
 
         private function templateRdp(string $host, int $porta, string $apelido): string
@@ -325,11 +341,25 @@ RDP;
             );
         }
 
-        return back()->with(
-            'sucesso',
-            "Arquivos RDP gerados em storage/app/public/{$pasta}"
-        );
+    // Cria o arquivo ZIP
+    $caminhoPasta = Storage::disk('public')->path($pasta);
+    $nomeZip = "rdp-interno-{$timestamp}.zip";
+    $caminhoZip = Storage::disk('public')->path("remoteapp/{$nomeZip}");
 
+    $zip = new ZipArchive();
+
+    if ($zip->open($caminhoZip, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+        return back()->with('erro', 'Não foi possível criar o arquivo ZIP.');
+    }
+
+    foreach (glob($caminhoPasta . '/*.rdp') as $arquivo) {
+        $zip->addFile($arquivo, basename($arquivo));
+    }
+
+    $zip->close();
+
+    // Baixa o ZIP no navegador e remove somente o ZIP após o envio
+    return response()->download($caminhoZip, $nomeZip)->deleteFileAfterSend(true);
     }
 
     /**
