@@ -148,4 +148,17 @@ public function getClientesComRdp()
             ]) > 0;
     }
 
+    public function getClientesRetencaoBkp()
+    {
+        return DB::table('cliente_escala')
+            ->select(
+                'apelido',
+                'diasRetencaoBkp'
+            )
+            ->whereNotNull('apelido')
+            ->where('apelido', '<>', '')
+            ->orderBy('apelido')
+            ->get();
+    }
+
 }

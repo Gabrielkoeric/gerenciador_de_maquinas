@@ -49,4 +49,24 @@ class AsyncTasksRepository
             ]);
 }
 
+public function marcarComoErro(int $taskId, string $log, string $comando): void
+{
+    $task = DB::table('async_tasks')
+        ->where('id_async_tasks', $taskId)
+        ->value('parametros');
+
+    $parametros = json_decode($task, true) ?? [];
+
+    $parametros['comando'] = $comando;
+
+    DB::table('async_tasks')
+        ->where('id_async_tasks', $taskId)
+        ->update([
+            'horario_fim' => now(),
+            'status'      => 'Erro',
+            'log'         => $log,
+            'parametros'  => json_encode($parametros),
+        ]);
+}
+
 }
