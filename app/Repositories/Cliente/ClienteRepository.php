@@ -161,4 +161,16 @@ public function getClientesComRdp()
             ->get();
     }
 
+    public function getClientesBkp()
+    {
+        return DB::table('cliente_escala')
+            ->select(
+                'apelido'
+            )
+            ->whereNotNull('apelido')
+            ->where('apelido', '<>', '')
+            ->orderBy('tamanho_bkp', 'asc')
+            ->get();
+    }
+
 }
