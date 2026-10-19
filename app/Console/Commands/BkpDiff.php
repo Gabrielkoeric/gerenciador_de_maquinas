@@ -13,7 +13,7 @@ class BkpDiff extends Command
 
     public function handle()
     {
-        Log::dispatch()->onQueue('diff');
+        Diff::dispatch()->onQueue('diff');
 
         $this->info('Job de envio de backup DIFF enviado para a fila log.');
 
