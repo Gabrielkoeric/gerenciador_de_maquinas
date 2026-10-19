@@ -66,7 +66,7 @@ class Log implements ShouldQueue
                 . " --log-level INFO --use-json-log";
 
             $taskId = $asyncTasksRepository->create(
-                "Envio de backup de Log {$apelido}",
+                "Envio de backup LOG {$apelido}",
                 [
                     'comando' => $cmd,
                 ]

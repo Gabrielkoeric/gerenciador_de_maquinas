@@ -32,12 +32,12 @@ class Full implements ShouldQueue
         $remote = $configRepo->getConfigGeral('remoteBkpBanco');
         $serverBkp = $configRepo->getConfigGeral('idServerBkpBanco');
         $dadosServerBkp = $vmRepository->getById($serverBkp);
-        //$clientes = $clienteRepository->getClientesBkp();
-
+        $clientes = $clienteRepository->getClientesBkp();
+/*
         $clientes = collect([
             (object) ['apelido' => 'teste'],
         ]);
-        
+*/        
         $resultadoLimpeza = $sshService->limpaPasta(
             $dadosServerBkp->ip_lan_vm,
             $dadosServerBkp->usuario_local,
@@ -66,7 +66,7 @@ class Full implements ShouldQueue
                 . " --log-level INFO --use-json-log";
 
             $taskId = $asyncTasksRepository->create(
-                "Envio de backup full {$apelido}",
+                "Envio de backup FULL {$apelido}",
                 [
                     'comando' => $cmd,
                 ]
@@ -197,12 +197,12 @@ class Full implements ShouldQueue
 
             if ($erroExecucao !== null) {
                 LaravelLog::warning(
-                    "Envio de backup LOG finalizado com erro para {$apelido}. "
+                    "Envio de backup FULL finalizado com erro para {$apelido}. "
                     . $erroExecucao
                 );
             } else {
                 LaravelLog::info(
-                    "Envio de backup LOG finalizado para {$apelido}."
+                    "Envio de backup FULL finalizado para {$apelido}."
                 );
             }
         }

@@ -32,12 +32,12 @@ class Diff implements ShouldQueue
         $remote = $configRepo->getConfigGeral('remoteBkpBanco');
         $serverBkp = $configRepo->getConfigGeral('idServerBkpBanco');
         $dadosServerBkp = $vmRepository->getById($serverBkp);
-        //$clientes = $clienteRepository->getClientesBkp();
-
+        $clientes = $clienteRepository->getClientesBkp();
+/*
         $clientes = collect([
             (object) ['apelido' => 'teste'],
         ]);
-        
+*/        
         $resultadoLimpeza = $sshService->limpaPasta(
             $dadosServerBkp->ip_lan_vm,
             $dadosServerBkp->usuario_local,
@@ -66,7 +66,7 @@ class Diff implements ShouldQueue
                 . " --log-level INFO --use-json-log";
 
             $taskId = $asyncTasksRepository->create(
-                "Envio de backup Diff {$apelido}",
+                "Envio de backup DIFF {$apelido}",
                 [
                     'comando' => $cmd,
                 ]
@@ -187,7 +187,7 @@ class Diff implements ShouldQueue
                 );
             } else {
                 LaravelLog::info(
-                    "Envio de backup LOG finalizado para {$apelido}."
+                    "Envio de backup DIFF finalizado para {$apelido}."
                 );
             }
         }
