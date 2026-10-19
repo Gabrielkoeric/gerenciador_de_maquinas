@@ -120,9 +120,10 @@ class Full implements ShouldQueue
 
                         $nomeArquivo = basename($registro['object']);
 
-                        // Extrai data e hora do nome do arquivo.
+                        // Extrai data e hora do nome do arquivo
+
                         if (!preg_match(
-                            '/_(\d{8})_(\d{4})\.[^.]+$/',
+                            '/_(\d{8})_(\d{4})(?:_\d+)?\.[^.]+$/',
                             $nomeArquivo,
                             $matches
                         )) {
