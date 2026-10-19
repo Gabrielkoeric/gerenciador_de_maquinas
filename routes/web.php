@@ -57,6 +57,7 @@ use App\Http\Controllers\Restore\restoreController;
 use App\Http\Controllers\ContatosClientes\contatosClientesController;
 use App\Http\Controllers\DocumentacaoGerenciador\documentacaoGerenciadorController;
 use App\Http\Controllers\Proxmox\proxmoxController;
+use App\Http\Controllers\Bkp\bkpController;
 
 
 /*
@@ -223,3 +224,7 @@ Route::resource('/documentacao_gerenciador', documentacaoGerenciadorController::
 //proxmox
 Route::resource('/proxmox', proxmoxController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 Route::post('/proxmox/executar', [proxmoxController::class, 'executar'])->name('proxmox.executar')->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+
+//bkp
+Route::get('/bkp/download/{id}', [bkpController::class, 'download'])->name('bkp.download')->middleware([Autenticador::class, ValidarHorarioPlantao::class, ControleAcesso::class,]);
+Route::resource('/bkp', bkpController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
