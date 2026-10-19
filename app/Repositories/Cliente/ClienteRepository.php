@@ -173,4 +173,13 @@ public function getClientesComRdp()
             ->get();
     }
 
+    public function atualizarTamanhoBkp(string $apelido, int $tamanhoBkp): int
+    {
+        return DB::table('cliente_escala')
+            ->where('apelido', $apelido)
+            ->update([
+                'tamanho_bkp' => $tamanhoBkp,
+            ]);
+    }
+
 }

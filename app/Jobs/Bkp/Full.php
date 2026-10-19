@@ -107,8 +107,15 @@ class Full implements ShouldQueue
                 if ($resultadoLog['sucesso']) {
                     $logRclone = $resultadoLog['saida'];
 
+                    $tamanhoBkp = null;
+
                     foreach (explode("\n", $logRclone) as $linha) {
                         $registro = json_decode($linha, true);
+
+                        if (isset($registro['stats']['bytes'])) {
+                            $tamanhoBkp = (int) $registro['stats']['bytes'];
+                            continue;
+                        }
 
                         if (
                             !is_array($registro)
@@ -154,6 +161,13 @@ class Full implements ShouldQueue
                             'tamanho_bytes' => 0,
                             'id_cliente_escala' => $idCliente,
                         ]);
+                    }
+
+                    if ($tamanhoBkp !== null && $tamanhoBkp > 0) {
+                        $clienteRepository->atualizarTamanhoBkp(
+                            $apelido,
+                            $tamanhoBkp
+                        );
                     }
 
                 } else {
