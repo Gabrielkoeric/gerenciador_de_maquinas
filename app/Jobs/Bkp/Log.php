@@ -41,7 +41,7 @@ class Log implements ShouldQueue
         foreach ($clientes as $cliente) {
             $apelido = $cliente->apelido;
 
-            $origem = "/mnt/backup/{$apelido}_escalasoft/log/";
+            $origem = "/mnt/backup/clientes/{$apelido}_escalasoft/log/";
             $destino = "{$remote}{$apelido}_escalasoft/log/";
             $logPath = "/var/log/rclone/log/{$apelido}.log";
 
