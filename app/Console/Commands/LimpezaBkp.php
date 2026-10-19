@@ -41,15 +41,15 @@ class LimpezaBkp extends Command
         $remote = $this->configRepo->getConfigGeral('remoteBkpBanco');
         $serverBkp = $this->configRepo->getConfigGeral('idServerBkpBanco');
         $dadosServerBkp = $this->vmRepository->getById($serverBkp);
-        //$clientes = $this->clienteRepository->getClientesRetencaoBkp();
-
+        $clientes = $this->clienteRepository->getClientesRetencaoBkp();
+/*
         $clientes = [
             (object) [
                 'apelido' => 'teste',
                 'diasRetencaoBkp' => null,
             ]
         ];
-
+*/
         $senhaSegura = escapeshellarg($dadosServerBkp->senha_local);
         
         $limpaLogsCommand = "rm -f /var/log/rclone/limpeza/*";
