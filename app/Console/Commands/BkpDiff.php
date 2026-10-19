@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Jobs\Bkp\Log;
+use App\Jobs\Bkp\Diff;
 
 class BkpDiff extends Command
 {
