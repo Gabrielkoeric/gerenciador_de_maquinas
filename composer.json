@@ -8,6 +8,7 @@
         "php": "^8.0.2",
         "ext-mysqli": "*",
         "ext-pdo_mysql": "*",
+        "aws/aws-sdk-php": "^3.401",
         "barryvdh/laravel-dompdf": "^2.0",
         "cboden/ratchet": "^0.4.4",
         "endroid/qr-code": "^4.8",
