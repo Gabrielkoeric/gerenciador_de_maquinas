@@ -65,7 +65,7 @@ class LimpezaBkp extends Command
         foreach ($clientes as $cliente) {
             $dias = $cliente->diasRetencaoBkp ?? $diasPadrao;
             $apelido = $cliente->apelido;
-            $cmd = "rclone delete {$remote}{$apelido}_escalasoft/ --min-age {$dias}d --log-file /var/log/rclone/limpeza/{$cliente->apelido}.log --log-level INFO";
+            $cmd = "rclone delete {$remote}{$apelido}_escalasoft/ --min-age {$dias}d --log-file /var/log/rclone/limpeza/{$cliente->apelido}.log --log-level INFO --use-json-log";
 
             $taskId = $this->asyncTasksRepository->create(
                 "Limpeza Bkp {$apelido}",
