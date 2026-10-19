@@ -46,4 +46,24 @@ class SshService
             null
         );
     }
+
+    public function limpaPasta(
+        string $ip,
+        string $usuario,
+        string $senha,
+        string $caminho
+    ): array {
+        $caminho = rtrim($caminho, '/');
+    
+        $comando = 'find ' . escapeshellarg($caminho)
+            . ' -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +';
+    
+        return $this->executarComando(
+            $ip,
+            $usuario,
+            $senha,
+            $comando,
+            null
+        );
+    }
 }

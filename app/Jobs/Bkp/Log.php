@@ -37,6 +37,19 @@ class Log implements ShouldQueue
         $clientes = collect([
             (object) ['apelido' => 'teste'],
         ]);
+        
+        $resultadoLimpeza = $sshService->limpaPasta(
+            $dadosServerBkp->ip_lan_vm,
+            $dadosServerBkp->usuario_local,
+            $dadosServerBkp->senha_local,
+            '/var/log/rclone/log/'
+        );
+
+        if (!$resultadoLimpeza['sucesso']) {
+            throw new \RuntimeException(
+                'Falha ao limpar a pasta de logs: ' . $resultadoLimpeza['erro']
+            );
+        }
 
         foreach ($clientes as $cliente) {
             $apelido = $cliente->apelido;
