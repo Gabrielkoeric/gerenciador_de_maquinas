@@ -51,7 +51,7 @@
                     <td>{{ $bkp->objeto }}</td>
                     <td>{{ $bkp->data_backup }}</td>
                     <td>{{ $bkp->tipo }}</td>
-                    <td>{{ $bkp->tamanho_bytes }}</td>
+                    <td>{{ number_format($bkp->tamanho_bytes / 1073741824, 2, ',', '.') }} GB</td>
                     <td>{{ $bkp->apelido }}</td>
                     <td>
                         <a href="{{ route('bkp.download', ['id' => $bkp->id_bkp]) }}"
