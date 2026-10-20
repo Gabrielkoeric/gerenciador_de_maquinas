@@ -51,7 +51,20 @@
                     <td>{{ $bkp->objeto }}</td>
                     <td>{{ $bkp->data_backup }}</td>
                     <td>{{ $bkp->tipo }}</td>
-                    <td>{{ number_format($bkp->tamanho_bytes / 1073741824, 2, ',', '.') }} GB</td>
+                    <td
+                        title="{{ number_format($bkp->tamanho_bytes, 0, ',', '.') }} bytes | {{ number_format($bkp->tamanho_bytes / 1048576, 2, ',', '.') }} MB | {{ number_format($bkp->tamanho_bytes / 1073741824, 4, ',', '.') }} GB"
+                        style="cursor: help;"
+                    >
+                        @if ($bkp->tamanho_bytes >= 1073741824)
+                            {{ number_format($bkp->tamanho_bytes / 1073741824, 2, ',', '.') }} GB
+                        @elseif ($bkp->tamanho_bytes >= 1048576)
+                            {{ number_format($bkp->tamanho_bytes / 1048576, 2, ',', '.') }} MB
+                        @elseif ($bkp->tamanho_bytes >= 1024)
+                            {{ number_format($bkp->tamanho_bytes / 1024, 2, ',', '.') }} KB
+                        @else
+                            {{ number_format($bkp->tamanho_bytes, 0, ',', '.') }} bytes
+                        @endif
+                    </td>
                     <td>{{ $bkp->apelido }}</td>
                     <td>
                         <a href="{{ route('bkp.download', ['id' => $bkp->id_bkp]) }}"
