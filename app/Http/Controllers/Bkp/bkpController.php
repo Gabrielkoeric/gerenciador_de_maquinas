@@ -12,20 +12,53 @@ use Illuminate\Support\Facades\Log;
 class bkpController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $bkps = DB::table('bkp')
+        $filtroClientes = $request->input('clientes', []);
+        $filtroTipos = $request->input('tipos', []);
+
+        $query = DB::table('bkp')
             ->join(
                 'cliente_escala',
                 'bkp.id_cliente_escala',
                 '=',
                 'cliente_escala.id_cliente_escala'
             )
-            ->select('bkp.*', 'cliente_escala.apelido', 'cliente_escala.nome' )
-            ->orderBy('bkp.data_backup', 'desc')
-            ->paginate(100);
+            ->select(
+                'bkp.*',
+                'cliente_escala.apelido',
+                'cliente_escala.nome'
+            );
 
-        return view('bkp.index')->with('bkps', $bkps);
+        if (!empty($filtroClientes)) {
+            $query->whereIn('bkp.id_cliente_escala', $filtroClientes);
+        }
+
+        if (!empty($filtroTipos)) {
+            $query->whereIn('bkp.tipo', $filtroTipos);
+        }
+
+        $bkps = $query
+            ->orderBy('bkp.data_backup', 'desc')
+            ->paginate(100)
+            ->withQueryString();
+
+        $todosClientes = DB::table('cliente_escala')
+            ->orderBy('nome')
+            ->get();
+
+        $todosTipos = collect([
+            (object) ['id' => 'full', 'nome' => 'Full'],
+            (object) ['id' => 'diff', 'nome' => 'Diff'],
+            (object) ['id' => 'log', 'nome' => 'Log'],
+        ]);
+
+        return view('bkp.index')
+            ->with('bkps', $bkps)
+            ->with('todosClientes', $todosClientes)
+            ->with('filtroClientes', $filtroClientes)
+            ->with('todosTipos', $todosTipos)
+            ->with('filtroTipos', $filtroTipos);
     }
 
     public function download($id)
