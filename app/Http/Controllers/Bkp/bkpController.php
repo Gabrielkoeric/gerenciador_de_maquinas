@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Bkp;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,8 @@ class bkpController extends Controller
         $filtroClientes = $request->input('clientes', []);
         $filtroTipos = $request->input('tipos', []);
 
+        $idUsuario = Auth::id();
+
         $query = DB::table('bkp')
             ->join(
                 'cliente_escala',
@@ -28,7 +31,17 @@ class bkpController extends Controller
                 'bkp.*',
                 'cliente_escala.apelido',
                 'cliente_escala.nome'
-            );
+            )
+        ->whereExists(function ($subquery) use ($idUsuario) {
+            $subquery->select(DB::raw(1))
+                ->from('permissao_bkp_cliente')
+                ->whereColumn(
+                    'permissao_bkp_cliente.id_cliente_escala',
+                    'bkp.id_cliente_escala'
+                )
+                ->where('permissao_bkp_cliente.id_usuario', $idUsuario)
+                ->where('permissao_bkp_cliente.ano_referencia', date('Y'));
+        });
 
         if (!empty($filtroClientes)) {
             $query->whereIn('bkp.id_cliente_escala', $filtroClientes);
@@ -43,9 +56,19 @@ class bkpController extends Controller
             ->paginate(100)
             ->withQueryString();
 
-        $todosClientes = DB::table('cliente_escala')
-            ->orderBy('nome')
-            ->get();
+$todosClientes = DB::table('cliente_escala')
+    ->whereExists(function ($query) use ($idUsuario) {
+        $query->select(DB::raw(1))
+            ->from('permissao_bkp_cliente')
+            ->whereColumn(
+                'permissao_bkp_cliente.id_cliente_escala',
+                'cliente_escala.id_cliente_escala'
+            )
+            ->where('permissao_bkp_cliente.id_usuario', $idUsuario)
+            ->where('permissao_bkp_cliente.ano_referencia', date('Y'));
+    })
+    ->orderBy('nome')
+    ->get();
 
         $todosTipos = collect([
             (object) ['id' => 'full', 'nome' => 'Full'],
@@ -63,23 +86,35 @@ class bkpController extends Controller
 
     public function download($id)
     {
-        $bkp = DB::table('bkp')
-            ->join(
-                'cliente_escala',
-                'bkp.id_cliente_escala',
-                '=',
-                'cliente_escala.id_cliente_escala'
-            )
-            ->where('bkp.id_bkp', $id)
-            ->select(
-                'bkp.*',
-                'cliente_escala.apelido'
-            )
-            ->first();
+    $idUsuario = Auth::id();
 
-        if (!$bkp) {
-            abort(404, 'Backup não encontrado.');
-        }
+    $bkp = DB::table('bkp')
+        ->join(
+            'cliente_escala',
+            'bkp.id_cliente_escala',
+            '=',
+            'cliente_escala.id_cliente_escala'
+        )
+        ->where('bkp.id_bkp', $id)
+        ->whereExists(function ($query) use ($idUsuario) {
+            $query->select(DB::raw(1))
+                ->from('permissao_bkp_cliente')
+                ->whereColumn(
+                    'permissao_bkp_cliente.id_cliente_escala',
+                    'bkp.id_cliente_escala'
+                )
+                ->where('permissao_bkp_cliente.id_usuario', $idUsuario)
+                ->where('permissao_bkp_cliente.ano_referencia', date('Y'));
+        })
+        ->select(
+            'bkp.*',
+            'cliente_escala.apelido'
+        )
+        ->first();
+
+    if (!$bkp) {
+        abort(404, 'Backup não encontrado.');
+    }
 
         $caminho = 'clientes/' . $bkp->apelido . '_escalasoft/' . $bkp->objeto;
 
