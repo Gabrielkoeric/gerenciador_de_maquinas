@@ -9,6 +9,7 @@ use App\Repositories\Cliente\ClienteRepository;
 use App\Repositories\AsyncTasks\AsyncTasksRepository;
 use App\Repositories\Bkp\BkpRepository;
 use Illuminate\Support\Facades\Log as LaravelLog;
+use App\Services\RcloneExecucaoDiario\ZabbixSenderService;
 use Carbon\Carbon;
 
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -27,7 +28,8 @@ class Log implements ShouldQueue
         ClienteRepository $clienteRepository,
         AsyncTasksRepository $asyncTasksRepository,
         BkpRepository $bkpRepository,
-        SshService $sshService
+        SshService $sshService,
+        ZabbixSenderService $zabbix
     ) {
         $remote = $configRepo->getConfigGeral('remoteBkpBanco');
         $serverBkp = $configRepo->getConfigGeral('idServerBkpBanco');
@@ -53,6 +55,8 @@ class Log implements ShouldQueue
 
         foreach ($clientes as $cliente) {
             $apelido = $cliente->apelido;
+
+            $qtdTransferidos = 0;
 
             $origem = "/mnt/backup/clientes/{$apelido}_escalasoft/log/";
             $destino = "{$remote}{$apelido}_escalasoft/log/";
@@ -118,6 +122,8 @@ class Log implements ShouldQueue
                             continue;
                         }
 
+                        $qtdTransferidos++;
+
                         $nomeArquivo = basename($registro['object']);
 
                         // Extrai data e hora do nome do arquivo.
@@ -179,6 +185,14 @@ class Log implements ShouldQueue
                 $logRclone,
                 $cmd
             );
+
+            if ($erroExecucao === null) {
+                $zabbix->send($apelido, 'bkp.banco.log.qtd_1h', $qtdTransferidos);
+
+                if ($qtdTransferidos > 0) {
+                    $zabbix->send($apelido, 'bkp.banco.log.timestamp', now()->timestamp);
+                }
+            }
 
             if ($erroExecucao !== null) {
                 LaravelLog::warning(
