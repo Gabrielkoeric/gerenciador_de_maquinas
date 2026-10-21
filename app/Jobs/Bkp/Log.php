@@ -56,6 +56,7 @@ class Log implements ShouldQueue
         foreach ($clientes as $cliente) {
             $apelido = $cliente->apelido;
 
+            $bytesTransferidos = 0;
             $qtdTransferidos = 0;
 
             $origem = "/mnt/backup/clientes/{$apelido}_escalasoft/log/";
@@ -114,6 +115,11 @@ class Log implements ShouldQueue
                     foreach (explode("\n", $logRclone) as $linha) {
                         $registro = json_decode($linha, true);
 
+                        if (isset($registro['stats']) && is_array($registro['stats'])) {
+                            $bytesTransferidos = (int) ($registro['stats']['bytes'] ?? 0);
+                            $qtdTransferidos = (int) ($registro['stats']['transfers'] ?? 0);
+                        }
+
                         if (
                             !is_array($registro)
                             || ($registro['msg'] ?? null) !== 'Copied (new)'
@@ -121,8 +127,6 @@ class Log implements ShouldQueue
                         ) {
                             continue;
                         }
-
-                        $qtdTransferidos++;
 
                         $nomeArquivo = basename($registro['object']);
 
@@ -188,6 +192,8 @@ class Log implements ShouldQueue
 
             if ($erroExecucao === null) {
                 $zabbix->send($apelido, 'bkp.banco.log.qtd_1h', $qtdTransferidos);
+
+                $zabbix->send($apelido, 'bkp.banco.log.bytes_1h', $bytesTransferidos);
 
                 if ($qtdTransferidos > 0) {
                     $zabbix->send($apelido, 'bkp.banco.log.timestamp', now()->timestamp);
