@@ -10,6 +10,7 @@ use App\Repositories\AsyncTasks\AsyncTasksRepository;
 use App\Repositories\Bkp\BkpRepository;
 use Illuminate\Support\Facades\Log as LaravelLog;
 use Carbon\Carbon;
+use App\Services\RcloneExecucaoDiario\ZabbixSenderService;
 
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,7 +28,8 @@ class Full implements ShouldQueue
         ClienteRepository $clienteRepository,
         AsyncTasksRepository $asyncTasksRepository,
         BkpRepository $bkpRepository,
-        SshService $sshService
+        SshService $sshService,
+        ZabbixSenderService $zabbix
     ) {
         $remote = $configRepo->getConfigGeral('remoteBkpBanco');
         $serverBkp = $configRepo->getConfigGeral('idServerBkpBanco');
@@ -53,6 +55,9 @@ class Full implements ShouldQueue
 
         foreach ($clientes as $cliente) {
             $apelido = $cliente->apelido;
+
+            $bytesTransferidos = 0;
+            $qtdTransferidos = 0;
 
             $origem = "/mnt/backup/clientes/{$apelido}_escalasoft/full/";
             $destino = "{$remote}{$apelido}_escalasoft/full/";
@@ -112,8 +117,11 @@ class Full implements ShouldQueue
                     foreach (explode("\n", $logRclone) as $linha) {
                         $registro = json_decode($linha, true);
 
-                        if (isset($registro['stats']['bytes'])) {
-                            $tamanhoBkp = (int) $registro['stats']['bytes'];
+                        if (isset($registro['stats']) && is_array($registro['stats'])) {
+                            $bytesTransferidos = (int) ($registro['stats']['bytes'] ?? 0);
+                            $qtdTransferidos = (int) ($registro['stats']['transfers'] ?? 0);
+                        
+                            $tamanhoBkp = $bytesTransferidos;
                             continue;
                         }
 
@@ -194,6 +202,14 @@ class Full implements ShouldQueue
                 $logRclone,
                 $cmd
             );
+
+            if ($erroExecucao === null) {
+                $zabbix->send($apelido, 'bkp.banco.full.bytes', $bytesTransferidos);
+
+                if ($qtdTransferidos > 0) {
+                    $zabbix->send($apelido, 'bkp.banco.full.timestamp', now()->timestamp);
+                }
+            }
 
             if ($erroExecucao !== null) {
                 LaravelLog::warning(
