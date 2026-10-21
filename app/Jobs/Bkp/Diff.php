@@ -8,6 +8,7 @@ use App\Repositories\Vm\VmRepository;
 use App\Repositories\Cliente\ClienteRepository;
 use App\Repositories\AsyncTasks\AsyncTasksRepository;
 use App\Repositories\Bkp\BkpRepository;
+use App\Services\RcloneExecucaoDiario\ZabbixSenderService;
 use Illuminate\Support\Facades\Log as LaravelLog;
 use Carbon\Carbon;
 
@@ -27,7 +28,8 @@ class Diff implements ShouldQueue
         ClienteRepository $clienteRepository,
         AsyncTasksRepository $asyncTasksRepository,
         BkpRepository $bkpRepository,
-        SshService $sshService
+        SshService $sshService,
+        ZabbixSenderService $zabbix
     ) {
         $remote = $configRepo->getConfigGeral('remoteBkpBanco');
         $serverBkp = $configRepo->getConfigGeral('idServerBkpBanco');
@@ -53,6 +55,9 @@ class Diff implements ShouldQueue
 
         foreach ($clientes as $cliente) {
             $apelido = $cliente->apelido;
+
+            $bytesTransferidos = 0;
+            $qtdTransferidos = 0;
 
             $origem = "/mnt/backup/clientes/{$apelido}_escalasoft/diff/";
             $destino = "{$remote}{$apelido}_escalasoft/diff/";
@@ -106,6 +111,19 @@ class Diff implements ShouldQueue
 
                 if ($resultadoLog['sucesso']) {
                     $logRclone = $resultadoLog['saida'];
+
+                    foreach (explode("\n", $logRclone) as $linha) {
+                        $registro = json_decode($linha, true);
+                    
+                        if (
+                            is_array($registro)
+                            && isset($registro['stats'])
+                            && is_array($registro['stats'])
+                        ) {
+                            $bytesTransferidos = (int) ($registro['stats']['bytes'] ?? 0);
+                            $qtdTransferidos = (int) ($registro['stats']['transfers'] ?? 0);
+                        }
+                    }
 
                     foreach (explode("\n", $logRclone) as $linha) {
                         $registro = json_decode($linha, true);
@@ -179,6 +197,14 @@ class Diff implements ShouldQueue
                 $logRclone,
                 $cmd
             );
+
+            if ($erroExecucao === null) {
+                $zabbix->send($apelido, 'bkp.banco.diff.bytes', $bytesTransferidos);
+
+                if ($qtdTransferidos > 0) {
+                    $zabbix->send($apelido, 'bkp.banco.diff.timestamp', now()->timestamp);
+                }
+            }
 
             if ($erroExecucao !== null) {
                 LaravelLog::warning(
