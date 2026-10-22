@@ -58,6 +58,7 @@ use App\Http\Controllers\ContatosClientes\contatosClientesController;
 use App\Http\Controllers\DocumentacaoGerenciador\documentacaoGerenciadorController;
 use App\Http\Controllers\Proxmox\proxmoxController;
 use App\Http\Controllers\Bkp\bkpController;
+use App\Http\Controllers\Bkp\permissaoBkpController;
 
 
 /*
@@ -228,3 +229,5 @@ Route::post('/proxmox/executar', [proxmoxController::class, 'executar'])->name('
 //bkp
 Route::get('/bkp/download/{id}', [bkpController::class, 'download'])->name('bkp.download')->middleware([Autenticador::class, ValidarHorarioPlantao::class, ControleAcesso::class,]);
 Route::resource('/bkp', bkpController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+//permissão bkp
+Route::resource('/permissao_bkp', permissaoBkpController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
