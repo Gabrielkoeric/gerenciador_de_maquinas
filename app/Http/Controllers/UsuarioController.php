@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Usuarios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Jobs\EnviarEmailJob;
 
 class UsuarioController extends Controller
 {
@@ -41,11 +44,13 @@ class UsuarioController extends Controller
         $email = $request->input('email');
         $celular = $request->input('celular');
         $permissao = $request->input('perfil');
+        $senha = Str::random(15);
 
         $dados = [
             'email' => $email,
             'celular' => $celular,
             'nome_completo' => $usuario,
+            'password' => Hash::make($senha),
         ];
         $id = DB::table('usuarios')->insertGetId($dados);
 
@@ -70,6 +75,22 @@ class UsuarioController extends Controller
                 'updated_at' => now(),
             ]);
         }
+
+        EnviarEmailJob::dispatch(
+            $email,
+            'Usuário criado - Gerenciador Escalasoft',
+            "Olá, {$usuario}!\n\n"
+                . "Informamos que seu usuário foi criado com sucesso no sistema Gerenciador Escalasoft.\n\n"
+                . "Segue abaixo sua senha de acesso inicial:\n\n"
+                . "Senha: {$senha}\n\n"
+                . "Por motivos de segurança, sua senha será redefinida automaticamente a cada 30 dias.\n\n"
+                . "Caso não reconheça esta solicitação, desconsidere este e-mail.\n\n"
+                . "Atenciosamente,\n"
+                . "Equipe de Data Center Escalasoft.",
+            null,
+            null,
+            null
+        );
 
         return redirect('/usuario')->with('mensagem.sucesso', 'Usuario inserido com sucesso!');
     }
