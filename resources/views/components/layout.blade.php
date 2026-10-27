@@ -22,7 +22,11 @@
                     <img src="{{Auth::user()->imagem}}" style="max-width: 65px; border-radius: 50%;">
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{route('usuario.edit', Auth::User('id'))}}">Editar Usuario</a>
+                    @if (Route::has('usuario.edit'))
+                        <a class="dropdown-item" href="{{ route('usuario.edit', Auth::id()) }}">
+                            Editar Usuario
+                        </a>
+                    @endif
                     
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
     @csrf
