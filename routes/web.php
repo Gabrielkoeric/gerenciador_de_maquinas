@@ -59,6 +59,7 @@ use App\Http\Controllers\DocumentacaoGerenciador\documentacaoGerenciadorControll
 use App\Http\Controllers\Proxmox\proxmoxController;
 use App\Http\Controllers\Bkp\bkpController;
 use App\Http\Controllers\Bkp\permissaoBkpController;
+use App\Http\Controllers\LogsDownloadBkp\logsDownloadBkpController;
 
 
 /*
@@ -231,3 +232,6 @@ Route::get('/bkp/download/{id}', [bkpController::class, 'download'])->name('bkp.
 Route::resource('/bkp', bkpController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
 //permissão bkp
 Route::resource('/permissao_bkp', permissaoBkpController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);
+
+//permissão bkp
+Route::resource('/logs_download_bkp', logsDownloadBkpController::class)->middleware(Autenticador::class)->middleware(ValidarHorarioPlantao::class)->middleware(ControleAcesso::class);

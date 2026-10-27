@@ -1,6 +1,7 @@
 <x-layout title="Permissão Usuario Bkp">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
     <a href="{{route('permissao_bkp.create')}}" class="btn btn-dark my-3">Adicionar</a>
+    <a href="{{route('logs_download_bkp.index')}}" class="btn btn-dark my-3 pr">Logs Download Bkp</a>
 
     <ul class="list-group">
 

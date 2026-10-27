@@ -145,6 +145,14 @@ $todosClientes = DB::table('cliente_escala')
             'arquivo' => $caminho,
         ]);
 
+        DB::table('logs_download_bkp')->insert([
+            'objeto' => $bkp->objeto,
+            'nome_cliente' => $bkp->apelido,
+            'data_hora' => now(),
+            'ip_address' => request()->ip(),
+            'id_usuario' => $idUsuario,
+        ]);
+
         return redirect()->away(
             (string) $request->getUri()
         );
