@@ -1,6 +1,16 @@
 <x-layout title="Backups">
     <a href="{{route('home.index')}}" class="btn btn-dark my-3 pr">Home</a>
 
+    <div class="alert alert-info d-flex align-items-start mt-3" role="alert">
+        <i class="fas fa-info-circle me-2 mt-1"></i>
+        <div>
+            <strong>Prazo para disponibilização dos backups</strong>
+            <p class="mb-0">
+                Após a execução, os backups podem levar até 48 horas para serem disponibilizados para download.
+            </p>
+        </div>
+    </div>
+
 <form method="GET" class="mb-4">
         <div class="row g-2 align-items-center">
 
