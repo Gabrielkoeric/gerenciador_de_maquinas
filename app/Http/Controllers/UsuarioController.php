@@ -76,21 +76,24 @@ class UsuarioController extends Controller
             ]);
         }
 
-        EnviarEmailJob::dispatch(
-            $email,
-            'Usuário criado - Gerenciador Escalasoft',
-            "Olá, {$usuario}!\n\n"
-                . "Informamos que seu usuário foi criado com sucesso no sistema Gerenciador Escalasoft.\n\n"
-                . "Segue abaixo sua senha de acesso inicial:\n\n"
-                . "Senha: {$senha}\n\n"
-                . "Por motivos de segurança, sua senha será redefinida automaticamente a cada 30 dias.\n\n"
-                . "Caso não reconheça esta solicitação, desconsidere este e-mail.\n\n"
-                . "Atenciosamente,\n"
-                . "Equipe de Data Center Escalasoft.",
-            null,
-            null,
-            null
-        );
+    EnviarEmailJob::dispatch(
+        $email,
+        'Usuário criado - Gerenciador Escalasoft',
+        "Olá, {$usuario}!\n\n"
+            . "Informamos que seu usuário foi criado com sucesso no sistema Gerenciador Escalasoft.\n\n"
+            . "Segue abaixo sua senha de acesso inicial:\n\n"
+            . "Senha: {$senha}\n\n"
+            . "Por motivos de segurança, sua senha será redefinida automaticamente a cada 30 dias.\n\n"
+            . "A senha é pessoal e intransferível, sendo de responsabilidade do usuário mantê-la em sigilo. "
+            . "O compartilhamento da senha com terceiros é expressamente desaconselhado, e o usuário é responsável "
+            . "pelo uso de suas credenciais de acesso.\n\n"
+            . "Caso não reconheça esta solicitação, desconsidere este e-mail e comunique a equipe responsável.\n\n"
+            . "Atenciosamente,\n"
+            . "Equipe de Data Center Escalasoft.",
+        null,
+        null,
+        null
+    );
 
         return redirect('/usuario')->with('mensagem.sucesso', 'Usuario inserido com sucesso!');
     }
