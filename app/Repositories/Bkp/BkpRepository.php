@@ -39,4 +39,11 @@ class BkpRepository
             ->where('tamanho_bytes', 0)
             ->update(['tamanho_bytes' => $tamanho]) > 0;
     }
+
+    public function removerBkp(string $objeto): bool
+    {
+        return DB::table('bkp')
+            ->where('objeto', $objeto)
+            ->delete() > 0;
+    }
 }

@@ -10,6 +10,7 @@ use App\Repositories\ConfigGeral\ConfigGeralRepository;
 use App\Repositories\Vm\VmRepository;
 use App\Repositories\Cliente\ClienteRepository;
 use App\Repositories\AsyncTasks\AsyncTasksRepository;
+use App\Repositories\Bkp\BkpRepository;
 
 class LimpezaBkp extends Command
 {
@@ -21,18 +22,21 @@ class LimpezaBkp extends Command
     protected VmRepository $vmRepository;
     protected ClienteRepository $clienteRepository;
     protected AsyncTasksRepository $asyncTasksRepository;
+    protected BkpRepository $bkpRepository;
 
     public function __construct(
         ConfigGeralRepository $configRepo,
         VmRepository $vmRepository,
         ClienteRepository $clienteRepository,
-        AsyncTasksRepository $asyncTasksRepository
+        AsyncTasksRepository $asyncTasksRepository,
+        BkpRepository $bkpRepository
     ) {
         parent::__construct();
         $this->configRepo = $configRepo;
         $this->vmRepository = $vmRepository;
         $this->clienteRepository = $clienteRepository;
         $this->asyncTasksRepository = $asyncTasksRepository;
+        $this->bkpRepository = $bkpRepository;
     }
 
     public function handle()
@@ -121,6 +125,17 @@ class LimpezaBkp extends Command
             $logProcess->run();
 
             $logRclone = $logProcess->getOutput();
+
+            foreach (explode("\n", $logRclone) as $linha) {
+                $registro = json_decode($linha, true);
+            
+                if (
+                    isset($registro['msg'], $registro['object']) &&
+                    $registro['msg'] === 'Deleted'
+                ) {
+                    $this->bkpRepository->removerBkp($registro['object']);
+                }
+            }
 
             $this->asyncTasksRepository->marcarComoConcluido(
                 $taskId,
