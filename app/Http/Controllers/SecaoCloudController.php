@@ -104,7 +104,7 @@ class SecaoCloudController extends Controller
         Create::dispatch($usuario, $senha, $coletor, $arquivo, $taskId, $apelido);
 
         DB::table('secao_cloud')->insertGetId($dado);
-        
+
             if ($apelido === 'escalasoft') {
 
                 $usuarioBase = explode('@', $usuario)[0];
@@ -133,6 +133,7 @@ class SecaoCloudController extends Controller
                     null
                 );
             }
+
         return redirect('/secao_cloud');
     }
 
@@ -204,13 +205,18 @@ class SecaoCloudController extends Controller
 
         $novaSenha = substr(str_shuffle(str_repeat('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*', 8)), 0, 8);
 
+        $secaoCloud = DB::table('secao_cloud')
+            ->where('id_secao_cloud', $id)
+            ->first();
+    
+        $usuario = $secaoCloud->usuario;
+    
+        // Busca o apelido do cliente
+        $apelido = $this->cliente->findById($secaoCloud->id_cliente_escala)->apelido;
+    
         DB::table('secao_cloud')
             ->where('id_secao_cloud', $id)
             ->update(['senha' => $novaSenha]);
-
-        $usuario = DB::table('secao_cloud')
-            ->where('id_secao_cloud', $id)
-            ->value('usuario');
 
         $dado = [
             'id_vm' => $id_vm,
@@ -222,6 +228,35 @@ class SecaoCloudController extends Controller
         $taskId = $this->asyncTasksRepository->create('Reset Pass', $dado);
 
         Reset::dispatch($usuario, $novaSenha, $arquivo, $taskId);
+
+        if ($apelido === 'escalasoft') {
+
+            $usuarioBase = explode('@', $usuario)[0];
+
+            $email = $usuarioBase . '@escalasoft.com.br';
+
+            $usuarioCloud = $usuarioBase . '@cloud.escalasoft.com.br';
+
+            EnviarEmailJob::dispatch(
+                $email,
+                'Senha redefinida - Acesso clientes Escalasoft',
+                "Olá, {$usuarioBase}!\n\n"
+                    . "Informamos que sua senha de acesso aos clientes Escalasoft foi redefinida com sucesso.\n\n"
+                    . "Seguem abaixo suas novas credenciais de acesso:\n\n"
+                    . "Usuário: {$usuarioCloud}\n"
+                    . "Senha: {$novaSenha}\n\n"
+                    . "Por motivos de segurança, sua senha será redefinida automaticamente a cada 30 dias.\n\n"
+                    . "A senha é pessoal e intransferível, sendo de responsabilidade do usuário mantê-la em sigilo. "
+                    . "O compartilhamento da senha com terceiros é expressamente desaconselhado, e o usuário é responsável "
+                    . "pelo uso de suas credenciais de acesso.\n\n"
+                    . "Caso não tenha solicitado essa redefinição, comunique imediatamente a equipe responsável.\n\n"
+                    . "Atenciosamente,\n"
+                    . "Equipe de Data Center Escalasoft.",
+                null,
+                null,
+                null
+            );
+        }
 
         return redirect()->route('secao_cloud.index');
     }
