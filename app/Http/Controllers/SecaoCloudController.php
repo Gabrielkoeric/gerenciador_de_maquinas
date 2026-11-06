@@ -104,7 +104,35 @@ class SecaoCloudController extends Controller
         Create::dispatch($usuario, $senha, $coletor, $arquivo, $taskId, $apelido);
 
         DB::table('secao_cloud')->insertGetId($dado);
+        
+            if ($apelido === 'escalasoft') {
 
+                $usuarioBase = explode('@', $usuario)[0];
+
+                $email = $usuarioBase . '@escalasoft.com.br';
+
+                $usuarioCloud = $usuarioBase . '@cloud.escalasoft.com.br';
+
+                EnviarEmailJob::dispatch(
+                    $email,
+                    'Usuário criado para acesso aos clientes Escalasoft',
+                    "Olá, {$usuarioBase}!\n\n"
+                        . "Seu usuário de acesso aos clientes Escalasoft foi criado com sucesso.\n\n"
+                        . "Seguem abaixo suas credenciais de acesso:\n\n"
+                        . "Usuário: {$usuarioCloud}\n"
+                        . "Senha: {$senha}\n\n"
+                        . "Por motivos de segurança, sua senha será redefinida automaticamente a cada 30 dias.\n\n"
+                        . "A senha é pessoal e intransferível, sendo de responsabilidade do usuário mantê-la em sigilo. "
+                        . "O compartilhamento da senha com terceiros é expressamente desaconselhado, e o usuário é responsável "
+                        . "pelo uso de suas credenciais de acesso.\n\n"
+                        . "Caso não reconheça esta solicitação, desconsidere este e-mail e comunique a equipe responsável.\n\n"
+                        . "Atenciosamente,\n"
+                        . "Equipe de Data Center Escalasoft.",
+                    null,
+                    null,
+                    null
+                );
+            }
         return redirect('/secao_cloud');
     }
 
