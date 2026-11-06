@@ -6,7 +6,7 @@
 
     <div class="mb-3">
         <label for="usuario" class=form-label>Usuario:</label>
-        <input type="text" id="usuario" name="usuario" class="form-control" @isset($usuario) value="{{$usuario}}" @endisset required>
+        <input type="text" id="usuario" name="usuario" class="form-control" oninput="this.value = this.value.toLowerCase()" @isset($usuario) value="{{$usuario}}" @endisset required>
 
         <label for="senha" class="form-label">Senha:</label>
         <div class="input-group mb-3">
